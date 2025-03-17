@@ -1,0 +1,9 @@
+#tbl_Roles tbody td:eq(0) {
+    text-align: left;
+}
+#tbl_Roles tbody td {
+    text-align: center;
+}
+
+
+

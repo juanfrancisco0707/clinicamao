@@ -1,0 +1,41 @@
+INSERT INTO tblexpedientes(id_expediente, 
+                                                        id_paciente, 
+                                                        id_representante, 
+                                                        fecha_ingreso, 
+                                                        fecha_salida,
+                                                        firmo_contrato, 
+                                                        tiempo_duracion,
+                                                        hora_ingreso,
+                                                        cuota_ingreso,
+                                                        cuota_semanal,
+                                                        testigo,
+                                                        estatus ) 
+                                                VALUES (
+                                                         7,
+                                                                       1,
+                                                                       2,
+                                                                       '2022/01/01',
+                                                                       '2022/08/08',
+                                                                       'SI',
+                                                                       6,
+                                                                       '12:10',
+                                                                       7000,
+                                                                       800,
+                                                                       'Prudencio',
+                                                                       'Activo'
+                                                        )
+
+
+
+SELECT  id, nombre
+        FROM tblpacientes p 
+        inner join tblexpedientes e 
+        on p.id = e.id_paciente 
+    order BY nombre asc
+
+SELECT  id, nombre
+        FROM tblpacientes p 
+        WHERE NOT EXISTS (SELECT NULL
+                     FROM tblexpedientes e
+                    WHERE p.id = e.id_paciente)
+    order BY nombre asc
