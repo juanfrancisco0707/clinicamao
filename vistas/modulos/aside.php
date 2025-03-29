@@ -61,6 +61,13 @@
                              </a>
                          </li>
                          <li class="nav-item">
+                            <a style="cursor: pointer;" class="nav-link" id="mservicios"
+                                onclick="CargarContenido('../vistas/mao.servicios.php','content-wrapper')">
+                                <i class="fa fa-folder-open" aria-hidden="true"></i>&nbsp;
+                                <p>Servicios</p>
+                            </a>
+                         </li>
+                         <li class="nav-item">
                          <a style="cursor: pointer;" class="nav-link" id="mexpedientes" onclick="CargarContenido('../vistas/servicios_medicos.php','content-wrapper')">
                                  <i class="fa fa-folder-open" aria-hidden="true"></i>&nbsp;
                                  <p>Servicios</p>
@@ -364,6 +371,9 @@ $(document).ready(function() {
                     case '26':
                     $("#mrnotificacion_mp").show();
                     break;
+                    case '27':
+                    $("#mservicios").show();
+              break;
                 default:                  
                     break;
                 }// fin del case
@@ -381,6 +391,7 @@ function ocultaropcionesdelmenu(){
              $("#mcapturaingresos").hide();
              $("#madministraingresos").hide();
              $("#mgastos").hide();
+             $("#mservicios").hide();
 
             // $("#mringresos").hide();
 
