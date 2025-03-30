@@ -173,6 +173,14 @@
                     className: 'control'
                 },
                 {
+                    targets: 1, // Nombre del Servicio
+                    data: 'id'
+                },
+                {
+                    targets: 2, // Nombre del Servicio
+                    data: 'nombre_modulo'
+                },
+                {
                     targets: 3,
                     orderable: false,
                     render: function(data, type, full, meta) {
