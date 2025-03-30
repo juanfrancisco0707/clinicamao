@@ -368,10 +368,10 @@ $(document).ready(function() {
                 case '25':
                     $("#mdrogas").show();
                     break;
-                    case '26':
+                case '26':
                     $("#mrnotificacion_mp").show();
                     break;
-                    case '27':
+                case '27':
                     $("#mservicios").show();
               break;
                 default:                  
