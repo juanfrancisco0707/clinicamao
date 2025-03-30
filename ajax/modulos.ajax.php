@@ -41,7 +41,10 @@ class AjaxModulos{
     
         echo json_encode($respuesta);
     }
-    
+    public function ajaxListarModulosForSelect() {
+        $modulos = ModulosControlador::ctrListarModulos();
+        echo json_encode($modulos, JSON_UNESCAPED_UNICODE);
+    }
 
 }
 //$modulos = new AjaxModulos();
@@ -80,7 +83,7 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar m
 
 }else if(isset($_POST["accion"]) && $_POST["accion"] == 6){  // TRAER LISTADO DE modulos PARA EL AUTOCOMPLETE
 
-   // $nombreModulo = new AjaxModulos();
+    //$nombreModulo = new AjaxModulos();
    // $nombreModulo -> ajaxListarNombreModulos();
 
 }else if(isset($_POST["accion"]) && $_POST["accion"] == 7){ // OBTENER DATOS DE UN modulos POR SU ID
@@ -91,4 +94,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar m
     
   // $listaModulo -> ajaxGetDatosModulos();
 	
+}
+else if(isset($_POST['accion']) && $_POST['accion'] == 10){ // Listar modulos para el select
+    $modulos = new AjaxModulos();
+    $modulos->ajaxListarModulosForSelect();
 }
