@@ -67,12 +67,21 @@
                                 <p>Servicios</p>
                             </a>
                          </li>
+
                          <li class="nav-item">
-                         <a style="cursor: pointer;" class="nav-link" id="mexpedientes" onclick="CargarContenido('../vistas/servicios_medicos.php','content-wrapper')">
-                                 <i class="fa fa-folder-open" aria-hidden="true"></i>&nbsp;
-                                 <p>Servicios</p>
+                         <a style="cursor: pointer;" class="nav-link"id="mnespecialistas"onclick="CargarContenido('../vistas/mao.especialistas.php','content-wrapper')">
+                                 <i class="fa fa-briefcase" aria-hidden="true"></i>&nbsp;&nbsp;
+                                 <p>Especialistas</p>
                              </a>
                          </li>
+
+                         
+                         <!-- <li class="nav-item">
+                         <a style="cursor: pointer;" class="nav-link" id="mexpedientes" onclick="CargarContenido('../vistas/servicios_medicos.php','content-wrapper')">
+                                 <i class="fa fa-folder-open" aria-hidden="true"></i>&nbsp;
+                                 <p>expedientes</p>
+                             </a>
+                         </li> -->
                          <li class="nav-item">
                          <a style="cursor: pointer;" class="nav-link" id="mperiodos" onclick="CargarContenido('../vistas/periodos.php','content-wrapper')">
                                  <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;&nbsp;
@@ -373,6 +382,9 @@ $(document).ready(function() {
                     break;
                 case '27':
                     $("#mservicios").show();
+                    break;
+                    case '28':
+                    $("#mnespecialistas").show();
               break;
                 default:                  
                     break;
@@ -392,6 +404,8 @@ function ocultaropcionesdelmenu(){
              $("#madministraingresos").hide();
              $("#mgastos").hide();
              $("#mservicios").hide();
+             $("#mnespecialistas").hide();
+             
 
             // $("#mringresos").hide();
 
