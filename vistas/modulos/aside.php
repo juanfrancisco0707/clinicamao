@@ -383,8 +383,9 @@ $(document).ready(function() {
                 case '27':
                     $("#mservicios").show();
                     break;
-                    case '28':
-                    $("#mnespecialistas").show();
+                case '28':
+                    $("#mestados_citas").show();
+                    break;
               break;
                 default:                  
                     break;
@@ -404,7 +405,8 @@ function ocultaropcionesdelmenu(){
              $("#madministraingresos").hide();
              $("#mgastos").hide();
              $("#mservicios").hide();
-             $("#mnespecialistas").hide();
+             $("#mestados_citas").hide();
+            // $("#mnespecialistas").hide();
              
 
             // $("#mringresos").hide();
