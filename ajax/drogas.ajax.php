@@ -4,7 +4,7 @@ require_once "../controladores/drogas.controlador.php";
 require_once "../modelos/drogas.modelo.php";
 
 class Ajaxdrogas{
-    public $id;
+    public $id_droga;
     public $nombre_droga;
 
 

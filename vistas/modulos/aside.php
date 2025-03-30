@@ -107,7 +107,7 @@
                                  <p>Drogas</p>
                              </a>
                          </li>
-                        
+                         
                      </ul>
                  </li>
 
@@ -249,6 +249,11 @@
                          </li>
                          <li class="nav-item">
                          <?php
+                         if ($_SESSION['S_ROL']==1) 
+                            { echo '<a style="cursor: pointer;" class="nav-link" id="mmodulos" onclick="CargarContenido(\'../vistas/modulos.php\',\'content-wrapper\')"><i class="fa fa-stethoscope" aria-hidden="true"></i>&nbsp;&nbsp;Módulos</a>';}?>
+                         </li>
+                         <li class="nav-item">
+                         <?php
                          if ($_SESSION['S_ROL']!=1) 
                             { echo '<a style="cursor: pointer;" class="nav-link" id="mperfiles" onclick="CargarContenido(\'../vistas/perfil.php\',\'content-wrapper\')"><i class="fa fa-user-md" aria-hidden="true"></i>&nbsp;&nbsp;Perfil de Usuario</a>';}?>
                          </li>
@@ -383,8 +388,10 @@ $(document).ready(function() {
                 case '27':
                     $("#mservicios").show();
                     break;
-                    case '28':
+                case '28':
                     $("#mnespecialistas").show();
+                case '30':
+                    $("#mmodulos").show();
               break;
                 default:                  
                     break;
@@ -405,6 +412,8 @@ function ocultaropcionesdelmenu(){
              $("#mgastos").hide();
              $("#mservicios").hide();
              $("#mnespecialistas").hide();
+             $("#mperiodos").hide();
+             $("#mdrogas").hide();
              
 
             // $("#mringresos").hide();
@@ -426,6 +435,8 @@ function ocultaropcionesdelmenu(){
              $("#mperfiles").hide();
              $("#mrespaldos").hide();
              $("#mdashboardo").hide();
+             $("#mmodulos").hide();
+
 
 
 
