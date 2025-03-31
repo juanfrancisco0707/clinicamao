@@ -12,6 +12,7 @@ if(isset($_SESSION['S_IDUSUARIO'])){
 	<title>Sistema Control de Ingreso de Pacientes</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <!--===============================================================================================-->	
 	<link rel="icon" type="login/image/png" href="login/images/icons/favicon.ico"/>
 <!--===============================================================================================-->
@@ -39,7 +40,7 @@ if(isset($_SESSION['S_IDUSUARIO'])){
 <body>
 	
 	<div class="limiter">
-		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+		<div class="container-login100" style="background-image: url('images/bg-01.png');">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
 					<span class="login100-form-title p-b-49">
 						INICIAR SESI&Oacute;N
@@ -76,9 +77,11 @@ if(isset($_SESSION['S_IDUSUARIO'])){
 						<a href="https://facebook.com/" class="login100-social-item bg1">
 							<i class="fa fa-facebook"></i>
 						</a>
-
 						<a href="https://twitter.com/" class="login100-social-item bg2">
-							<i class="fa fa-twitter"></i>
+							<i class="fab fa-x-twitter"></i>
+						</a>
+						<a href="https://www.instagram.com/mao.fisioterapia/" class="login100-social-item bg3">
+							<i class="fab fa-instagram"></i>
 						</a>
 
 						<a href="https://google.com/" class="login100-social-item bg3">

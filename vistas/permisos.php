@@ -369,9 +369,13 @@ $(document).ready(function() {
     /*===================================================================*/
     $.ajax({
         url: "../ajax/modulos.ajax.php",
+        method: "POST", // Add the method
+        data: {
+            'accion': 10 // Add the 'accion' parameter with value 10
+        },
         cache: false,
-        contentType: false,
-        processData: false,
+        //contentType: false, // Remove this line
+        //processData: false, // Remove this line
         dataType: 'json',
         success: function(respuesta) {
 
@@ -384,6 +388,7 @@ $(document).ready(function() {
             }
 
             $("#selModuloReg").append(options);
+            $("#selModuloRegm").append(options);
         }
     });
     /*===================================================================*/

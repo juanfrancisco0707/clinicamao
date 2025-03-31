@@ -77,9 +77,11 @@ if(isset($_SESSION['S_IDUSUARIO'])){
 						</a>
 
 						<a href="#" class="login100-social-item bg2">
-							<i class="fa fa-twitter"></i>
+							<i class="fab fa-x-twitter"></i>
 						</a>
-
+						<a href="#" class="login100-social-item bg3">
+							<i class="fab fa-instagram"></i>
+						</a>
 						<a href="#" class="login100-social-item bg3">
 							<i class="fa fa-google"></i>
 						</a>

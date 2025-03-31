@@ -10,7 +10,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> Clínica</title>
-    <link rel="shortcut icon" href="../vistas/assets/dist/img/logoclinica.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../vistas/assets/dist/img/logomaofisioterapia.png" type="image/x-icon">
 
     <!-- ============================================================================================================= -->
     <!-- REQUIRED CSS -->

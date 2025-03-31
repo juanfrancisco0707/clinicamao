@@ -3,7 +3,7 @@
    
      <!-- Brand Logo -->
      <a href="index.html" class="brand-link">
-         <img src="../vistas/assets/dist/img/logoclinica.png" alt="Clínica logo" class="brand-image img-circle elevation-3"
+         <img src="../vistas/assets/dist/img/logomaofisioterapia.png" alt="Clínica logo" class="brand-image img-circle elevation-3"
              style="opacity: .8">
              
          <span class="brand-text font-weight-light ">Clínica</span>
@@ -107,7 +107,7 @@
                                  <p>Drogas</p>
                              </a>
                          </li>
-                        
+                         
                      </ul>
                  </li>
 
@@ -249,6 +249,11 @@
                          </li>
                          <li class="nav-item">
                          <?php
+                         if ($_SESSION['S_ROL']==1) 
+                            { echo '<a style="cursor: pointer;" class="nav-link" id="mmodulos" onclick="CargarContenido(\'../vistas/modulos.php\',\'content-wrapper\')"><i class="fa fa-stethoscope" aria-hidden="true"></i>&nbsp;&nbsp;Módulos</a>';}?>
+                         </li>
+                         <li class="nav-item">
+                         <?php
                          if ($_SESSION['S_ROL']!=1) 
                             { echo '<a style="cursor: pointer;" class="nav-link" id="mperfiles" onclick="CargarContenido(\'../vistas/perfil.php\',\'content-wrapper\')"><i class="fa fa-user-md" aria-hidden="true"></i>&nbsp;&nbsp;Perfil de Usuario</a>';}?>
                          </li>
@@ -384,8 +389,9 @@ $(document).ready(function() {
                     $("#mservicios").show();
                     break;
                 case '28':
-                    $("#mestados_citas").show();
-                    break;
+                    $("#mnespecialistas").show();
+                case '30':
+                    $("#mmodulos").show();
               break;
                 default:                  
                     break;
@@ -405,8 +411,9 @@ function ocultaropcionesdelmenu(){
              $("#madministraingresos").hide();
              $("#mgastos").hide();
              $("#mservicios").hide();
-             $("#mestados_citas").hide();
-            // $("#mnespecialistas").hide();
+             $("#mnespecialistas").hide();
+             $("#mperiodos").hide();
+             $("#mdrogas").hide();
              
 
             // $("#mringresos").hide();
@@ -428,6 +435,8 @@ function ocultaropcionesdelmenu(){
              $("#mperfiles").hide();
              $("#mrespaldos").hide();
              $("#mdashboardo").hide();
+             $("#mmodulos").hide();
+
 
 
 
