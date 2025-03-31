@@ -128,14 +128,20 @@
 <!-- Incluye DataTables JS (puedes usar un CDN) -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
     $(document).ready(function () {
+        // Check if modal is a function
+        console.log("Is $.fn.modal a function?", typeof $.fn.modal === 'function');
+        let focusedElementBeforeModal;
+        let accion = 2; // 2: add, 4: update
+
         /*===================================================================
         CARGAR LISTADO DE ESPECIALISTAS CON DATATABLE
         ====================================================================*/
         var tablaEspecialistas = $('#tbl_Especialistas').DataTable({
             ajax: {
-                url: 'ajax/AjaxEspecialistas.php',
+                url: '../ajax/mao.especialistas.ajax.php',
                 type: 'POST',
                 data: { accion: 1 }, // Acción para listar especialistas
                 dataSrc: ''
@@ -218,10 +224,11 @@
             `;
         }
         /*===================================================================
-        EVENTO PARA REGISTRAR ESPECIALISTA
+        EVENTO PARA REGISTRAR/ACTUALIZAR ESPECIALISTA
         ====================================================================*/
         $("#btnGuardarEspecialista").on('click', function () {
             if ($("#formEspecialista")[0].checkValidity()) {
+                var id_fisioterapeuta = $("#iptIdReg").val();
                 var nombre = $("#iptNombreReg").val();
                 var apellido = $("#iptApellidoReg").val();
                 var especialidad = $("#iptEspecialidadReg").val();
@@ -229,7 +236,8 @@
                 var email = $("#iptEmailReg").val();
 
                 var datos = new FormData();
-                datos.append("accion", 2); // Acción para registrar
+                datos.append("accion", accion); // Acción para registrar or update
+                datos.append("id_fisioterapeuta", id_fisioterapeuta);
                 datos.append("nombre", nombre);
                 datos.append("apellido", apellido);
                 datos.append("especialidad", especialidad);
@@ -237,7 +245,7 @@
                 datos.append("email", email);
 
                 $.ajax({
-                    url: "ajax/AjaxEspecialistas.php",
+                    url: "../ajax/mao.especialistas.ajax.php",
                     method: "POST",
                     data: datos,
                     cache: false,
@@ -246,12 +254,12 @@
                     dataType: "json",
                     success: function (respuesta) {
                         if (respuesta == "ok") {
-                            $("#modalEspecialista").modal('hide');
+                            $("#modalEspecialista").modal('hide'); // This line was causing the error
                             $("#formEspecialista")[0].reset();
                             tablaEspecialistas.ajax.reload();
-                            alert("Especialista registrado correctamente");
+                            alert(accion == 2 ? "Especialista registrado correctamente" : "Especialista actualizado correctamente");
                         } else {
-                            alert("Error al registrar el Especialista");
+                            alert(accion == 2 ? "Error al registrar el Especialista" : "Error al actualizar el Especialista");
                         }
                     }
                 });
@@ -263,16 +271,18 @@
         EVENTO PARA EDITAR ESPECIALISTA
         ====================================================================*/
         $("#tbl_Especialistas").on("click", ".btnEditarEspecialista", function () {
+            accion = 4; //set action to update
             var id_fisioterapeuta = $(this).data("id");
             $("#modalEspecialistaLabel").text("Editar Especialista");
             $("#btnGuardarEspecialista").text("Actualizar Especialista");
+            $("#btnGuardarEspecialista").addClass("btn-primary"); // Ensure button has btn-primary class
 
             var datos = new FormData();
             datos.append("accion", 7); // Acción para obtener datos del especialista
             datos.append("id_fisioterapeuta", id_fisioterapeuta);
 
             $.ajax({
-                url: "ajax/AjaxEspecialistas.php",
+                url: "../ajax/mao.especialistas.ajax.php",
                 method: "POST",
                 data: datos,
                 cache: false,
@@ -286,48 +296,7 @@
                     $("#iptEspecialidadReg").val(respuesta.especialidad);
                     $("#iptTelefonoReg").val(respuesta.telefono);
                     $("#iptEmailReg").val(respuesta.email);
-                    $("#modalEspecialista").modal('show');
-                }
-            });
-            $("#btnGuardarEspecialista").off('click').on('click', function () {
-                if ($("#formEspecialista")[0].checkValidity()) {
-                    var id_fisioterapeuta = $("#iptIdReg").val();
-                    var nombre = $("#iptNombreReg").val();
-                    var apellido = $("#iptApellidoReg").val();
-                    var especialidad = $("#iptEspecialidadReg").val();
-                    var telefono = $("#iptTelefonoReg").val();
-                    var email = $("#iptEmailReg").val();
-
-                    var datos = new FormData();
-                    datos.append("accion", 4); // Acción para actualizar
-                    datos.append("id_fisioterapeuta", id_fisioterapeuta);
-                    datos.append("nombre", nombre);
-                    datos.append("apellido", apellido);
-                    datos.append("especialidad", especialidad);
-                    datos.append("telefono", telefono);
-                    datos.append("email", email);
-
-                    $.ajax({
-                        url: "ajax/AjaxEspecialistas.php",
-                        method: "POST",
-                        data: datos,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        dataType: "json",
-                        success: function (respuesta) {
-                            if (respuesta == "ok") {
-                                $("#modalEspecialista").modal('hide');
-                                $("#formEspecialista")[0].reset();
-                                tablaEspecialistas.ajax.reload();
-                                alert("Especialista actualizado correctamente");
-                            } else {
-                                alert("Error al actualizar el Especialista");
-                            }
-                        }
-                    });
-                } else {
-                    $("#formEspecialista")[0].classList.add('was-validated');
+                    $("#modalEspecialista").modal('show'); // This line was causing the error
                 }
             });
         });
@@ -343,7 +312,7 @@
                 datos.append("id_fisioterapeuta", id_fisioterapeuta);
 
                 $.ajax({
-                    url: "ajax/AjaxEspecialistas.php",
+                    url: "../ajax/mao.especialistas.ajax.php",
                     method: "POST",
                     data: datos,
                     cache: false,
@@ -364,19 +333,48 @@
         /*===================================================================
         EVENTO PARA LIMPIAR FORMULARIO AL CERRAR MODAL
         ====================================================================*/
-        $("#btnCerrarModal").on("click", function () {
+        $("#btnCerrarModal, #btnCancelarRegistro").on("click", function () {
             $("#modalEspecialistaLabel").text("Agregar Especialista");
             $("#btnGuardarEspecialista").text("Guardar Especialista");
+            $("#btnGuardarEspecialista").addClass("btn-primary"); // Ensure button has btn-primary class
             $("#formEspecialista")[0].reset();
             $("#formEspecialista")[0].classList.remove('was-validated');
+             // Remove focus from any element inside the modal
+            $("#modalEspecialista :focus").blur(); // This line is key!
+
+            $("#modalEspecialista").modal('hide');
+            accion = 2; //set action to add
         });
         $("#btnNuevoEspecialista").on("click", function () {
+            accion = 2; //set action to add
             $("#modalEspecialistaLabel").text("Agregar Especialista");
             $("#btnGuardarEspecialista").text("Guardar Especialista");
+            $("#btnGuardarEspecialista").addClass("btn-primary"); // Ensure button has btn-primary class
             $("#formEspecialista")[0].reset();
             $("#formEspecialista")[0].classList.remove('was-validated');
+            // Store the currently focused element
+            focusedElementBeforeModal = document.activeElement;
+            // Show the modal
+            $("#modalEspecialista").modal('show');
+        });
+        // Event listener for when the modal is hidden
+        $('#modalEspecialista').on('hidden.bs.modal', function () {
+            // Restore focus to the element that had it before the modal was opened
+            if (focusedElementBeforeModal) {
+                //focusedElementBeforeModal.focus();
+                //focusedElementBeforeModal.blur();
+            }
+        });
+        // Event listener for when the modal is shown
+        $('#modalEspecialista').on('shown.bs.modal', function () {
+            // Store the currently focused element
+            focusedElementBeforeModal = document.activeElement;
         });
     });
 </script>
+
+
+
 </body>
 </html>
+
