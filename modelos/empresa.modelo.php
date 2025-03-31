@@ -22,13 +22,18 @@ class EmpresaModelo{
         $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
                                                 FROM tblempresa  order BY nombre asc'); 
          $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR); 
-         }
-    else
-    {
+         }else {
+            $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
+                                                   FROM tblempresa where id = :idclinica  order BY nombre asc'); 
+            $stmt->bindParam(":idclinica", $idclinica, PDO::PARAM_INT); // Corrected: Use PDO::PARAM_INT for ID
+        }
+
+    
+    
         $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
                                                FROM tblempresa where id = :idclinica  order BY nombre asc'); 
         $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR); 
-    }                                                                                
+                                                                                    
          $stmt->execute();
          return $stmt->fetchAll();
      }
