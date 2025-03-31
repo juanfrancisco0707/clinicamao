@@ -18,24 +18,18 @@ class EmpresaModelo{
     ====================================================================*/
     static public function mdlListarEmpresacb($idclinica,$idrol){
     
-        if($idrol==1){
-        $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
-                                                FROM tblempresa  order BY nombre asc'); 
-         $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR); 
-         }else {
-            $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
-                                                   FROM tblempresa where id = :idclinica  order BY nombre asc'); 
-            $stmt->bindParam(":idclinica", $idclinica, PDO::PARAM_INT); // Corrected: Use PDO::PARAM_INT for ID
+        if($idrol == 1){
+            // If the user is an admin (idrol == 1), load all branches
+            $stmt = Conexion::conectar()->prepare('SELECT id, nombre FROM tblempresa ORDER BY nombre ASC');
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } else {
+            // If the user is not an admin, load only the branch associated with $idclinica
+            $stmt = Conexion::conectar()->prepare('SELECT id, nombre FROM tblempresa WHERE id = :idclinica ORDER BY nombre ASC');
+            $stmt->bindParam(":idclinica", $idclinica, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll();
         }
-
-    
-    
-        $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
-                                               FROM tblempresa where id = :idclinica  order BY nombre asc'); 
-        $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR); 
-                                                                                    
-         $stmt->execute();
-         return $stmt->fetchAll();
      }
     
     /*===================================================================
