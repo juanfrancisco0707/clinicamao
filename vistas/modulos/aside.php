@@ -74,7 +74,12 @@
                                  <p>Especialistas</p>
                              </a>
                          </li>
-
+                         <li class="nav-item">
+                         <a style="cursor: pointer;" class="nav-link"id="mestadoscitas"onclick="CargarContenido('../vistas/mao.estados_citas.php','content-wrapper')">
+                                 <i class="fa fa-briefcase" aria-hidden="true"></i>&nbsp;&nbsp;
+                                 <p>Estados Citas</p>
+                             </a>
+                         </li>
                          
                          <!-- <li class="nav-item">
                          <a style="cursor: pointer;" class="nav-link" id="mexpedientes" onclick="CargarContenido('../vistas/servicios_medicos.php','content-wrapper')">
@@ -390,6 +395,8 @@ $(document).ready(function() {
                     break;
                 case '28':
                     $("#mnespecialistas").show();
+                case '2':
+                        $("#mestadoscitas").show();
                 case '30':
                     $("#mmodulos").show();
               break;
@@ -414,7 +421,7 @@ function ocultaropcionesdelmenu(){
              $("#mnespecialistas").hide();
              $("#mperiodos").hide();
              $("#mdrogas").hide();
-             
+             $("#mestadoscitas").hide();
 
             // $("#mringresos").hide();
 
