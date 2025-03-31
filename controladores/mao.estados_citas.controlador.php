@@ -2,7 +2,7 @@
 
 class EstadosCitasControlador{
 
-    /*===================================================================
+    /*=================================================================
     OBTENER LISTADO TOTAL DE Estados de Citas
     ====================================================================*/
     static public function ctrListarEstadosCitas(){

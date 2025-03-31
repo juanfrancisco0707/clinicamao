@@ -101,7 +101,7 @@ class EstadosCitasModelo{
 
     }   
 
-    /*=================================================================
+    /*==============================================================
     LISTAR NOMBRE DE Estados de Citas PARA INPUT DE AUTO COMPLETADO
     ===================================================================*/
     static public function mdlListarNombreEstadosCitas(){

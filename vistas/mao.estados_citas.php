@@ -371,7 +371,7 @@
     });
 
 
-    /*===================================================================*/
+    /*=================================================================*/
     //EVENTO QUE LIMPIA LOS MENSAJES DE ALERTA DE INGRESO DE DATOS DE CADA INPUT AL CANCELAR LA VENTANA MODAL
     /*===================================================================*/
     document.getElementById("btnCancelarRegistro").addEventListener("click", function() {
