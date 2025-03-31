@@ -139,6 +139,29 @@
                          </a>
                      </ul>
                  </li>
+                 <li class="nav-item">
+                 <a href="#" class="nav-link">
+                         <i class="nav-icon fas fa-shopping-cart text-ligth"></i>
+                         <p>
+                             Agenda
+                             <i class="right fas fa-angle-left"></i>
+                         </p>
+                     </a>
+                     <ul class="nav nav-treeview">
+                         <a style="cursor: pointer;" class="nav-link"id="mcalendario" onclick="CargarContenido('../vistas/mao.calendario.php','content-wrapper')">
+                         <i class="fa fa-credit-card" aria-hidden="true"></i>&nbsp;
+                                 <p>
+                                   Calendario
+                                 </p>
+                         </a>
+                         <a style="cursor: pointer;" class="nav-link" id="mrecordatorio" onclick="CargarContenido('../vistas/mao.recordatorio.php','content-wrapper')">
+                             <i class="fa fa-cart-plus" aria-hidden="true"></i>&nbsp;
+                                 <p>
+                                   Recordatorio
+                                 </p>
+                         </a>
+                     </ul>
+                 </li>
                 
                  <li class="nav-item">
                  <a style="cursor: pointer;" class="nav-link" id="mngastos" onclick="CargarContenido('../vistas/gastos.php','content-wrapper')">
@@ -395,11 +418,18 @@ $(document).ready(function() {
                     break;
                 case '28':
                     $("#mnespecialistas").show();
+                    break;
                 case '2':
-                        $("#mestadoscitas").show();
+                    $("#mestadoscitas").show();
+                    break;
                 case '30':
                     $("#mmodulos").show();
-              break;
+                    break;
+                case '31':
+                    $("#mcalendario").show();
+                    break;
+                 break;
+                
                 default:                  
                     break;
                 }// fin del casee
