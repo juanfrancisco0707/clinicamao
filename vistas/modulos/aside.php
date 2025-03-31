@@ -395,7 +395,7 @@ $(document).ready(function() {
               break;
                 default:                  
                     break;
-                }// fin del case
+                }// fin del casee
             }
         }
         });
