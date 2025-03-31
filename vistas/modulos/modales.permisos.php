@@ -93,7 +93,7 @@ $(document).ready(function(){
             [0, 'desc']
         ],
         "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+            "url": "../vistas/assets/json/Spanish.json"
         }
     });
 
