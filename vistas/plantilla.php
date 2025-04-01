@@ -133,8 +133,8 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                 </a> -->
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a style="cursor: pointer;" class="nav-link" onclick="CargarContenido('../vistas/gastos.php','content-wrapper')">
-                Gastos
+                <a style="cursor: pointer;" class="nav-link" onclick="CargarContenido('../vistas/mao.calendario.php','content-wrapper')">
+                Agenda
                 </a>
             </li>
         </ul>
