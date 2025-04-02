@@ -107,9 +107,9 @@
                              </a>
                          </li>
                          <li class="nav-item">
-                         <a style="cursor: pointer;" class="nav-link" id="mdrogas" onclick="CargarContenido('../vistas/drogas.php','content-wrapper')">
+                         <a style="cursor: pointer;" class="nav-link" id="mhorarios" onclick="CargarContenido('../vistas/mao.horarios.php','content-wrapper')">
                                  <i class="fa fa-book" aria-hidden="true"></i>&nbsp;&nbsp;
-                                 <p>Drogas</p>
+                                 <p>Horarios</p>
                              </a>
                          </li>
                          
@@ -428,7 +428,9 @@ $(document).ready(function() {
                 case '31':
                     $("#mcalendario").show();
                     break;
-                 break;
+                case '32':
+                    $("#mhorarios").show();
+                    break;
                 
                 default:                  
                     break;
@@ -452,6 +454,7 @@ function ocultaropcionesdelmenu(){
              $("#mperiodos").hide();
              $("#mdrogas").hide();
              $("#mestadoscitas").hide();
+             $("#mhorarios").hide();
 
             // $("#mringresos").hide();
 
