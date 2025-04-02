@@ -126,7 +126,7 @@
                             <a style="cursor: pointer;" class="nav-link" id="minventario"
                                 onclick="CargarContenido('../vistas/mao.inventario.php','content-wrapper')">
                                 <i class="fa fa-book" aria-hidden="true"></i>&nbsp;&nbsp;
-                                <p>inventario</p>
+                                <p>Inventario</p>
                             </a>
                         </li>
                         
