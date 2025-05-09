@@ -299,7 +299,7 @@
                         </li>
                         <?php
                         if ($_SESSION['S_ROL'] != -1) {
-                            echo '<a style="cursor: pointer;" class="nav-link" id="mrespaldos" onclick="CargarContenido(\'../email/index.php\',\'content-wrapper\')"><i class="fa fa-server" aria-hidden="true" ></i>&nbsp;&nbsp;Respado de Datos</a>';
+                            echo '<a style="cursor: pointer;" class="nav-link" id="mrespaldos" onclick="CargarContenido(\'../email/index.php\',\'content-wrapper\')"><i class="fa fa-server" aria-hidden="true" ></i>&nbsp;&nbsp;Respaldo de Datos</a>';
                         } ?>
                 </li>
 
