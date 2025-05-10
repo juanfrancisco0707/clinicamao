@@ -169,7 +169,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <a style="cursor: pointer;" class="nav-link" id="mcalendario"
-                            onclick="CargarContenido('../vistas/mao.calendario.php','content-wrapper')">
+                            onclick="CargarContenido('../vistas/maocalendario.php','content-wrapper')">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>&nbsp;
                             <p>
                                 Calendario

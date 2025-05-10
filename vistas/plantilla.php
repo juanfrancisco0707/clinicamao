@@ -32,8 +32,9 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     <!-- Jquery CSS -->
     <link rel="stylesheet" href="../vistas/assets/plugins/jquery-ui/css/jquery-ui.css">
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
 
     <!-- ============================================================
     =ESTILOS PARA USO DE DATATABLES JS
@@ -47,8 +48,10 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../vistas/assets/dist/css/adminlte.min.css">
+      <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
     
-    <!-- Estilos personazalidos -->
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="../vistas/assets/dist/css/plantilla.css">
     
     <!-- Multiselect -->
@@ -76,9 +79,9 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     <!-- jquery UI -->
     <script src="../vistas/assets/plugins/jquery-ui/js/jquery-ui.js"></script>
 
-    <!-- JS Bootstrap 5 -->
+    <!-- JS Bootstrap 5 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    -->
     <!-- ============================================================
     =LIBRERIAS PARA USO DE DATATABLES JS
     ===============================================================-->
@@ -100,10 +103,14 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
    
-    <!-- AdminLTE App -->
+   
     <script src="../vistas/assets/dist/js/adminlte.min.js"></script>
 
-    
+         <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- Opcional: FullCalendar locale para español (si lo necesitas) -->
++     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script> 
+    <!-- AdminLTE App -->
 
 </head>
 
@@ -133,7 +140,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                 </a> -->
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a style="cursor: pointer;" class="nav-link" onclick="CargarContenido('../vistas/mao.calendario.php','content-wrapper')">
+                <a style="cursor: pointer;" class="nav-link" onclick="CargarContenido('../vistas/maocalendario.php','content-wrapper')">
                 Agenda
                 </a>
             </li>
