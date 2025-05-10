@@ -207,43 +207,7 @@
                     <!-- Reportes -->
                     <ul class="nav nav-treeview">
 
-                        <li class="nav-item">
-                            <a style="cursor: pointer;" class="nav-link" id="musuarios" onclick="CargarContenido('../vistas/usuarios.php','content-wrapper')"><i class="fa fa-user-md" aria-hidden="true"></i>&nbsp;&nbsp;Usuarios </a>            
-                         </li>
-                         <li class="nav-item">
-                         <?php
-                         if ($_SESSION['S_ROL']==1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mroles" onclick="CargarContenido(\'../vistas/rols.php\',\'content-wrapper\')"><i class="fa fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Tipo de Usuario</a>';}?>
-                         </li>
-                         <li class="nav-item">
-                         <?php
-                         if ($_SESSION['S_ROL']==1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mpermisos" onclick="CargarContenido(\'../vistas/permisos.php\',\'content-wrapper\')"><i class="fa fa-key" aria-hidden="true"></i>&nbsp;&nbsp;Permisos</a>';}?>
-                         </li>
-                         <li class="nav-item">
-                         <?php
-                         if ($_SESSION['S_ROL']==1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mempresa" onclick="CargarContenido(\'../vistas/empresa.php\',\'content-wrapper\')"><i class="fa fa-stethoscope" aria-hidden="true"></i>&nbsp;&nbsp;Datos de la Clínica</a>';}?>
-                         </li>
-                         <li class="nav-item">
-                         <?php
-                         if ($_SESSION['S_ROL']==1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mmodulos" onclick="CargarContenido(\'../vistas/modulos.php\',\'content-wrapper\')"><i class="fa fa-stethoscope" aria-hidden="true"></i>&nbsp;&nbsp;Módulos</a>';}?>
-                         </li>
-                         <li class="nav-item">
-                         <?php
-                         if ($_SESSION['S_ROL']!=1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mperfiles" onclick="CargarContenido(\'../vistas/perfil.php\',\'content-wrapper\')"><i class="fa fa-user-md" aria-hidden="true"></i>&nbsp;&nbsp;Perfil de Usuario</a>';}?>
-                         </li>
-                         <?php
-                         if ($_SESSION['S_ROL']!=-1) 
-                            { echo '<a style="cursor: pointer;" class="nav-link" id="mrespaldos" onclick="CargarContenido(\'../email/index.php\',\'content-wrapper\')"><i class="fa fa-server" aria-hidden="true" ></i>&nbsp;&nbsp;Respaldo de Datos</a>';}?>
-                         </li>
-                        
-                     </ul>
-                 </li>
-
-
+                  
                     </ul>
                 </li>
                 <!--CONFIGURACION -->
