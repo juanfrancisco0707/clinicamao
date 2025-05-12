@@ -24,11 +24,13 @@ class ajaxPacientes{
     public $id_ocupacion;
     public $id_nacionalidad;
     public $comorbilidad;
+    public $idclinica;
    // public $fecha_creacion; Se graba automaticamente
   
     public $id_empresa;  
     public $estatus;     
     public $clinica;
+    public $entidad;
 
     public function ajaxListarPacientes(){
         
@@ -36,6 +38,10 @@ class ajaxPacientes{
         
         echo json_encode($pacientes);     
     }
+    public function ajaxListarFolioEntidad(){
+    $folio = PacientesControlador::ctrListarFolioEntidad($this->entidad, $this->id_empresa);
+    echo json_encode($folio);
+}
     public function ajaxListarPacientesadmin(){
          $pacientes = PacientesControlador::ctrListarPacientesadmin();
          echo json_encode($pacientes);     
@@ -227,10 +233,13 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar P
     $listaPaciente -> ajaxGetDatosPaciente();
 
 }else if(isset($_POST['accion']) && $_POST['accion'] == 11){ // folio de representantes
-
-    $folioPacientes = new ajaxPacientes();
-    $folioPacientes -> idclinica = $_SESSION['S_IDCLINICA']; 
-    $folioPacientes ->  ajaxListarFolioPacientes();
+    $entidad = isset($_POST['entidad']) ? $_POST['entidad'] : 'paciente'; // valor por defecto
+    //var_dump($entidad);
+    //exit;
+     $folioPacientes = new ajaxPacientes();
+    $folioPacientes->entidad = $entidad;
+    $folioPacientes->id_empresa = $_SESSION['S_IDCLINICA']; // ← lo tomas de la sesión
+    $folioPacientes->ajaxListarFolioEntidad();
     
 }
 else if(isset($_POST["accion"]) && $_POST["accion"] == 99){ // OBTENER DATOS DE UN PACIENTE POR SU ID y ACTIVO

@@ -45,7 +45,7 @@
         <div class="modal-content">
             <div class="modal-header bg-gray py-1">
                 <h5 class="modal-title">Agregar/Modificar Horario</h5>
-                <button type="button" class="btn btn-outline-primary text-white border-0 fs-5" data-bs-dismiss="modal" id="btnCerrarModal">
+                <button type="button" class="btn btn-outline-primary text-white border-0 fs-5" data-dismiss="modal" id="btnCerrarModal">
                     <i class="far fa-times-circle"></i>
                 </button>
             </div>
@@ -55,7 +55,7 @@
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="selFisioterapeuta">Fisioterapeuta<span class="text-danger">*</span></label>
-                                <select class="form-select form-select-sm" id="selFisioterapeuta" required>
+                                <select class="form-control form-control-sm" id="selFisioterapeuta" required>
                                 </select>
                                 <div class="invalid-feedback">Seleccione un fisioterapeuta</div>
                             </div>
@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <input type="hidden" id="iptIdHorario">
-                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;" data-bs-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
+                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;" data-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
                         <button type="button" style="width:170px;" class="btn btn-primary mt-3 mx-2" id="btnGuardarHorario">Guardar Horario</button>
                     </div>
                 </form>
@@ -90,18 +90,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-
 
 <script>
     var accion;

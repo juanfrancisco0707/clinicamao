@@ -77,469 +77,376 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 <!-- /.content -->
 
 <!-- Ventana Modal para ingresar o modificar un Paciente -->
-<div class="modal fade" id="mdlGestionarPacientes" role="dialog">
+<!-- Ventana Modal para ingresar o modificar un Paciente -->
+<div class="modal fade" id="mdlGestionarPacientes" tabindex="-1" role="dialog" aria-labelledby="modalPacienteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
 
-    <div class="modal-dialog modal-xl">
+    <!-- contenido del modal -->
+    <div class="modal-content">
 
-        <!-- contenido del modal -->
-        <div class="modal-content">
+      <!-- cabecera del modal -->
+      <div class="modal-header bg-indigo py-1">
+        <h5 class="modal-title" id="modalPacienteLabel">Agregar Paciente</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" id="btnCerrarModal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-            <!-- cabecera del modal -->
-            <div class="modal-header bg-indigo py-1">
+      <!-- cuerpo del modal -->
+      <div class="modal-body">
+        <form class="needs-validation" novalidate>
+          <div class="row">
 
-                <h5 class="modal-title">Agregar Paciente</h5>
-
-                <button type="button" class="btn btn-outline-primary text-white border-0 fs-5" data-bs-dismiss="modal" id="btnCerrarModal">
-                    <i class="far fa-times-circle"></i>
-                </button>
-
+            <!-- Identificador -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptIdReg">
+                  <i class="fas fa-barcode fs-6"></i>
+                  <span class="small">Identificador</span><span class="text-danger">*</span>
+                </label>
+                <input type="number" class="form-control form-control-sm" id="iptIdReg" name="iptId" placeholder="Identificador" disabled>
+                <div class="invalid-feedback">Debe ingresar el Identificador del Paciente</div>
+              </div>
             </div>
 
-            <!-- cuerpo del modal ingreso de Pacientes-->
-            <div class="modal-body">
-    
-                <form class="needs-validation" novalidate >
-                    <!-- Abrimos una fila -->
-                    <div class="row">
-
-                        <!-- Columna para registro del Identificador -->
-                        <div class="col-12 col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptIdReg"><i class="fas fa-barcode fs-6"></i>
-                                    <span class="small">Identificador</span><span class="text-danger">*</span>
-                                </label>
-                                <input type="number" class="form-control form-control-sm" id="iptIdReg"
-                                    name="iptId" placeholder="Identificador" disabled>
-                                <div class="invalid-feedback">Debe ingresar el Identificador del Paciente</div>
-                            </div>
-                        </div>
-
-                       
-                        <!-- Columna para registro del Nombre del Paciente -->
-                        <div class="col-12">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptNombreReg"><i
-                                        class="fas fa-file-signature fs-6"></i> <span
-                                        class="small">Nombre</span><span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" id="iptNombreReg"
-                                    placeholder="Nombre" required>
-                                <div class="invalid-feedback">Debe ingresar el nombre</div>
-                            </div>
-                        </div>
-
-                        <!-- Columna para registro del Sexo 
-                    <i class="fas fa-dollar-sign fs-6"></i> Esto se pone para poner un ícono en la etiqueta que se captura un valor monetario
-                    -->
-                        <div class="col-12  col-lg-4">
-                            <div class="form-group mb-2">
-                               <!-- <label class="" for="iptSexoReg"> <span class="small">Sexo</span><span class="text-danger">*</span></label>-->
-                               <label class="" for="iptSexoReg"><i
-                                        class="fa fa-venus-mars" aria-hidden="true"></i> <span class="small">Sexo</span><span class="text-danger">*</span></label>
-                                        <select name="sexo" class="form-control form-control-sm" id ="iptSexoReg" required>
-                                         <option>Masculino</option>
-                                         <option>Femenino</option>
-                                         <option>Otro</option>
-                                         </select>         
-
-                                <div class="invalid-feedback">Debe ingresar el Sexo</div>
-                            </div>
-                        </div>
-
-                        <!-- Columna para registro de la Fecha de Nacimiento
-                    <i class="fa-solid fa-calendar-days"></i>-->
-                        <div class="col-12 col-lg-4">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptFecha_NacimientoReg"><i
-                                class="fa fa-calendar" aria-hidden="true"></i> <span class="small">Fecha de Nacimiento</span>
-                                        <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control form-control-sm" id="iptFecha_NacimientoReg"
-                                    placeholder="Fecha de Nacimiento"  required>
-                                <div class="invalid-feedback">Debe ingresar Fecha de Nacimiento</div>
-                            </div>
-                        </div>
-
-                        <!-- Columna para registro de la Edad  <i
-                                        class="fas fa-dollar-sign fs-6"></i>   disabled-->
-                        <div class="col-12 col-lg-4">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptEdadReg"> <span class="small">Edad</span></label>
-                                <input type="number" min="0" class="form-control form-control-sm" id="iptEdadReg"                                
-                                 placeholder="Edad" disabled>
-                               <!--  <input type="button" value="Calcular edad" onclick="javascript:calcularEdad();" /> -->
-                            </div>
-                            
-                        </div>
-
-                        <!-- Columna para registro de la Dirección del Paciente -->
-                        <div class="col-12 col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptDireccionReg"><i class="fa fa-address-card" aria-hidden="true"></i>
-                                    <span class="small">Dirección</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptDireccionReg"
-                                    placeholder="Direccion" required>
-                                <div class="invalid-feedback">Debe ingresar la Dirección</div>
-                            </div>
-                        </div>
-                         <!-- Columna para registro del Teléfono -->
-                         <div class="col-12 col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptTelefonoReg"><i  class="fa fa-phone" aria-hidden="true"></i>
-                                    <span class="small">Teléfono</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptTelefonoReg"
-                                    placeholder="Teléfono" required>
-                                <div class="invalid-feedback">Debe ingresar el teléfono</div>
-                            </div>
-                        </div>
-
-                        <!-- Columna para registro del Estado Civil -->
-                        <div class="col-12 col-lg-4">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptEstado_CivilReg"><i
-                                        class="fas fa-minus-circle fs-6"></i> <span class="small">Estado Civil</span><span class="text-danger">*</span></label>
-                                        <select name="estadocivil" class="form-control form-control-sm" id ="iptEstado_CivilReg" required>
-                                         <option>Casado(a)</option>
-                                         <option>Unión Libre</option>
-                                         <option>Anulado(a)</option>
-                                         <option>Separado(a)</option>
-                                         <option>Viudo(a)</option>
-                                         <option>Soltero(a)</option>
-                                         </select>     
-                              <!--  <input type="text" min="0" class="form-control form-control-sm" id="iptEstado_CivilReg"
-                                    placeholder="Estado Civil" required> -->
-                                <div class="invalid-feedback">Debe ingresar el Estado Civil</div>
-                            </div>
-                        </div>
-                         <!-- Columna para registro de la Escolaridad -->
-                         <div class="col-12 col-lg-2">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptEscolaridadReg"><i
-                                       class="fa fa-graduation-cap" aria-hidden="true"></i> <span class="small">Escolaridad</span><span class="text-danger">*</span></label>
-                                        <select name="escolaridad" class="form-control form-control-sm" id ="iptEscolaridadReg" required>
-                                         <option>Primaria</option>
-                                         <option>Secundaria</option>
-                                         <option>Preparatoria</option>
-                                         <option>Licenciatura</option>
-                                         <option>Maestría</option>
-                                         <option>Doctorado</option>
-                                         <option>Sin Estudio</option>
-                                         </select>
-                               <!-- <input type="text" min="0" class="form-control form-control-sm" id="iptEscolaridadReg"
-                                    placeholder="Escolaridad" required> -->
-                                <div class="invalid-feedback">Debe ingresar la Escolaridad</div>
-                            </div>
-                        </div>
-                    <!-- Columna para registro de la Ocupación del Paciente -->
-                        <div class="col-12  col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="selOcupacionReg"><i class="fas fa-dumpster fs-6"></i>
-                                    <span class="small">Ocupación</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selOcupacionReg" required>
-                                </select>
-                                <div class="invalid-feedback">Seleccione la ocupación</div>
-                            </div>
-                        </div>
-                        <!-- Columna para registro de la Nacionalidad del Paciente -->
-                        <div class="col-12  col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="selNacionalidadReg"><i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                    <span class="small">Nacionalidad</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selNacionalidadReg" required>
-                                </select>
-                                <div class="invalid-feedback">Seleccione la Nacionalidad</div>
-                            </div>
-                        </div>
-                         <!-- Columna para registro de Clínica del Paciente -->
-                         <div class="col-12  col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="selEmpresaReg"><i class="fa fa-medkit" aria-hidden="true"></i>
-                                    <span class="small">Clínica</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selEmpresaReg" required>
-                                </select>
-                                <div class="invalid-feedback">Seleccione la Clínica</div>
-                            </div>
-                        </div>
-                       
-                       
-                         <!-- Columna para registro de la(s) Comorbilidades -->
-                         <div class="col-12 col-lg-6">
-                            <div class="form-group mb-2">
-                                <label class="" for="iptComorbilidadReg"><i
-                                class="fa fa-bed" aria-hidden="true"></i> <span class="small">Comorbilidad</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptComorbilidadReg"
-                                    placeholder="Comorbilidad" required>
-                                <div class="invalid-feedback">Debe ingresar la Comorbilidad</div>
-                            </div>
-                        </div>
-                     
-                        <div class="col-12 col-lg-6">
-                            <div class="form-group mb-2">
-                            <label class="" for="iptEstatusReg"><i
-                                        class="fas fa-minus-circle fs-6"></i> <span class="small">Estatus</span><span class="text-danger">*</span></label>
-                                        <select name="estatus" class="form-control form-control-sm" id ="iptEstatusReg" required>
-                                         <option>Activo</option>
-                                         <option>Baja</option>
-                                         <option>Becado</option>
-                                         </select>     
-                                <div class="invalid-feedback">Debe Seleccionar el estatus</div>
-                            </div>
-                        </div>
-                       
-                        <!-- creacion de botones para cancelar y guardar el Paciente -->
-                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;"
-                            data-bs-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
-                        <button type="button" style="width:170px;" class="btn btn-primary mt-3 mx-2"
-                            id="btnGuardarPaciente">Guardar Paciente</button>
-                        <!-- <button class="btn btn-default btn-success" type="submit" name="submit" value="Submit">Save</button> -->
-                        </div>
-                    </div>
-                </form>
-            
+            <!-- Nombre -->
+            <div class="col-12">
+              <div class="form-group mb-2">
+                <label for="iptNombreReg"><i class="fas fa-file-signature fs-6"></i> <span class="small">Nombre</span><span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="iptNombreReg" placeholder="Nombre" required>
+                <div class="invalid-feedback">Debe ingresar el nombre</div>
+              </div>
             </div>
 
-        </div>
+            <!-- Sexo -->
+            <div class="col-12 col-lg-4">
+              <div class="form-group mb-2">
+                <label for="iptSexoReg"><i class="fa fa-venus-mars"></i> <span class="small">Sexo</span><span class="text-danger">*</span></label>
+                <select name="sexo" class="form-control form-control-sm" id="iptSexoReg" required>
+                  <option>Masculino</option>
+                  <option>Femenino</option>
+                  <option>Otro</option>
+                </select>
+                <div class="invalid-feedback">Debe ingresar el Sexo</div>
+              </div>
+            </div>
+
+            <!-- Fecha de nacimiento -->
+            <div class="col-12 col-lg-4">
+              <div class="form-group mb-2">
+                <label for="iptFecha_NacimientoReg"><i class="fa fa-calendar"></i> <span class="small">Fecha de Nacimiento</span><span class="text-danger">*</span></label>
+                <input type="date" class="form-control form-control-sm" id="iptFecha_NacimientoReg" required>
+                <div class="invalid-feedback">Debe ingresar Fecha de Nacimiento</div>
+              </div>
+            </div>
+
+            <!-- Edad -->
+            <div class="col-12 col-lg-4">
+              <div class="form-group mb-2">
+                <label for="iptEdadReg"> <span class="small">Edad</span></label>
+                <input type="number" min="0" class="form-control form-control-sm" id="iptEdadReg" placeholder="Edad" disabled>
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptDireccionReg"><i class="fa fa-address-card"></i> <span class="small">Dirección</span><span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="iptDireccionReg" placeholder="Dirección" required>
+                <div class="invalid-feedback">Debe ingresar la Dirección</div>
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptTelefonoReg"><i class="fa fa-phone"></i> <span class="small">Teléfono</span><span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="iptTelefonoReg" placeholder="Teléfono" required>
+                <div class="invalid-feedback">Debe ingresar el teléfono</div>
+              </div>
+            </div>
+
+            <!-- Estado Civil -->
+            <div class="col-12 col-lg-4">
+              <div class="form-group mb-2">
+                <label for="iptEstado_CivilReg"><i class="fas fa-minus-circle fs-6"></i> <span class="small">Estado Civil</span><span class="text-danger">*</span></label>
+                <select name="estadocivil" class="form-control form-control-sm" id="iptEstado_CivilReg" required>
+                  <option>Casado(a)</option>
+                  <option>Unión Libre</option>
+                  <option>Anulado(a)</option>
+                  <option>Separado(a)</option>
+                  <option>Viudo(a)</option>
+                  <option>Soltero(a)</option>
+                </select>
+                <div class="invalid-feedback">Debe ingresar el Estado Civil</div>
+              </div>
+            </div>
+
+            <!-- Escolaridad -->
+            <div class="col-12 col-lg-2">
+              <div class="form-group mb-2">
+                <label for="iptEscolaridadReg"><i class="fa fa-graduation-cap"></i> <span class="small">Escolaridad</span><span class="text-danger">*</span></label>
+                <select name="escolaridad" class="form-control form-control-sm" id="iptEscolaridadReg" required>
+                  <option>Primaria</option>
+                  <option>Secundaria</option>
+                  <option>Preparatoria</option>
+                  <option>Licenciatura</option>
+                  <option>Maestría</option>
+                  <option>Doctorado</option>
+                  <option>Sin Estudio</option>
+                </select>
+                <div class="invalid-feedback">Debe ingresar la Escolaridad</div>
+              </div>
+            </div>
+
+            <!-- Ocupación -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="selOcupacionReg"><i class="fas fa-dumpster"></i> <span class="small">Ocupación</span><span class="text-danger">*</span></label>
+                <select class="form-control form-control-sm" id="selOcupacionReg" required></select>
+                <div class="invalid-feedback">Seleccione la ocupación</div>
+              </div>
+            </div>
+
+            <!-- Nacionalidad -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="selNacionalidadReg"><i class="fa fa-flag-checkered"></i> <span class="small">Nacionalidad</span><span class="text-danger">*</span></label>
+                <select class="form-control form-control-sm" id="selNacionalidadReg" required></select>
+                <div class="invalid-feedback">Seleccione la Nacionalidad</div>
+              </div>
+            </div>
+
+            <!-- Clínica -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="selEmpresaReg"><i class="fa fa-medkit"></i> <span class="small">Clínica</span><span class="text-danger">*</span></label>
+                <select class="form-control form-control-sm" id="selEmpresaReg" required></select>
+                <div class="invalid-feedback">Seleccione la Clínica</div>
+              </div>
+            </div>
+
+            <!-- Comorbilidad -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptComorbilidadReg"><i class="fa fa-bed"></i> <span class="small">Comorbilidad</span><span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="iptComorbilidadReg" placeholder="Comorbilidad" required>
+                <div class="invalid-feedback">Debe ingresar la Comorbilidad</div>
+              </div>
+            </div>
+
+            <!-- Estatus -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptEstatusReg"><i class="fas fa-minus-circle"></i> <span class="small">Estatus</span><span class="text-danger">*</span></label>
+                <select name="estatus" class="form-control form-control-sm" id="iptEstatusReg" required>
+                  <option>Activo</option>
+                  <option>Baja</option>
+                </select>
+                <div class="invalid-feedback">Debe seleccionar el estatus</div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="col-12 text-center mt-3">
+              <button type="button" class="btn btn-danger mx-2" data-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
+              <button type="button" class="btn btn-primary mx-2" id="btnGuardarPaciente">Guardar Paciente</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
     </div>
-
-
+  </div>
 </div>
+<!-- Fin de Modal -->
+
+
 <!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
                             
 <!-- Ventana Modal para ingresar o modificar un Paciente -->
-<div class="modal fade" id="mdlGestionarPacientesm" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
-        <!-- contenido del modal -->
+<div class="modal fade" id="mdlGestionarPacientesm" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
 
-            <!-- cabecera del modal -->
+            <!-- CABECERA -->
             <div class="modal-header bg-indigo py-1">
-
                 <h5 class="modal-title">Modificar Paciente</h5>
-
-                <button type="button" class="btn btn-outline-primary text-white border-0 fs-5" data-bs-dismiss="modal" id="btnCerrarModalm">
-                    <i class="far fa-times-circle"></i>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" id="btnCerrarModalm">
+                    <span aria-hidden="true">&times;</span>
                 </button>
-
             </div>
 
-            <!-- cuerpo del modal ingreso de Pacientes-->
+            <!-- CUERPO -->
             <div class="modal-body">
-    
-                <form class="needs-validation" novalidate >
-                    <!-- Abrimos una fila -->
+                <form class="needs-validation" novalidate>
                     <div class="row">
 
-                        <!-- Columna para registro del Identificador -->
+                        <!-- ID -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptIdRegm"><i class="fas fa-barcode fs-6"></i>
+                                <label for="iptIdRegm"><i class="fas fa-barcode fs-6"></i>
                                     <span class="small">Identificador</span><span class="text-danger">*</span>
                                 </label>
-                                <input type="number" class="form-control form-control-sm" id="iptIdRegm"
-                                    name="iptIdm" placeholder="Identificador" disabled>
+                                <input type="number" class="form-control form-control-sm" id="iptIdRegm" name="iptIdm" placeholder="Identificador" disabled>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
 
-                       
-                        <!-- Columna para registro del Nombre del Paciente -->
+                        <!-- NOMBRE -->
                         <div class="col-12">
                             <div class="form-group mb-2">
-                                <label class="" for="iptNombreRegm"><i
-                                        class="fas fa-file-signature fs-6"></i> <span
-                                        class="small">Nombre</span><span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" id="iptNombreRegm"
-                                    placeholder="Nombre" required>
+                                <label for="iptNombreRegm"><i class="fas fa-file-signature fs-6"></i>
+                                    <span class="small">Nombre</span><span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="iptNombreRegm" placeholder="Nombre" required>
                                 <div class="invalid-feedback">Debe ingresar el nombre</div>
                             </div>
                         </div>
 
-                        <!-- Columna para registro del Sexo 
-                    <i class="fas fa-dollar-sign fs-6"></i> Esto se pone para poner un ícono en la etiqueta que se captura un valor monetario
-                    -->
-                        <div class="col-12  col-lg-4">
+                        <!-- SEXO -->
+                        <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
-                               <!-- <label class="" for="iptSexoReg"> <span class="small">Sexo</span><span class="text-danger">*</span></label>-->
-                               <label class="" for="iptSexoRegm"><i
-                               class="fa fa-venus-mars" aria-hidden="true"></i> <span class="small">Sexo</span><span class="text-danger">*</span></label>
-                                        <select name="sexo" class="form-control form-control-sm" id ="iptSexoRegm" required>
-                                         <option>Masculino</option>
-                                         <option>Femenino</option>
-                                         <option>Otro</option>
-                                         </select>         
-                              <!--  <input type="text" class="form-control form-control-sm"
-                                    id="iptSexoReg" placeholder="Sexo M-Masculino, F-Femenino" required> -->
+                                <label for="iptSexoRegm"><i class="fa fa-venus-mars"></i> <span class="small">Sexo</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="iptSexoRegm" required>
+                                    <option>Masculino</option>
+                                    <option>Femenino</option>
+                                    <option>Otro</option>
+                                </select>
                                 <div class="invalid-feedback">Debe ingresar el Sexo</div>
                             </div>
                         </div>
 
-                        <!-- Columna para registro de la Fecha de Nacimiento
-                    <i class="fa-solid fa-calendar-days"></i>-->
+                        <!-- FECHA NACIMIENTO -->
                         <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
-                                <label class="" for="iptFecha_NacimientoRegm"><i
-                                class="fa-solid fa-calendar-days"></i> <span class="small">Fecha de Nacimiento</span>
-                                        <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control form-control-sm" id="iptFecha_NacimientoRegm"
-                                    placeholder="Fecha de Nacimiento"  required>
+                                <label for="iptFecha_NacimientoRegm"><i class="fa fa-calendar"></i> <span class="small">Fecha de Nacimiento</span><span class="text-danger">*</span></label>
+                                <input type="date" class="form-control form-control-sm" id="iptFecha_NacimientoRegm" required>
                                 <div class="invalid-feedback">Debe ingresar Fecha de Nacimiento</div>
                             </div>
                         </div>
 
-                        <!-- Columna para registro de la Edad  <i
-                                        class="fas fa-dollar-sign fs-6"></i>   disabled-->
+                        <!-- EDAD -->
                         <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
-                                <label class="" for="iptEdadRegm"> <span class="small">Edad</span></label>
-                                <input type="number" min="0" class="form-control form-control-sm" id="iptEdadRegm"                                
-                                 placeholder="Edad" disabled>
-                               <!--  <input type="button" value="Calcular edad" onclick="javascript:calcularEdad();" /> -->
+                                <label for="iptEdadRegm"><span class="small">Edad</span></label>
+                                <input type="number" min="0" class="form-control form-control-sm" id="iptEdadRegm" placeholder="Edad" disabled>
                             </div>
-                            
                         </div>
 
-                        <!-- Columna para registro de la Dirección del Paciente -->
+                        <!-- DIRECCIÓN -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptDireccionRegm"><i class="fa fa-address-card" aria-hidden="true"></i>
-                                    <span class="small">Dirección</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptDireccionRegm"
-                                    placeholder="Direccion" required>
+                                <label for="iptDireccionRegm"><i class="fa fa-address-card"></i> <span class="small">Dirección</span><span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="iptDireccionRegm" placeholder="Dirección" required>
                                 <div class="invalid-feedback">Debe ingresar la Dirección</div>
                             </div>
                         </div>
+
+                        <!-- TELÉFONO -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptTelefonoRegm"><i
-                                class="fa fa-phone" aria-hidden="true"></i> <span class="small">Teléfono</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptTelefonoRegm"
-                                    placeholder="Teléfono" required>
+                                <label for="iptTelefonoRegm"><i class="fa fa-phone"></i> <span class="small">Teléfono</span><span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="iptTelefonoRegm" placeholder="Teléfono" required>
                                 <div class="invalid-feedback">Debe ingresar el teléfono</div>
                             </div>
-
                         </div>
-                        <!-- Columna para registro del Estado Civil -->
+
+                        <!-- ESTADO CIVIL -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptEstado_CivilRegm"><i
-                                        class="fas fa-minus-circle fs-6"></i> <span class="small">Estado Civil</span><span class="text-danger">*</span></label>
-                                        <select name="estadocivil" class="form-control form-control-sm" id ="iptEstado_CivilRegm" required>
-                                         <option>Casado(a)</option>
-                                         <option>Unión Libre</option>
-                                         <option>Anulado(a)</option>
-                                         <option>Separado(a)</option>
-                                         <option>Viudo(a)</option>
-                                         <option>Soltero(a)</option>
-                                         </select>     
-                              <!--  <input type="text" min="0" class="form-control form-control-sm" id="iptEstado_CivilReg"
-                                    placeholder="Estado Civil" required> -->
+                                <label for="iptEstado_CivilRegm"><i class="fas fa-minus-circle"></i> <span class="small">Estado Civil</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="iptEstado_CivilRegm" required>
+                                    <option>Casado(a)</option>
+                                    <option>Unión Libre</option>
+                                    <option>Anulado(a)</option>
+                                    <option>Separado(a)</option>
+                                    <option>Viudo(a)</option>
+                                    <option>Soltero(a)</option>
+                                </select>
                                 <div class="invalid-feedback">Debe ingresar el Estado Civil</div>
                             </div>
                         </div>
-                         <!-- Columna para registro de la Escolaridad -->
-                         <div class="col-12 col-lg-6">
+
+                        <!-- ESCOLARIDAD -->
+                        <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptEscolaridadRegm"><i
-                                        class="fas fa-minus-circle fs-6"></i> <span class="small">Escolaridad</span><span class="text-danger">*</span></label>
-                                        <select name="escolaridad" class="form-control form-control-sm" id ="iptEscolaridadRegm" required>
-                                         <option>Primaria</option>
-                                         <option>Secundaria</option>
-                                         <option>Preparatoria</option>
-                                         <option>Licenciatura</option>
-                                         <option>Maestría</option>
-                                         <option>Doctorado</option>
-                                         <option>Sin Estudio</option>
-                                         </select>
-                               <!-- <input type="text" min="0" class="form-control form-control-sm" id="iptEscolaridadReg"
-                                    placeholder="Escolaridad" required> -->
+                                <label for="iptEscolaridadRegm"><i class="fas fa-minus-circle"></i> <span class="small">Escolaridad</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="iptEscolaridadRegm" required>
+                                    <option>Primaria</option>
+                                    <option>Secundaria</option>
+                                    <option>Preparatoria</option>
+                                    <option>Licenciatura</option>
+                                    <option>Maestría</option>
+                                    <option>Doctorado</option>
+                                    <option>Sin Estudio</option>
+                                </select>
                                 <div class="invalid-feedback">Debe ingresar la Escolaridad</div>
                             </div>
                         </div>
-                    <!-- Columna para registro de la Ocupación del Paciente -->
-                        <div class="col-12  col-lg-6">
+
+                        <!-- OCUPACIÓN -->
+                        <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="selOcupacionRegm"><i class="fas fa-dumpster fs-6"></i>
-                                    <span class="small">Ocupación</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selOcupacionRegm" required>
-                                </select>
+                                <label for="selOcupacionRegm"><i class="fas fa-dumpster"></i> <span class="small">Ocupación</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="selOcupacionRegm" required></select>
                                 <div class="invalid-feedback">Seleccione la ocupación</div>
                             </div>
                         </div>
-                        <!-- Columna para registro de la Nacionalidad del Paciente -->
-                        <div class="col-12  col-lg-6">
+
+                        <!-- NACIONALIDAD -->
+                        <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="selNacionalidadRegm"><i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                    <span class="small">Nacionalidad</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selNacionalidadRegm" required>
-                                </select>
+                                <label for="selNacionalidadRegm"><i class="fa fa-flag-checkered"></i> <span class="small">Nacionalidad</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="selNacionalidadRegm" required></select>
                                 <div class="invalid-feedback">Seleccione la Nacionalidad</div>
                             </div>
                         </div>
-                         <!-- Columna para registro de Clínica del Paciente -->
-                         <div class="col-12  col-lg-6">
+
+                        <!-- CLÍNICA -->
+                        <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="selEmpresaRegm"><i class="fa fa-medkit" aria-hidden="true"></i>
-                                    <span class="small">Clínica</span><span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                    id="selEmpresaRegm" required>
-                                </select>
+                                <label for="selEmpresaRegm"><i class="fa fa-medkit"></i> <span class="small">Clínica</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="selEmpresaRegm" required></select>
                                 <div class="invalid-feedback">Seleccione la Clínica</div>
                             </div>
                         </div>
-                       
-                       
-                         <!-- Columna para registro de la(s) Comorbilidades -->
-                         <div class="col-12 col-lg-6">
+
+                        <!-- COMORBILIDAD -->
+                        <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                                <label class="" for="iptComorbilidadRegm"><i
-                                class="fa fa-bed" aria-hidden="true"></i> <span class="small">Comorbilidad</span><span class="text-danger">*</span></label>
-                                <input type="text" min="0" class="form-control form-control-sm" id="iptComorbilidadRegm"
-                                    placeholder="Comorbilidad" required>
+                                <label for="iptComorbilidadRegm"><i class="fa fa-bed"></i> <span class="small">Comorbilidad</span><span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm" id="iptComorbilidadRegm" placeholder="Comorbilidad" required>
                                 <div class="invalid-feedback">Debe ingresar la Comorbilidad</div>
                             </div>
                         </div>
-                       
+
+                        <!-- ESTATUS -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
-                            <label class="" for="iptEstatusRegm"><i
-                                        class="fas fa-minus-circle fs-6"></i> <span class="small">Estatus</span><span class="text-danger">*</span></label>
-                                        <select name="estatus" class="form-control form-control-sm" id ="iptEstatusRegm" required>
-                                         <option>Activo</option>
-                                         <option>Baja</option>
-                                         <option>Becado</option>
-                                         </select>     
-                                <div class="invalid-feedback">Debe Seleccionar el estatus</div>
+                                <label for="iptEstatusRegm"><i class="fas fa-minus-circle"></i> <span class="small">Estatus</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="iptEstatusRegm" required>
+                                    <option>Activo</option>
+                                    <option>Baja</option>
+                                </select>
+                                <div class="invalid-feedback">Debe seleccionar el estatus</div>
                             </div>
                         </div>
-                       
-                        <!-- creacion de botones para cancelar y guardar el Paciente -->
-                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;"
-                            data-bs-dismiss="modal" id="btnCancelarRegistrom">Cancelar</button>
-                        <button type="button" style="width:170px;" class="btn btn-primary mt-3 mx-2"
-                            id="btnGuardarPacientem">Guardar Paciente</button>
-                        <!-- <button class="btn btn-default btn-success" type="submit" name="submit" value="Submit">Save</button> -->
+
+                        <!-- BOTONES -->
+                        <div class="col-12 text-center mt-3">
+                            <button type="button" class="btn btn-danger mx-2" style="width:170px;" data-dismiss="modal" id="btnCancelarRegistrom">Cancelar</button>
+                            <button type="button" class="btn btn-primary mx-2" style="width:170px;" id="btnGuardarPacientem">Guardar Paciente</button>
                         </div>
+
                     </div>
                 </form>
-            
             </div>
 
         </div>
     </div>
-
-
 </div>
+
 <!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
 
 
@@ -567,7 +474,7 @@ var Toast = Swal.mixin({
 //});
 
 $(document).ready(function() {
-    $.ajax({
+   /* $.ajax({
 
     async: false,
     url: "../ajax/pacientes.ajax.php",
@@ -580,8 +487,21 @@ $(document).ready(function() {
         folio = respuesta["folio"];
         $("#iptIdReg").val(folio);
     }
+    });*/
+    $.ajax({
+        async: false,
+        url: "../ajax/pacientes.ajax.php",
+        method: "POST",
+        data: {
+            'accion': 11,
+            'entidad': 'paciente'
+        },
+        dataType: 'json',
+        success: function(respuesta) {
+            const folio = respuesta["folio"];
+            $("#iptIdReg").val(folio);
+        }
     });
-
 
    // alert(clinica2);
     /*===================================================================*/
@@ -981,7 +901,9 @@ $(document).ready(function() {
      //           table.fnFilter(this.value);
      //       }
     //    });
-
+    $('#modalRegistroPaciente').on('show.bs.modal', function () {
+        obtenerFolio('paciente');
+    });
                 /* Apply the tooltips */
     $('#tbl_pacientes thead tr[title]').tooltip({
                     "delay": 0,
@@ -1241,7 +1163,22 @@ $(document).ready(function() {
     })
 
 });
-
+function obtenerFolio(entidad) {
+    $.ajax({
+        url: "../ajax/pacientes.ajax.php",
+        method: "POST",
+        data: {
+            'accion': 11,
+            'entidad': entidad
+            
+        },
+        dataType: 'json',
+        success: function(respuesta) {
+            let folio = respuesta.folio;
+            $("#iptIdReg").val(folio);
+        }
+    });
+}
 // CALCULA LA UTILIDAD
 function calcularUtilidad() {
 

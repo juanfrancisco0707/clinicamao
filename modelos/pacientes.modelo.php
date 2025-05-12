@@ -104,10 +104,10 @@ class PacientesModelo{
         p.id_empresa,
         e.nombre as nombre_clinica,                                                   
         '' as acciones
-    FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
-    inner join tblnacionalidad n on p.id_nacionalidad = n.id
-    inner join tblempresa e on p.id_empresa = e.id
-    where e.nombre = :clinica order by p.id desc");
+        FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
+        inner join tblnacionalidad n on p.id_nacionalidad = n.id
+        inner join tblempresa e on p.id_empresa = e.id
+        where e.nombre = :clinica order by p.id desc");
  
          $stmt -> bindParam(":clinica", $clinica , PDO::PARAM_STR);   
  
@@ -127,9 +127,9 @@ class PacientesModelo{
                      FROM tblexpedientes e
                     WHERE p.id = e.id_paciente AND p.id_empresa = e.id_clinica)
                      and p.id_empresa=:idclinica
-    order BY nombre asc'); 
-     $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR);                                         
-        $stmt->execute();
+        order BY nombre asc'); 
+        $stmt -> bindParam(":idclinica",$idclinica,PDO::PARAM_STR);                                         
+            $stmt->execute();
     
         return $stmt->fetchAll();
     }
@@ -146,6 +146,28 @@ class PacientesModelo{
         $stmt -> execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
      }
+    /*===================================================================*/
+
+    static public function mdlListarFolioEntidad($entidad, $id_empresa){
+        $stmt = Conexion::conectar()->prepare("
+            SELECT (ultimo_folio + 1) AS folio
+            FROM consecutivos
+            WHERE entidad = :entidad AND id_empresa = :id_empresa
+        ");
+        
+        $stmt->bindParam(":entidad", $entidad, PDO::PARAM_STR);
+        $stmt->bindParam(":id_empresa", $id_empresa, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_OBJ);
+
+        // Si no hay registro, devolvemos 1
+        if (!$resultado) {
+            return ['folio' => 1];
+        }
+
+        return ['folio' => $resultado->folio];
+    }
 
     /*===================================================================
     OBTENER LISTADO TOTAL DE PACIENTES ACTIVOS INDIVIDUALES
@@ -180,7 +202,7 @@ class PacientesModelo{
     
         $stmt = Conexion::conectar()->prepare('SELECT  id, nombre
         FROM tblpacientes p 
-    order BY nombre asc'); 
+        order BY nombre asc'); 
     
         $stmt->execute();
     
@@ -190,7 +212,7 @@ class PacientesModelo{
     /*===================================================================
     REGISTRAR PACIENTES UNO A UNO DESDE EL FORMULARIO DE PACIENTES
     ====================================================================*/
-    static public function mdlRegistrarPaciente($id, $nombre,$sexo,$fecha_nacimiento,
+    /*static public function mdlRegistrarPaciente($id, $nombre,$sexo,$fecha_nacimiento,
                                                 $edad,$direccion,$telefono,$estado_civil,$escolaridad,
                                                 $id_ocupacion,$id_nacionalidad,$comorbilidad,
                                                 $id_empresa,$estatus){        
@@ -260,7 +282,61 @@ class PacientesModelo{
 
         $stmt = null;
 
+    }*/
+    static public function mdlRegistrarPaciente($id,$nombre, $sexo, $fecha_nacimiento,
+                                            $edad, $direccion, $telefono, $estado_civil, $escolaridad,
+                                            $id_ocupacion, $id_nacionalidad, $comorbilidad,
+                                            $id_empresa, $estatus) {
+
+        try {
+
+            $stmt = Conexion::conectar()->prepare("CALL sp_registrar_paciente(
+                                                        :nombre,
+                                                        :sexo,
+                                                        :fecha_nacimiento,
+                                                        :edad,
+                                                        :direccion,
+                                                        :telefono,
+                                                        :estado_civil,
+                                                        :escolaridad,
+                                                        :id_ocupacion,
+                                                        :id_nacionalidad,
+                                                        :comorbilidad,
+                                                        :id_empresa,
+                                                        :estatus
+                                                    )");
+
+            $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+            $stmt->bindParam(":sexo", $sexo, PDO::PARAM_STR);
+            $stmt->bindParam(":fecha_nacimiento", $fecha_nacimiento, PDO::PARAM_STR);
+            $stmt->bindParam(":edad", $edad, PDO::PARAM_INT);
+            $stmt->bindParam(":direccion", $direccion, PDO::PARAM_STR);
+            $stmt->bindParam(":telefono", $telefono, PDO::PARAM_STR);
+            $stmt->bindParam(":estado_civil", $estado_civil, PDO::PARAM_STR);
+            $stmt->bindParam(":escolaridad", $escolaridad, PDO::PARAM_STR);
+            $stmt->bindParam(":id_ocupacion", $id_ocupacion, PDO::PARAM_INT);
+            $stmt->bindParam(":id_nacionalidad", $id_nacionalidad, PDO::PARAM_INT);
+            $stmt->bindParam(":comorbilidad", $comorbilidad, PDO::PARAM_STR);
+            $stmt->bindParam(":id_empresa", $id_empresa, PDO::PARAM_INT);
+            $stmt->bindParam(":estatus", $estatus, PDO::PARAM_STR);
+
+            if ($stmt->execute()) {
+                $resultado = "ok";
+            } else {
+                // Captura errores del statement PDO
+                $errorInfo = $stmt->errorInfo();
+                $resultado = "Error en la ejecución: " . $errorInfo[2]; // Mensaje de error
+            }
+
+        } catch (Exception $e) {
+            $resultado = 'Excepción capturada: ' . $e->getMessage() . "\n";
+        }
+
+        return $resultado;
+
+        $stmt = null;
     }
+
 /*===================================================================
     BUSCAR POR ID DEL PACIENTE
     ====================================================================*/
@@ -271,9 +347,9 @@ class PacientesModelo{
         p.estado_civil, p.escolaridad, p.id_ocupacion, left(o.nombre_ocupacion,20) as nombre_ocupacion,
         p.id_nacionalidad, n.gentilicio_nac, p.comorbilidad, p.estatus,
         p.fecha_creacion, p.id_empresa, e.nombre as nombre_clinica                                                  
-    FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
-    inner join tblnacionalidad n on p.id_nacionalidad = n.id
-    inner join tblempresa e on p.id_empresa = e.id WHERE p.id = :id");
+        FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
+        inner join tblnacionalidad n on p.id_nacionalidad = n.id
+        inner join tblempresa e on p.id_empresa = e.id WHERE p.id = :id");
         
         $stmt -> bindParam(":id",$id,PDO::PARAM_INT);
 

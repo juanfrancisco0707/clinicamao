@@ -109,7 +109,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
          <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <!-- Opcional: FullCalendar locale para español (si lo necesitas) -->
-+     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script> 
     <!-- AdminLTE App -->
 
 </head>

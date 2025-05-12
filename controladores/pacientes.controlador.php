@@ -8,6 +8,9 @@ static public function ctrListarPacientes($clinica){
     return $pacientes;
 
 }
+static public function ctrListarFolioEntidad($entidad, $id_empresa){
+    return PacientesModelo::mdlListarFolioEntidad($entidad, $id_empresa);
+}
 static public function ctrListarPacientesadmin(){
 
     $pacientes = PacientesModelo::mdlListarPacientesadmin();

@@ -21,6 +21,7 @@ class AjaxHorarios
     public function ajaxListarHorarios()
     {
         $horarios = HorariosControlador::ctrListarHorarios();
+        header('Content-Type: application/json');
         echo json_encode($horarios, JSON_UNESCAPED_UNICODE);
     }
 
@@ -30,6 +31,7 @@ class AjaxHorarios
     public function ajaxRegistrarHorario()
     {
         $registroHorario = HorariosControlador::ctrRegistrarHorario($this->id_fisioterapeuta, $this->dia_semana, $this->hora_inicio, $this->hora_fin);
+        header('Content-Type: application/json');
         echo json_encode($registroHorario);
     }
 
@@ -39,6 +41,7 @@ class AjaxHorarios
     public function ajaxListarHorariosPorFisioterapeuta()
     {
         $horarios = HorariosControlador::ctrListarHorariosPorFisioterapeuta($this->id_fisioterapeuta);
+        header('Content-Type: application/json');
         echo json_encode($horarios, JSON_UNESCAPED_UNICODE);
     }
 
@@ -52,6 +55,7 @@ class AjaxHorarios
         $nameId = "id_horario";
 
         $respuesta = HorariosControlador::ctrActualizarHorario($table, $data, $id, $nameId);
+        header('Content-Type: application/json');
         echo json_encode($respuesta);
     }
 
@@ -65,6 +69,7 @@ class AjaxHorarios
         $nameId = "id_horario";
 
         $respuesta = HorariosControlador::ctrEliminarHorario($table, $id, $nameId);
+        header('Content-Type: application/json');
         echo json_encode($respuesta);
     }
 
@@ -74,6 +79,7 @@ class AjaxHorarios
     public function ajaxObtenerHorarioPorId(){
         $horario = HorariosControlador::ctrObtenerHorarioPorId($this->id_horario);
         echo json_encode($horario, JSON_UNESCAPED_UNICODE);
+        header('Content-Type: application/json');
     }
 }
 

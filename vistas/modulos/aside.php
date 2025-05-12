@@ -43,13 +43,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a style="cursor: pointer;" class="nav-link" id="mrepresentantes"
-                                onclick="CargarContenido('../vistas/representantes.php','content-wrapper')">
-                                <i class="fa fa-id-card" aria-hidden="true"></i>&nbsp;&nbsp;
-                                <p>Representantes</p>
-                            </a>
-                        </li>
+                      
                         <li class="nav-item">
                             <a style="cursor: pointer;" class="nav-link" id="mpacientes"
                                 onclick="CargarContenido('../vistas/pacientes.php','content-wrapper')">
