@@ -11,6 +11,6 @@
     </div>
 
     <!-- Elemento de la izquierda: Nombre del Usuario -->
-    <strong>Usuario: <?php echo isset($_SESSION['S_NOMBRE']) ? htmlspecialchars($_SESSION['S_NOMBRE']) : 'Usuario'; ?></strong>
+    <strong>Usuario: <span style="color: #004085;"><?php echo isset($_SESSION['S_NOMBRE']) ? htmlspecialchars($_SESSION['S_NOMBRE']) : 'Usuario'; ?></span></strong>
 
 </footer>
