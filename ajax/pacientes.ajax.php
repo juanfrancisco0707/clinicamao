@@ -5,6 +5,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 }
 require_once "../controladores/pacientes.controlador.php";
 require_once "../modelos/pacientes.modelo.php";
+require_once "../modelos/folios.modelo.php";
 
 require_once "../vendor/autoload.php";
 
@@ -19,6 +20,7 @@ class ajaxPacientes{
     public $edad;
     public $direccion;
     public $telefono;
+    public $correo;
     public $estado_civil;
     public $escolaridad;
     public $id_ocupacion;
@@ -39,9 +41,12 @@ class ajaxPacientes{
         echo json_encode($pacientes);     
     }
     public function ajaxListarFolioEntidad(){
-    $folio = PacientesControlador::ctrListarFolioEntidad($this->entidad, $this->id_empresa);
-    echo json_encode($folio);
-}
+
+        $folio = PacientesControlador::ctrListarFolioEntidad($this->entidad, $this->id_empresa);
+
+        echo json_encode($folio);
+
+    }
     public function ajaxListarPacientesadmin(){
          $pacientes = PacientesControlador::ctrListarPacientesadmin();
          echo json_encode($pacientes);     
@@ -52,7 +57,8 @@ class ajaxPacientes{
         $paciente = PacientesControlador::ctrRegistrarPaciente($this->id, $this->nombre,
         $this->sexo, 
         $this->fecha_nacimiento,        
-                    $this->edad,$this->direccion,$this->telefono,$this->estado_civil,$this->escolaridad,
+                    $this->edad,$this->direccion,$this->telefono, $this->correo,
+                    $this->estado_civil,$this->escolaridad,
                     $this->id_ocupacion,$this->id_nacionalidad,$this->comorbilidad,
                     $this->id_empresa,
                     $this->estatus);
@@ -153,6 +159,7 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar P
     $registrarPaciente -> edad = $_POST["edad"];
     $registrarPaciente -> direccion = $_POST["direccion"];
     $registrarPaciente -> telefono = $_POST["telefono"];
+    $registrarPaciente -> correo = $_POST["correo"];
     $registrarPaciente -> estado_civil = $_POST["estado_civil"];
     $registrarPaciente -> escolaridad = $_POST["escolaridad"];
     $registrarPaciente -> id_ocupacion = $_POST["id_ocupacion"];
@@ -176,6 +183,7 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar P
         "edad" => $_POST["edad"],
         "direccion" => $_POST["direccion"],
         "telefono" => $_POST["telefono"],
+        "correo" => $_POST["correo"],
         "estado_civil" => $_POST["estado_civil"],
         "escolaridad" => $_POST["escolaridad"],
         "id_ocupacion" => $_POST["id_ocupacion"],
@@ -199,6 +207,7 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar P
             "edad" => $_POST["edad"],
             "direccion" => $_POST["direccion"],
             "telefono" => $_POST["telefono"],
+            "correo" => $_POST["correo"],
             "estado_civil" => $_POST["estado_civil"],
             "escolaridad" => $_POST["escolaridad"],
             "id_ocupacion" => $_POST["id_ocupacion"],

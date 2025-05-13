@@ -56,6 +56,7 @@ class PacientesModelo{
        p.edad,
        p.direccion,
        p.telefono,
+       p.correo,
        p.estado_civil,
        p.escolaridad,
        p.id_ocupacion,
@@ -82,7 +83,7 @@ class PacientesModelo{
     OBTENER LISTADO TOTAL DE PACIENTES PARA EL DATATABLE
     ====================================================================*/
     static public function mdlListarPacientes($clinica){
-    
+        
         // $stmt = Conexion::conectar()->prepare('call prc_ListarPacientes');
         $stmt = Conexion::conectar()->prepare("SELECT   '' as detalles,
         p.id,
@@ -92,6 +93,7 @@ class PacientesModelo{
         p.edad,
         p.direccion,
         p.telefono,
+        p.correo,
         p.estado_civil,
         p.escolaridad,
         p.id_ocupacion,
@@ -284,7 +286,7 @@ class PacientesModelo{
 
     }*/
     static public function mdlRegistrarPaciente($id,$nombre, $sexo, $fecha_nacimiento,
-                                            $edad, $direccion, $telefono, $estado_civil, $escolaridad,
+                                            $edad, $direccion, $telefono,$correo, $estado_civil, $escolaridad,
                                             $id_ocupacion, $id_nacionalidad, $comorbilidad,
                                             $id_empresa, $estatus) {
 
@@ -297,6 +299,7 @@ class PacientesModelo{
                                                         :edad,
                                                         :direccion,
                                                         :telefono,
+                                                        :correo,
                                                         :estado_civil,
                                                         :escolaridad,
                                                         :id_ocupacion,
@@ -312,6 +315,7 @@ class PacientesModelo{
             $stmt->bindParam(":edad", $edad, PDO::PARAM_INT);
             $stmt->bindParam(":direccion", $direccion, PDO::PARAM_STR);
             $stmt->bindParam(":telefono", $telefono, PDO::PARAM_STR);
+            $stmt->bindParam(":correo", $correo, PDO::PARAM_STR);
             $stmt->bindParam(":estado_civil", $estado_civil, PDO::PARAM_STR);
             $stmt->bindParam(":escolaridad", $escolaridad, PDO::PARAM_STR);
             $stmt->bindParam(":id_ocupacion", $id_ocupacion, PDO::PARAM_INT);

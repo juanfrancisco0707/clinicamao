@@ -127,4 +127,24 @@ class FoliosModelo{
 
         return $stmt->fetchAll();
     }
+    static public function mdlListarFolioEntidad($entidad, $id_empresa){
+        $stmt = Conexion::conectar()->prepare("
+            SELECT (ultimo_folio + 1) AS folio
+            FROM consecutivos
+            WHERE entidad = :entidad AND id_empresa = :id_empresa
+        ");
+        
+        $stmt->bindParam(":entidad", $entidad, PDO::PARAM_STR);
+        $stmt->bindParam(":id_empresa", $id_empresa, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_OBJ);
+
+        // Si no hay registro, devolvemos 1
+        if (!$resultado) {
+            return ['folio' => 1];
+        }
+
+        return ['folio' => $resultado->folio];
+    }
 }

@@ -51,6 +51,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                             <th>Edad</th>
                             <th>Dirección</th>
                             <th>Teléfono</th>
+                            <th>Correo</th>
                             <th>Estado Civil</th>
                             <th>Escolaridad</th>
                             <th>id_ocupación</th>
@@ -163,6 +164,15 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                 <label for="iptTelefonoReg"><i class="fa fa-phone"></i> <span class="small">Teléfono</span><span class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-sm" id="iptTelefonoReg" placeholder="Teléfono" required>
                 <div class="invalid-feedback">Debe ingresar el teléfono</div>
+              </div>
+            </div>
+
+            <!-- Correo -->
+            <div class="col-12 col-lg-6">
+              <div class="form-group mb-2">
+                <label for="iptCorreoReg"><i class="fa fa-envelope"></i> <span class="small">Correo</span><span class="text-danger">*</span></label>
+                <input type="email" class="form-control form-control-sm" id="iptCorreoReg" placeholder="Correo" required>
+                <div class="invalid-feedback">Debe ingresar el Correo electrónico</div>
               </div>
             </div>
 
@@ -352,6 +362,15 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                             </div>
                         </div>
 
+                         <!-- Correo -->
+                        <div class="col-12 col-lg-6">
+                        <div class="form-group mb-2">
+                            <label for="iptCorreoRegm"><i class="fa fa-envelope"></i> <span class="small">Correo</span><span class="text-danger">*</span></label>
+                            <input type="email" class="form-control form-control-sm" id="iptCorreoRegm" placeholder="Correo" required>
+                            <div class="invalid-feedback">Debe ingresar el Correo electrónico</div>
+                        </div>
+                        </div>
+
                         <!-- ESTADO CIVIL -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
@@ -490,7 +509,7 @@ $(document).ready(function() {
     });*/
     $.ajax({
         async: false,
-        url: "../ajax/pacientes.ajax.php",
+        url: "../ajax/mao.folio.ajax.php",
         method: "POST",
         data: {
             'accion': 11,
@@ -663,10 +682,11 @@ $(document).ready(function() {
                     $.ajax({
 
                         async: false,
-                        url: "../ajax/pacientes.ajax.php",
+                        url: "../ajax/mao.folio.ajax.php",
                         method: "POST",
                         data: {
-                            'accion': 11
+                            'accion': 11,
+                            'entidad': 'paciente'
                         },
                         dataType: 'json',
                         success: function(respuesta) {
@@ -759,40 +779,44 @@ $(document).ready(function() {
                 className: 'text-center'
             },
             {
-                targets: 6, // no muestra la direccion para que no oculte los iconos de modificar
+                targets: 6, // 
                 visible: false
             },
             {
-                targets: 7, // no muestra la direccion para que no oculte los iconos de modificar
+                targets: 7, // 
+                visible: false
+            },
+            {
+                targets: 8, // 
                 visible: false
             }
             ,
             {
-                targets: 8, // no muestra el estado civil
+                targets: 10, // no muestra el estado civil
                 visible: false
             },
             {
-                targets: 10, // 
+                targets: 11, // 
                 visible: false
             },
             {   width: "100px",
-                targets: 11, // La Nacionalidad
+                targets: 12, // La Nacionalidad
                 
             },
             {
-                targets: 12, // no muestre el id nacionalidad
+                targets: 13, // no muestre el id nacionalidad
                 visible: false
             },
             {
-                targets: 13, // no muestre la Nacionalidad
+                targets: 14, // no muestre la Nacionalidad
             },
             {
-                targets: 14, // 
+                targets: 15, // 
                 className: 'dt-body-center',
                 className: 'text-center'
             },
             {
-                targets: 15, // 
+                targets: 16, // 
                       createdCell: function(td, cellData, rowData, row, col) {
                    if ((rowData[15]) == 'Becado') {
                       $(td).parent().css('background', '#a7e698')
@@ -822,16 +846,16 @@ $(document).ready(function() {
                 }*/
            },
               {
-                targets: 16, // no muestra 
+                targets: 17, // no muestra 
                 visible: false
             },
             {
-                targets: 17, // no muestra 
+                targets: 18, // no muestra 
                 visible: false
             }
             ,
             {
-                targets: 18, // no muestra 
+                targets: 19, // no muestra 
                 visible: false
             },
             
@@ -847,7 +871,7 @@ $(document).ready(function() {
            // },
             
             {
-                targets: 19,
+                targets: 20,
                 orderable: false,
                 render: function(data, type, full, meta) {
                     return "<center>" +                        
@@ -975,6 +999,7 @@ $(document).ready(function() {
         $("#validate_edad").css("display", "none");
         $("#validate_direccion").css("display", "none");
         $("#validate_telefono").css("display", "none");
+        $("#validate_correo").css("display", "none");
         $("#validate_estado_civil").css("display", "none");
         $("#validate_escolaridad").css("display", "none");
         $("#validate_id_ocupacion").css("display", "none");
@@ -990,6 +1015,7 @@ $(document).ready(function() {
         $("#iptFecha_NacimientoReg").val("");
         $("#iptDireccionReg").val("");
         $("#iptTelefonoReg").val("");
+        $("#iptCorreoReg").val("");
         $("#iptEstado_CivilReg").val("");
         $("#iptEscolaridadReg").val("");
         $("#selId_OcupacionReg").val(0);
@@ -1009,6 +1035,7 @@ $(document).ready(function() {
         $("#validate_edadm").css("display", "none");
         $("#validate_direccionm").css("display", "none");
         $("#validate_telefonom").css("display", "none");
+         $("#validate_correom").css("display", "none");
         $("#validate_estado_civilm").css("display", "none");
         $("#validate_escolaridadm").css("display", "none");
         $("#validate_id_ocupacionm").css("display", "none");
@@ -1024,6 +1051,7 @@ $(document).ready(function() {
         $("#iptFecha_NacimientoRegm").val("");
         $("#iptDireccionRegm").val("");
         $("#iptTelefonoRegm").val("");
+        $("#iptCorreoRegm").val("");
         $("#iptEstado_CivilRegm").val("");
         $("#iptEscolaridadRegm").val("");
         $("#selId_OcupacionRegm").val(0);
@@ -1073,13 +1101,14 @@ $(document).ready(function() {
         $("#iptEdadRegm").val(data[5]);
         $("#iptDireccionRegm").val(data["direccion"]);
         $("#iptTelefonoRegm").val(data[7]);
-        $("#iptEstado_CivilRegm").val(data[8]);
-        $("#iptEscolaridadRegm").val(data[9]);
-        $("#selOcupacionRegm").val(data[10]);// ocupacion
-        $("#selNacionalidadRegm").val(data[12]);
-        $("#iptComorbilidadRegm").val(data[14]);
+         $("#iptCorreoRegm").val(data[8]);
+        $("#iptEstado_CivilRegm").val(data[9]);
+        $("#iptEscolaridadRegm").val(data[10]);
+        $("#selOcupacionRegm").val(data[11]);// ocupacion
+        $("#selNacionalidadRegm").val(data[13]);
+        $("#iptComorbilidadRegm").val(data[15]);
         $("#iptEstatusRegm").val(data["estatus"]);
-        $("#selEmpresaRegm").val(data[17]);
+        $("#selEmpresaRegm").val(data[18]);
 
     })
    
@@ -1165,7 +1194,7 @@ $(document).ready(function() {
 });
 function obtenerFolio(entidad) {
     $.ajax({
-        url: "../ajax/pacientes.ajax.php",
+        url: "../ajax/mao.folio.ajax.php",
         method: "POST",
         data: {
             'accion': 11,
@@ -1244,7 +1273,8 @@ document.getElementById("btnGuardarPaciente").addEventListener("click", function
                     datos.append("fecha_nacimiento", $("#iptFecha_NacimientoReg").val()); //Fecha_Nacimeinto_Paciente
                     datos.append("edad", $("#iptEdadReg").val()); //Edad_Paciente
                     datos.append("direccion", $("#iptDireccionReg").val()); //Direccion_Paciente
-                    datos.append("telefono", $("#iptTelefonoReg").val()); //Direccion_Paciente
+                    datos.append("telefono", $("#iptTelefonoReg").val()); //Telefono_Paciente
+                     datos.append("correo", $("#iptCorreoReg").val()); //Correo_Paciente
                     datos.append("estado_civil", $("#iptEstado_CivilReg").val()); //Estado Civil
                     datos.append("escolaridad", $("#iptEscolaridadReg").val()); //Escolaridad
                     datos.append("id_ocupacion", $("#selOcupacionReg").val()); //Id_ocupacion 
@@ -1292,6 +1322,7 @@ document.getElementById("btnGuardarPaciente").addEventListener("click", function
                                 $("#iptEdadReg").val("");
                                 $("#iptDireccionReg").val("");
                                 $("#iptTelefonoReg").val("");
+                                $("#iptCorreoReg").val("");
                                 $("#iptEstadoCivilReg").val("");
                                 $("#iptEscolaridadReg").val("");
                                 $("#selOcupacionReg").val(0);

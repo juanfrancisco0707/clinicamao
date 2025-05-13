@@ -1,11 +1,16 @@
 <?php
-
-require_once "../controladores/folios.controlador.php";
+session_start();
+if(!isset($_SESSION['S_IDUSUARIO'])){
+	header('Location: ../Login/index.php');
+}
+require_once "../controladores/folio.controlador.php";
 require_once "../modelos/folios.modelo.php";
 
 class Ajaxfolios{
     public $id_droga;
     public $nombre_droga;
+    public $entidad;
+    public $id_empresa;
 
 
     public function ajaxListarfolios(){
@@ -13,6 +18,13 @@ class Ajaxfolios{
         $folios = foliosControlador::ctrListarfolios();
 
         echo json_encode($folios, JSON_UNESCAPED_UNICODE);
+    }
+    public function ajaxListarFolioEntidad(){
+
+        $folio = FoliosControlador::ctrListarFolioEntidad($this->entidad, $this->id_empresa);
+
+        echo json_encode($folio);
+
     }
     public function ajaxRegistrarfolios(){
                                                
@@ -83,12 +95,13 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar f
   //  $nombreDroga = new Ajaxfolios();
   //  $nombreDroga -> ajaxListarNombreDroga();
 
-}else if(isset($_POST["accion"]) && $_POST["accion"] == 7){ // OBTENER DATOS DE UN folios POR SU ID
-
-   // $listaDroga = new Ajaxfolios();
-
-   // $listaDroga -> id = $_POST["id"];
+}if(isset($_POST['accion']) && $_POST['accion'] == 11){ // folio de representantes
+    //$entidad = isset($_POST['entidad']) ? $_POST['entidad'] : 'paciente'; // valor por defecto
+    //var_dump($entidad);
+    //exit;
+     $folio = new ajaxFolios();
+    $folio->entidad = $_POST['entidad'];
+    $folio->id_empresa = $_SESSION['S_IDCLINICA']; // ← lo tomas de la sesión
+    $folio->ajaxListarFolioEntidad();
     
-  // $listaDroga -> ajaxGetDatosfolios();
-	
 }

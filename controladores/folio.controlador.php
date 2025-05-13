@@ -9,6 +9,11 @@ class FoliosControlador{
         return $Folios;
 
     }
+    static public function ctrListarFolioEntidad($entidad, $id_empresa){
+
+        return FoliosModelo::mdlListarFolioEntidad($entidad, $id_empresa);
+    
+    }
     static public function ctrListarFolioscb(){
         
         $Folioscb = FoliosModelo::mdlListarFolioscb();

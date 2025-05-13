@@ -27,7 +27,7 @@ class EspecialistasModelo
     /*===================================================================
     REGISTRAR Especialistas UNO A UNO DESDE EL FORMULARIO DE Especialistas
     ====================================================================*/
-    static public function mdlRegistrarEspecialista($data)
+    /*static public function mdlRegistrarEspecialista($data)
     {
         try {
             $stmt = Conexion::conectar()->prepare("INSERT INTO tblmaoespecialistas(nombre, apellido, especialidad, telefono, email) 
@@ -51,7 +51,31 @@ class EspecialistasModelo
         return $resultado;
 
         $stmt = null;
+    } */
+    static public function mdlRegistrarEspecialista($data) 
+    {
+        try {
+            $stmt = Conexion::conectar()->prepare("CALL sp_registrar_especialista(:nombre, :apellido, :especialidad, :telefono, :email, :id_empresa)");
+
+            $stmt->bindParam(":nombre", $data["nombre"], PDO::PARAM_STR);
+            $stmt->bindParam(":apellido", $data["apellido"], PDO::PARAM_STR);
+            $stmt->bindParam(":especialidad", $data["especialidad"], PDO::PARAM_STR);
+            $stmt->bindParam(":telefono", $data["telefono"], PDO::PARAM_STR);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
+            $stmt->bindParam(":id_empresa", $data["id_empresa"], PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                $respuesta = $stmt->fetch(PDO::FETCH_ASSOC); // Obtiene id_especialista
+            } else {
+                $respuesta = "error";
+            }
+        } catch (Exception $e) {
+            $respuesta = 'Excepción capturada: ' .  $e->getMessage();
+        }
+
+        return $respuesta;
     }
+
 
     static public function mdlActualizarInformacion($table, $data, $id, $nameId)
     {

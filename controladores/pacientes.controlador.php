@@ -9,7 +9,9 @@ static public function ctrListarPacientes($clinica){
 
 }
 static public function ctrListarFolioEntidad($entidad, $id_empresa){
-    return PacientesModelo::mdlListarFolioEntidad($entidad, $id_empresa);
+
+    return FoliosModelo::mdlListarFolioEntidad($entidad, $id_empresa);
+    
 }
 static public function ctrListarPacientesadmin(){
 
@@ -49,10 +51,10 @@ static public function ctrGetDatosPacienteActivo($id){
 
 }
 
-static public function ctrRegistrarPaciente($id, $nombre, $sexo, $fecha_nacimiento, $edad,$direccion,$telefono, $estado_civil, $escolaridad,$id_ocupacion,
+static public function ctrRegistrarPaciente($id, $nombre, $sexo, $fecha_nacimiento, $edad,$direccion,$telefono, $correo, $estado_civil, $escolaridad,$id_ocupacion,
 $id_nacionalidad,$comorbilidad, $id_empresa, $estatus){
 
-    $registroPaciente = PacientesModelo::mdlRegistrarPaciente($id, $nombre, $sexo, $fecha_nacimiento, $edad,$direccion,$telefono, $estado_civil, $escolaridad,$id_ocupacion,
+    $registroPaciente = PacientesModelo::mdlRegistrarPaciente($id, $nombre, $sexo, $fecha_nacimiento, $edad,$direccion,$telefono,$correo, $estado_civil, $escolaridad,$id_ocupacion,
     $id_nacionalidad,$comorbilidad,  $id_empresa, $estatus);
 
     return $registroPaciente;
