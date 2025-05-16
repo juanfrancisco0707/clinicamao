@@ -99,9 +99,12 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar f
     //$entidad = isset($_POST['entidad']) ? $_POST['entidad'] : 'paciente'; // valor por defecto
     //var_dump($entidad);
     //exit;
+    //if( $_SESSION['S_ROL']==1){
+
+      //  }
      $folio = new ajaxFolios();
     $folio->entidad = $_POST['entidad'];
-    $folio->id_empresa = $_SESSION['S_IDCLINICA']; // ← lo tomas de la sesión
+    $folio->id_empresa = $_POST['id_empresa'];//$_SESSION['S_IDCLINICA']; // ← lo tomas de la sesión
     $folio->ajaxListarFolioEntidad();
     
 }

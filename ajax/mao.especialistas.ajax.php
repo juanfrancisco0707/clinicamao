@@ -10,7 +10,7 @@ class AjaxEspecialistas
     public $especialidad;
     public $telefono;
     public $email;
-
+    public $id_empresa;  
     public function ajaxListarEspecialistas()
     {
         $especialistas = EspecialistasControlador::ctrListarEspecialistas();
@@ -24,7 +24,8 @@ class AjaxEspecialistas
             "apellido" => $this->apellido,
             "especialidad" => $this->especialidad,
             "telefono" => $this->telefono,
-            "email" => $this->email
+            "email" => $this->email,
+            "id_empresa" => $this->id_empresa
         );
 
         $especialista = EspecialistasControlador::ctrRegistrarEspecialista($data);
@@ -69,6 +70,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 1) { // parametro para listar
     $registrarEspecialista->especialidad = $_POST["especialidad"];
     $registrarEspecialista->telefono = $_POST["telefono"];
     $registrarEspecialista->email = $_POST["email"];
+    $registrarEspecialista->id_empresa = $_POST["id_empresa"];
 
     $registrarEspecialista->ajaxRegistrarEspecialista();
 } else if (isset($_POST['accion']) && $_POST['accion'] == 4) { // ACCION PARA ACTUALIZAR UN especialista
@@ -79,7 +81,8 @@ if (isset($_POST['accion']) && $_POST['accion'] == 1) { // parametro para listar
         "apellido" => $_POST["apellido"],
         "especialidad" => $_POST["especialidad"],
         "telefono" => $_POST["telefono"],
-        "email" => $_POST["email"]
+        "email" => $_POST["email"],
+        "id_empresa" => $_POST["id_empresa"]
     );
 
     $actualizarEspecialista->ajaxActualizarEspecialista($data);

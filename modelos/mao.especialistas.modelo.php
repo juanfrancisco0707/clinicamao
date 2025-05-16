@@ -66,8 +66,12 @@ class EspecialistasModelo
 
             if ($stmt->execute()) {
                 $respuesta = $stmt->fetch(PDO::FETCH_ASSOC); // Obtiene id_especialista
+               // var_dump($respuesta);
+               // exit;
             } else {
-                $respuesta = "error";
+                 // Captura errores del statement PDO
+                $errorInfo = $stmt->errorInfo();
+                $respuesta = "Error en la ejecución: " . $errorInfo[2]; // Mensaje de error
             }
         } catch (Exception $e) {
             $respuesta = 'Excepción capturada: ' .  $e->getMessage();

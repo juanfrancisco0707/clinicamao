@@ -925,8 +925,9 @@ $(document).ready(function() {
      //           table.fnFilter(this.value);
      //       }
     //    });
-    $('#modalRegistroPaciente').on('show.bs.modal', function () {
-        obtenerFolio('paciente');
+    $('#mdlGestionarPacientes').on('show.bs.modal', function () {
+        var id_empresa = $("#selEmpresaReg").val();
+        obtenerFolio('paciente',id_empresa);
     });
                 /* Apply the tooltips */
     $('#tbl_pacientes thead tr[title]').tooltip({
@@ -1192,13 +1193,14 @@ $(document).ready(function() {
     })
 
 });
-function obtenerFolio(entidad) {
+function obtenerFolio(entidad,id_empresa) {
     $.ajax({
         url: "../ajax/mao.folio.ajax.php",
         method: "POST",
         data: {
             'accion': 11,
-            'entidad': entidad
+            'entidad': entidad,
+            'id_empresa': id_empresa   
             
         },
         dataType: 'json',

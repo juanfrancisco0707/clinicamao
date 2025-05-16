@@ -38,6 +38,7 @@
                         <th>Especialidad</th>
                         <th>Teléfono</th>
                         <th>Email</th>
+                        <th>Clínica</th>
                         <th class="text-center">Opciones</th>
                     </tr>
                 </thead>
@@ -65,6 +66,14 @@
                 <form class="needs-validation" novalidate id="formEspecialista">
                     <!-- Abrimos una fila -->
                     <div class="row">
+                         <!-- Clínica -->
+                        <div class="col-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="selEmpresaReg"><i class="fa fa-medkit"></i> <span class="small">Clínica</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="selEmpresaReg" required></select>
+                                <div class="invalid-feedback">Seleccione la Clínica</div>
+                            </div>
+                        </div>
                         <!-- Columna para registro del Identificador -->
                         <div class="col-12 col-lg-6">
                             <div class="form-group mb-2">
@@ -112,6 +121,7 @@
                                 <input type="email" class="form-control form-control-sm" id="iptEmailReg" name="iptEmail" placeholder="Email">
                             </div>
                         </div>
+                       
                         <!-- creacion de botones para cancelar y guardar el Especialista -->
                         <div class="col-12">
                             <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;" data-bs-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
@@ -139,7 +149,7 @@
         //console.log("Is $.fn.modal a function?", typeof $.fn.modal === 'function');
         let focusedElementBeforeModal;
         let accion = 2; // 2: add, 4: update
-
+        //obtenerFolio('especialista');
         /*===================================================================
         CARGAR LISTADO DE ESPECIALISTAS CON DATATABLE
         ====================================================================*/
@@ -178,6 +188,28 @@
             language: {
                 //url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
                  "url": "../vistas/assets/json/Spanish.json"
+            }
+        });
+         /*===================================================================*/
+        //SOLICITUD AJAX PARA CARGAR SELECT DE LAS CLINICAS
+        /*===================================================================*/
+        $.ajax({
+            url: "../ajax/empresacb.ajax.php",
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(respuesta) {
+
+                var options = '<option selected value="">Seleccione una clínica</option>';
+
+                for (let index = 0; index < respuesta.length; index++) {
+                    options = options + '<option value=' + respuesta[index][0] + '>' + respuesta[index][
+                        1
+                    ] + '</option>';
+                }
+
+                $("#selEmpresaReg").append(options);
             }
         });
         /*===================================================================
@@ -239,6 +271,9 @@
                 var especialidad = $("#iptEspecialidadReg").val();
                 var telefono = $("#iptTelefonoReg").val();
                 var email = $("#iptEmailReg").val();
+                var email = $("#iptEmailReg").val();    
+                var id_empresa = $("#selEmpresaReg").val();
+
 
                 var datos = new FormData();
                 datos.append("accion", accion); // Acción para registrar or update
@@ -248,6 +283,7 @@
                 datos.append("especialidad", especialidad);
                 datos.append("telefono", telefono);
                 datos.append("email", email);
+                 datos.append("id_empresa", id_empresa);
 
                 $.ajax({
                     url: "../ajax/mao.especialistas.ajax.php",
@@ -258,13 +294,18 @@
                     processData: false,
                     dataType: "json",
                     success: function (respuesta) {
-                        if (respuesta == "ok") {
+                        //if (respuesta == "ok") {
+                        if (respuesta && respuesta.resultado === "ok") {
                             $("#modalEspecialista").modal('hide'); // This line was causing the error
                             $("#formEspecialista")[0].reset();
                             tablaEspecialistas.ajax.reload();
                             alert(accion == 2 ? "Especialista registrado correctamente" : "Especialista actualizado correctamente");
                         } else {
-                            alert(accion == 2 ? "Error al registrar el Especialista" : "Error al actualizar el Especialista");
+                            //alert(accion == 2 ? "Error al registrar el Especialista" : "Error al actualizar el Especialista");
+                            let mensajeError = "Error desconocido.";
+                            if (respuesta && respuesta.resultado) mensajeError = respuesta.resultado; // Usar el mensaje del SP si existe
+                            alert((accion == 2 ? "Error al registrar el Especialista: " : "Error al actualizar el Especialista: ") + mensajeError);
+                       
                         }
                     }
                 });
@@ -373,9 +414,35 @@
         // Event listener for when the modal is shown
         $('#modalEspecialista').on('shown.bs.modal', function () {
             // Store the currently focused element
+            // var id_empresa = $("#selEmpresaReg").val();
+            // obtenerFolio('especialista',id_empresa);
             focusedElementBeforeModal = document.activeElement;
         });
+        $("#selEmpresaReg").on('change', function() {
+            var id_empresa = $(this).val(); // Obtener el ID de la empresa seleccionada
+            obtenerFolio('especialista', id_empresa); // Llamar a la función para obtener el nuevo folio
+        });
+
+
     });
+    function obtenerFolio(entidad,id_empresa) {
+        $.ajax({
+            url: "../ajax/mao.folio.ajax.php",
+            method: "POST",
+            data: {
+                'accion': 11,
+                'entidad': entidad,
+                'id_empresa': id_empresa                                                                                                                               
+                
+            },
+            dataType: 'json',
+            success: function(respuesta) {
+                let folio = respuesta.folio;
+                $("#iptIdReg").val(folio);
+            }
+        });
+    }
+
 </script>
 
 
