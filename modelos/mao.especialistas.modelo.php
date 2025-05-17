@@ -19,7 +19,7 @@ class EspecialistasModelo
 
     static public function mdlListarEspecialistas()
     {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM tblmaoespecialistas");
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM tblmaoespecialistas e inner JOIN TBLEMPRESA em ON e.id_empresa = em.id WHERE e.estatus = 1  ORDER BY e.nombre ASC");
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -118,7 +118,7 @@ class EspecialistasModelo
     static public function mdlEliminarInformacion($table, $id, $nameId)
     {
 
-        $stmt = Conexion::conectar()->prepare("DELETE FROM $table WHERE $nameId = :$nameId");
+        $stmt = Conexion::conectar()->prepare("UPDATE $table SET estatus = 0 WHERE $nameId = :$nameId");
 
         $stmt->bindParam(":" . $nameId, $id, PDO::PARAM_INT);
 

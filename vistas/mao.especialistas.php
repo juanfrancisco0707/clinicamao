@@ -39,6 +39,7 @@
                         <th>Teléfono</th>
                         <th>Email</th>
                         <th>Clínica</th>
+                        <th class="text-center">Estatus</th>
                         <th class="text-center">Opciones</th>
                     </tr>
                 </thead>
@@ -173,6 +174,8 @@
                 { data: 'especialidad' },
                 { data: 'telefono' },
                 { data: 'email' },
+                { data: 'id_empresa'},
+                
                 {
                     data: null,
                     className: 'text-center',
@@ -346,36 +349,58 @@
                 }
             });
         });
-        /*===================================================================
+                /*===================================================================
         EVENTO PARA ELIMINAR ESPECIALISTA
         ====================================================================*/
         $("#tbl_Especialistas").on("click", ".btnEliminarEspecialista", function () {
             var id_fisioterapeuta = $(this).data("id");
 
-            if (confirm("¿Está seguro de eliminar este Especialista?")) {
-                var datos = new FormData();
-                datos.append("accion", 5); // Acción para eliminar
-                datos.append("id_fisioterapeuta", id_fisioterapeuta);
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Está seguro de dar de baja a este Especialista?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, Dar de baja!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var datos = new FormData();
+                    datos.append("accion", 5); // Acción para eliminar
+                    datos.append("id_fisioterapeuta", id_fisioterapeuta);
 
-                $.ajax({
-                    url: "../ajax/mao.especialistas.ajax.php",
-                    method: "POST",
-                    data: datos,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function (respuesta) {
-                        if (respuesta == "ok") {
-                            tablaEspecialistas.ajax.reload();
-                            alert("Especialista eliminado correctamente");
-                        } else {
-                            alert("Error al eliminar el Especialista");
+                    $.ajax({
+                        url: "../ajax/mao.especialistas.ajax.php",
+                        method: "POST",
+                        data: datos,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        dataType: "json",
+                        success: function (respuesta) {
+                            if (respuesta === "ok") {
+                                tablaEspecialistas.ajax.reload();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Baja!',
+                                    text: 'Especialista dado de baja correctamente.',
+                                    showConfirmButton: false,
+                                    timer: 3500
+                                });
+                            } else {
+                                 Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error al dar de baja el Especialista.'
+                                });
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            })
         });
+
         /*===================================================================
         EVENTO PARA LIMPIAR FORMULARIO AL CERRAR MODAL
         ====================================================================*/
@@ -449,4 +474,3 @@
 
 </body>
 </html>
-
