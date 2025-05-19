@@ -31,10 +31,11 @@ class EspecialistasControlador
     /*===================================================================
     ACTUALIZAR ESPECIALISTA
     ====================================================================*/
-    static public function ctrActualizarEspecialista($table, $data, $id, $nameId)
+    static public function ctrActualizarEspecialista($data)
+    // Cambiamos la firma para que solo reciba $data, ya que el modelo extraerá los IDs
     {
-        $respuesta = EspecialistasModelo::mdlActualizarInformacion($table, $data, $id, $nameId);
-        return $respuesta;
+        $respuesta = EspecialistasModelo::mdlActualizarEspecialista($data); // Llamar al nuevo método
+        return $respuesta; // El modelo ya retorna "ok" o el errorInfo
     }
 
     /*===================================================================
@@ -43,6 +44,14 @@ class EspecialistasControlador
     static public function ctrEliminarEspecialista($table, $id, $nameId)
     {
         $respuesta = EspecialistasModelo::mdlEliminarInformacion($table, $id, $nameId);
+        return $respuesta;
+    }
+    /*===================================================================
+    ALTA ESPECIALISTA
+    ====================================================================*/
+    static public function ctrAltaEspecialista($table, $id, $nameId)
+    {
+        $respuesta = EspecialistasModelo::mdlAltaInformacion($table, $id, $nameId);
         return $respuesta;
     }
 

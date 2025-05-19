@@ -34,11 +34,10 @@ class AjaxEspecialistas
 
     public function ajaxActualizarEspecialista($data)
     {
-        $table = "tblmaoespecialistas";
-        $id = $_POST["id_fisioterapeuta"];
-        $nameId = "id_fisioterapeuta";
-        $respuesta = EspecialistasControlador::ctrActualizarEspecialista($table, $data, $id, $nameId);
-        echo json_encode($respuesta);
+        // Las variables $table, $id, $nameId no son necesarias aquí,
+        // ya que $data contiene toda la información requerida por el controlador y el modelo.
+        $respuesta = EspecialistasControlador::ctrActualizarEspecialista($data);
+         echo json_encode(['resultado' => $respuesta]); 
     }
 
     public function ajaxEliminarEspecialista()
@@ -47,6 +46,14 @@ class AjaxEspecialistas
         $id = $_POST["id_fisioterapeuta"];
         $nameId = "id_fisioterapeuta";
         $respuesta = EspecialistasControlador::ctrEliminarEspecialista($table, $id, $nameId);
+        echo json_encode($respuesta);
+    }
+      public function ajaxAltaEspecialista()
+    {
+        $table = "tblmaoespecialistas";
+        $id = $_POST["id_fisioterapeuta"];
+        $nameId = "id_fisioterapeuta";
+        $respuesta = EspecialistasControlador::ctrAltaEspecialista($table, $id, $nameId);
         echo json_encode($respuesta);
     }
     public function ajaxObtenerEspecialista()
@@ -77,6 +84,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 1) { // parametro para listar
     $actualizarEspecialista = new AjaxEspecialistas();
 
     $data = array(
+        "id_fisioterapeuta" => $_POST["id_fisioterapeuta"], // Esencial para la cláusula WHERE en el modelo
         "nombre" => $_POST["nombre"],
         "apellido" => $_POST["apellido"],
         "especialidad" => $_POST["especialidad"],
@@ -95,4 +103,7 @@ if (isset($_POST['accion']) && $_POST['accion'] == 1) { // parametro para listar
 } else if (isset($_POST["accion"]) && $_POST["accion"] == 7) { // OBTENER DATOS DE UN especialista POR SU ID
     $listaEspecialista = new AjaxEspecialistas();
     $listaEspecialista->ajaxObtenerEspecialista();
+}else if (isset($_POST['accion']) && $_POST['accion'] == 8) { // ACCION PARA ELIMINAR UN especialista
+    $eliminarEspecialista = new AjaxEspecialistas();
+    $eliminarEspecialista->ajaxAltaEspecialista();
 }

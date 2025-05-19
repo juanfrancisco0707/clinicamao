@@ -34,13 +34,13 @@
                         <th></th>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Apellido</th>
                         <th>Especialidad</th>
                         <th>Teléfono</th>
                         <th>Email</th>
                         <th>Clínica</th>
                         <th class="text-center">Estatus</th>
-                        <th class="text-center">Opciones</th>
+                        <th class="text-center">Dar de Baja/Alta</th> <!-- Modificado para mayor claridad -->
+                        <th class="text-center">Acciones</th> <!-- Nuevo TH para la 10ª columna -->
                     </tr>
                 </thead>
                 <tbody class="text-small">
@@ -169,12 +169,24 @@
                     width: '2px'
                 },
                 { data: 'id_fisioterapeuta' },
-                { data: 'nombre' },
-                { data: 'apellido' },
+                { data: 'nombre_completo' },
                 { data: 'especialidad' },
                 { data: 'telefono' },
                 { data: 'email' },
-                { data: 'id_empresa'},
+                { data: 'nombre_empresa'},
+                {
+                    data: 'estatus',
+                    render: function (data, type, row) {
+                        return data == 1 ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
+                    }
+                },
+                {
+                    data: null,
+                    className: 'text-center',
+                    render: function (data, type, row) {
+                        return row.estatus == 1 ? '<button class="btn btn-danger btn-sm btnEliminarEspecialista" data-id="' + row.id_fisioterapeuta + '"><i class="fas fa-user-slash"></i></button>' : '<button class="btn btn-success btn-sm btnAltaEspecialista" data-id="' + row.id_fisioterapeuta + '"><i class="fas fa-user-check"></i></button>';
+                    }
+                },
                 
                 {
                     data: null,
@@ -182,7 +194,7 @@
                     render: function (data, type, row) {
                         return `
                             <button class="btn btn-warning btn-sm btnEditarEspecialista" data-id="${row.id_fisioterapeuta}"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminarEspecialista" data-id="${row.id_fisioterapeuta}"><i class="fas fa-trash-alt"></i></button>
+                           
                         `;
                     }
                 }
@@ -242,12 +254,9 @@
                     </tr>
                     <tr>
                         <td>Nombre:</td>
-                        <td>${d.nombre}</td>
+                        <td>${d.nombre_completo}</td>
                     </tr>
-                    <tr>
-                        <td>Apellido:</td>
-                        <td>${d.apellido}</td>
-                    </tr>
+                   
                     <tr>
                         <td>Especialidad:</td>
                         <td>${d.especialidad}</td>
@@ -259,6 +268,10 @@
                     <tr>
                         <td>Email:</td>
                         <td>${d.email}</td>
+                    </tr>
+                    <tr>
+                        <td>Clinica:</td>
+                        <td>${d.nombre_empresa}</td>
                     </tr>
                 </table>
             `;
@@ -274,7 +287,7 @@
                 var especialidad = $("#iptEspecialidadReg").val();
                 var telefono = $("#iptTelefonoReg").val();
                 var email = $("#iptEmailReg").val();
-                var email = $("#iptEmailReg").val();    
+               
                 var id_empresa = $("#selEmpresaReg").val();
 
 
@@ -299,15 +312,26 @@
                     success: function (respuesta) {
                         //if (respuesta == "ok") {
                         if (respuesta && respuesta.resultado === "ok") {
-                            $("#modalEspecialista").modal('hide'); // This line was causing the error
+                            $("#modalEspecialista").modal('hide'); 
                             $("#formEspecialista")[0].reset();
                             tablaEspecialistas.ajax.reload();
-                            alert(accion == 2 ? "Especialista registrado correctamente" : "Especialista actualizado correctamente");
+                            Swal.fire({
+                                icon: 'success',
+                                title: (accion == 2 ? "¡Registrado!" : "¡Actualizado!"),
+                                text: (accion == 2 ? "Especialista registrado correctamente." : "Especialista actualizado correctamente."),
+                                showConfirmButton: false,
+                                timer: 2000 // Opcional: cierra automáticamente después de 2 segundos
+                            });
                         } else {
                             //alert(accion == 2 ? "Error al registrar el Especialista" : "Error al actualizar el Especialista");
                             let mensajeError = "Error desconocido.";
                             if (respuesta && respuesta.resultado) mensajeError = respuesta.resultado; // Usar el mensaje del SP si existe
-                            alert((accion == 2 ? "Error al registrar el Especialista: " : "Error al actualizar el Especialista: ") + mensajeError);
+                            // alert((accion == 2 ? "Error al registrar el Especialista: " : "Error al actualizar el Especialista: ") + mensajeError);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: (accion == 2 ? "Error al registrar el Especialista: " : "Error al actualizar el Especialista: ") + mensajeError
+                            });
                        
                         }
                     }
@@ -345,6 +369,8 @@
                     $("#iptEspecialidadReg").val(respuesta.especialidad);
                     $("#iptTelefonoReg").val(respuesta.telefono);
                     $("#iptEmailReg").val(respuesta.email);
+                    $("#selEmpresaReg").val(respuesta.id_empresa); // Asignar el valor de la empresa
+                    $("#iptIdReg").attr("readonly", true); // Hacer el campo ID de solo lectura
                     $("#modalEspecialista").modal('show'); // This line was causing the error
                 }
             });
@@ -400,7 +426,56 @@
                 }
             })
         });
+        /*EVENTO PARA restablecer ESPECIALISTA
+        ====================================================================*/
+        $("#tbl_Especialistas").on("click", ".btnAltaEspecialista", function () {
+            var id_fisioterapeuta = $(this).data("id");
 
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "¿Está seguro de dar de Alta a este Especialista?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, Dar de alta!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var datos = new FormData();
+                    datos.append("accion", 8); // Acción para dar de alta
+                    datos.append("id_fisioterapeuta", id_fisioterapeuta);
+
+                    $.ajax({
+                        url: "../ajax/mao.especialistas.ajax.php",
+                        method: "POST",
+                        data: datos,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        dataType: "json",
+                        success: function (respuesta) {
+                            if (respuesta === "ok") {
+                                tablaEspecialistas.ajax.reload();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Alta!',
+                                    text: 'Especialista dado de Alta correctamente.',
+                                    showConfirmButton: false,
+                                    timer: 3500
+                                });
+                            } else {
+                                 Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error al dar de alta el Especialista.'
+                                });
+                            }
+                        }
+                    });
+                }
+            })
+        });
         /*===================================================================
         EVENTO PARA LIMPIAR FORMULARIO AL CERRAR MODAL
         ====================================================================*/

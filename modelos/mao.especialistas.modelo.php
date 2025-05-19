@@ -19,7 +19,8 @@ class EspecialistasModelo
 
     static public function mdlListarEspecialistas()
     {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM tblmaoespecialistas e inner JOIN TBLEMPRESA em ON e.id_empresa = em.id WHERE e.estatus = 1  ORDER BY e.nombre ASC");
+        $stmt = Conexion::conectar()->prepare("SELECT e.id_fisioterapeuta, CONCAT(e.nombre, ' ', e.apellido) AS nombre_completo, especialidad, e.telefono, e.email, em.nombre AS nombre_empresa, e.estatus FROM tblmaoespecialistas e
+         INNER JOIN TBLEMPRESA em ON e.id_empresa = em.id WHERE e.estatus = 1 or e.estatus = 0 ORDER BY e.nombre ASC;");
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -80,7 +81,7 @@ class EspecialistasModelo
         return $respuesta;
     }
 
-
+    /*===================================================================
     static public function mdlActualizarInformacion($table, $data, $id, $nameId)
     {
 
@@ -110,7 +111,50 @@ class EspecialistasModelo
             return Conexion::conectar()->errorInfo();
         }
     }
+    */
 
+    /*===================================================================
+    ACTUALIZAR Especialista usando llave compuesta
+    ====================================================================*/
+    static public function mdlActualizarEspecialista($data)
+    {
+        try {
+            // Extraer los valores de la llave primaria compuesta
+            $id_fisioterapeuta = $data['id_fisioterapeuta'];
+            $id_empresa = $data['id_empresa'];
+
+            // Construir la cláusula SET dinámicamente, excluyendo las llaves primarias
+            $set = "";
+            $bindParams = [];
+            foreach ($data as $key => $value) {
+                if ($key !== 'id_fisioterapeuta' && $key !== 'id_empresa') {
+                    $set .= $key . " = :" . $key . ",";
+                    $bindParams[":" . $key] = $value;
+                }
+            }
+            $set = rtrim($set, ","); // Eliminar la coma final
+
+            // Si no hay campos para actualizar (aparte de las llaves), retornar éxito
+            if (empty($set)) {
+                 return "ok";
+            }
+
+            $stmt = Conexion::conectar()->prepare("UPDATE tblmaoespecialistas SET $set WHERE id_fisioterapeuta = :id_fisioterapeuta AND id_empresa = :id_empresa");
+
+            // Bindear los parámetros de actualización
+            foreach ($bindParams as $param => $value) {
+                $stmt->bindValue($param, $value); // Usar bindValue para enlazar por valor, no por referencia
+            }
+
+            // Bindear los parámetros de la llave primaria compuesta
+            $stmt->bindParam(":id_fisioterapeuta", $id_fisioterapeuta, PDO::PARAM_INT);
+            $stmt->bindParam(":id_empresa", $id_empresa, PDO::PARAM_INT);
+
+            return ($stmt->execute()) ? "ok" : Conexion::conectar()->errorInfo();
+        } catch (Exception $e) {
+            return 'Excepción capturada: ' .  $e->getMessage() . "\n";
+        }
+    }
     /*=============================================
     Peticion DELETE para eliminar datos
     =============================================*/
@@ -130,6 +174,26 @@ class EspecialistasModelo
             return Conexion::conectar()->errorInfo();
         }
     }
+     /*=============================================
+    Peticion UPDATE para dar de alta datos
+    =============================================*/
+
+    static public function mdlAltaInformacion($table, $id, $nameId)
+    {
+
+        $stmt = Conexion::conectar()->prepare("UPDATE $table SET estatus = 1 WHERE $nameId = :$nameId");
+
+        $stmt->bindParam(":" . $nameId, $id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+
+            return "ok";;
+        } else {
+
+            return Conexion::conectar()->errorInfo();
+        }
+    }
+
 
     /*===================================================================
     LISTAR NOMBRE DE Especialistas PARA INPUT DE AUTO COMPLETADO
