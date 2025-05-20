@@ -69,22 +69,7 @@
         </div>
     </div>
     <div class="calendar-wrapper">
-        <!-- <div id="schedule" class="schedule d-none">
-           <div>07:00 AM</div>
-            <div>08:00 AM</div>
-            <div>09:00 AM</div>
-            <div>10:00 AM</div>
-            <div>11:00 AM</div>
-            <div>12:00 PM</div>
-            <div>01:00 PM</div>
-            <div>02:00 PM</div>
-            <div>03:00 PM</div>
-            <div>04:00 PM</div>
-            <div>05:00 PM</div>
-            <div>06:00 PM</div>
-            <div>07:00 PM</div>
-            <div>08:00 PM</div>
-        </div>-->
+        
         <div id="calendar" class="flex-grow-1">
             <!-- El calendario se renderizará aquí -->
              

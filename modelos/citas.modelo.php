@@ -18,9 +18,12 @@ class CitasModelo {
         $stmt->bindParam(":id_empresa", $datos["id_empresa"], PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            return "ok";
+            $stmt->closeCursor(); // Buena práctica cerrar el cursor
+            $stmt = null;         // y liberar el statement
+            return array("resultado" => "ok", "mensaje" => "Cita registrada correctamente.");
         } else {
-            return $stmt->errorInfo(); // Devuelve el array de error de PDO
+            $errorInfo = $stmt->errorInfo();
+            return array("resultado" => "error", "mensaje" => "Error al registrar la cita.", "detalle" => $errorInfo);
         }
         $stmt = null;
     }
@@ -111,6 +114,34 @@ class CitasModelo {
             // Loguear $errorInfo[2] para depuración
             return array("resultado" => "error", "mensaje" => "Error al actualizar la cita en la base de datos.");
         }
+    }
+
+    /*=============================================
+    VERIFICAR DISPONIBILIDAD DE CITA PARA UN ESPECIALISTA
+    =============================================*/
+    static public function mdlVerificarDisponibilidadCita($id_fisioterapeuta, $fecha_hora_formateada, $id_empresa, $id_cita_excluir = null) {
+        $sql = "SELECT COUNT(*) as count 
+                FROM tblcitas 
+                WHERE id_fisioterapeuta = :id_fisioterapeuta 
+                AND fecha_hora = :fecha_hora 
+                AND id_empresa = :id_empresa
+                AND estado NOT IN ('Cancelada', 'Completada')"; // No contar citas canceladas o completadas como conflicto
+
+        if ($id_cita_excluir !== null) {
+            $sql .= " AND id_cita != :id_cita_excluir";
+        }
+
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":id_fisioterapeuta", $id_fisioterapeuta, PDO::PARAM_INT);
+        $stmt->bindParam(":fecha_hora", $fecha_hora_formateada, PDO::PARAM_STR);
+        $stmt->bindParam(":id_empresa", $id_empresa, PDO::PARAM_INT);
+
+        if ($id_cita_excluir !== null) {
+            $stmt->bindParam(":id_cita_excluir", $id_cita_excluir, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchColumn(); // Devuelve el conteo directamente
     }
 }
 
