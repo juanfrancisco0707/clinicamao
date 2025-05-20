@@ -1358,44 +1358,17 @@ document.getElementById("btnGuardarPaciente").addEventListener("click", function
 /*===================================================================*/
 document.getElementById("btnGuardarPacientem").addEventListener("click", function() {
 
-// Get the forms we want to add validation styles to
-var forms = document.getElementsByClassName('needs-validation');
-// Loop over them and prevent submission
-var validation = Array.prototype.filter.call(forms, function(form) {
+    // Get the forms we want to add validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
     
     if (form.checkValidity() === true) {   
      // validar si el paciente tiene expediente activo para que no se pueda dar de baja
            var id_paciente= $("#iptIdRegm").val();
            var id_clinica = $("#selEmpresaRegm").val();
-          // alert(' id_paciente: '+id_paciente + ' id_clinica : ' + id_clinica);
-           
-            $.ajax({
-                async: false,
-                url: "../ajax/expedientes.ajax.php",
-                method: "POST",
-                data: {
-                    'accion': 556,
-                    'id_paciente': id_paciente,
-                    'id_clinica': id_clinica
-                },
-                dataType: 'json',
-                success: function(respuesta) {
-                 alert('CHECA SI TIENE EXPEDIENTE ACTIVO');
-
-                 //var estatusexp  = respuesta[0][13];
-                 //if(respuesta==='ok')
-                 
-                // alert('estatus expediente = ' + estatusexp);
-                 if(respuesta==='ok')
-                 {
-                 swal.fire({
-                    title:"Mensaje de Advertencia",
-                    icon: 'warning',
-                    text:' Se detectó que este paciente tiene expediente Activo, Si desea darlo de baja primero inactive su expediente'
-                 })
-                }
-                 
-                 else {
+          
+                
                     if(accion == 4){
                         $mensaje='Está seguro de Modificar el paciente?';
                         $confirmar='Si, deseo Modificarlo!';
@@ -1426,6 +1399,7 @@ var validation = Array.prototype.filter.call(forms, function(form) {
                             datos.append("edad", $("#iptEdadRegm").val()); //Edad_Paciente
                             datos.append("direccion", $("#iptDireccionRegm").val()); //Direccion_Paciente
                             datos.append("telefono", $("#iptTelefonoRegm").val()); //Teléfono_Paciente
+                            datos.append("correo", $("#iptCorreoRegm").val()); //Correo_Paciente
                             datos.append("estado_civil", $("#iptEstado_CivilRegm").val()); //Estado Civil
                             datos.append("escolaridad", $("#iptEscolaridadRegm").val()); //Escolaridad
                             datos.append("id_ocupacion", $("#selOcupacionRegm").val()); //Id_ocupacion 
@@ -1490,24 +1464,14 @@ var validation = Array.prototype.filter.call(forms, function(form) {
 
                         }
                     })
-
-
-
-
-                 }
-                    
-                }
-            });
-
-       // console.log("Listo para registrar el paciente")
-       
+                
     }else {
         console.log("No pasó la validación")
     }
 
     form.classList.add('was-validated');
 
-});
+    });
 });
 /*===================================================================*/
 //EVENTO QUE LIMPIA LOS MENSAJES DE ALERTA DE INGRESO DE DATOS DE CADA INPUT AL CANCELAR LA VENTANA MODAL

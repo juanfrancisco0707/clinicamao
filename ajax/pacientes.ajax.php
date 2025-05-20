@@ -116,8 +116,12 @@ class ajaxPacientes{
 
         echo json_encode($NombrePaciente);
     }
-
-    /*===================================================================
+    // En la clase AjaxPacientes:
+    public function ajaxListarPacientesParaSelect() {
+        $respuesta = PacientesControlador::ctrListarPacientesParaSelect();
+        echo json_encode($respuesta);
+    }
+        /*===================================================================
     BUSCAR PACIENTES POR SU ID
     ====================================================================*/
     public function ajaxGetDatosPaciente(){
@@ -260,6 +264,9 @@ else if(isset($_POST["accion"]) && $_POST["accion"] == 99){ // OBTENER DATOS DE 
     
     $listaPacienteActivo -> ajaxGetDatosPacienteActivo();
 
+}else if (isset($_POST["accion"]) && $_POST["accion"] == 'listarParaSelect') {
+    $pacientes = new AjaxPacientes(); // Asumiendo que tienes una clase AjaxPacientes
+    $pacientes->ajaxListarPacientesParaSelect();
 }
 else if(isset($_FILES)){
    

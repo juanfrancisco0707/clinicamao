@@ -170,7 +170,20 @@ class PacientesModelo{
 
         return ['folio' => $resultado->folio];
     }
+    /*=============================================
+    MOSTRAR PACIENTES PARA SELECT (ID Y NOMBRE_COMPLETO)
+    =============================================*/
+    static public function mdlListarPacientesParaSelect(){
 
+        $stmt = Conexion::conectar()->prepare("SELECT id as id_paciente, nombre AS nombre_completo FROM tblpacientes WHERE estatus = 'Activo' ORDER BY nombre ASC");
+        
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Devuelve un array de arrays asociativos
+
+        $stmt->closeCursor();
+        $stmt = null;
+    }
     /*===================================================================
     OBTENER LISTADO TOTAL DE PACIENTES ACTIVOS INDIVIDUALES
     ====================================================================*/

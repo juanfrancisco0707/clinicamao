@@ -20,7 +20,14 @@ static public function ctrListarPacientesadmin(){
     return $pacientes;
 
 }
-//
+  /*===================================================================
+    LISTAR PACIENTES PARA SELECT (ID Y NOMBRE)
+    ====================================================================*/
+    static public function ctrListarPacientesParaSelect(){
+        
+        $pacientes = PacientesModelo::mdlListarPacientesParaSelect();
+        return $pacientes;
+    }
 
 static public function ctrListarPacientesCb($idclinica){
 

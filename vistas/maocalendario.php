@@ -17,9 +17,9 @@
     color: #333333 !important;
 }
 
-/* Para el título de los eventos */
+/* Para el título de los eventos - Comentado o eliminado para permitir que textColor del evento funcione */
 #calendar .fc-event-title {
-    color: #ffffff !important; /* Asumiendo que el fondo del evento es oscuro */
+    /* color: #ffffff !important; */ /* Esta línea puede impedir que textColor funcione correctamente */
 }
 
 /* Para el texto de los eventos en la vista de lista */
@@ -50,6 +50,12 @@
     background-color: #0056b3 !important; /* Un azul más oscuro, estándar para .active en Bootstrap primary */
     border-color: #004085 !important;     /* Borde correspondiente */
     color: #ffffff !important;            /* Texto blanco para contraste */
+}
+
+/* Estilo para el fondo del calendario */
+#calendar {
+    background-color: ivory;
+   /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
 }
 </style>
 
@@ -82,6 +88,57 @@
         <div id="calendar" class="flex-grow-1">
             <!-- El calendario se renderizará aquí -->
              
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Registrar/Editar Cita -->
+<div class="modal fade" id="modalCita" tabindex="-1" aria-labelledby="modalCitaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCitaLabel">Registrar Nueva Cita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCita">
+                    <input type="hidden" id="id_cita"> <!-- Para edición futura -->
+                    <div class="mb-3">
+                        <label for="selPaciente" class="form-label">Paciente</label>
+                        <select class="form-select" id="selPaciente" required>
+                            <!-- Opciones se cargarán dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selFisioterapeuta" class="form-label">Fisioterapeuta</label>
+                        <select class="form-select" id="selFisioterapeuta" required>
+                            <!-- Opciones se cargarán dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaHoraCita" class="form-label">Fecha y Hora</label>
+                        <input type="datetime-local" class="form-control" id="fechaHoraCita" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="motivoCita" class="form-label">Motivo</label>
+                        <textarea class="form-control" id="motivoCita" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="estadoCita" class="form-label">Estado</label>
+                        <select class="form-select" id="estadoCita">
+                            <option value="Pendiente" selected>Pendiente</option>
+                            <option value="Confirmada">Confirmada</option>
+                            <option value="Cancelada">Cancelada</option>
+                            <option value="Completada">Completada</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                <button type="button" class="btn btn-primary" id="btnGuardarCita">Guardar Cita</button>
+            </div>
         </div>
     </div>
 </div>
@@ -133,15 +190,65 @@
         slotMinTime: "08:00:00",
         slotMaxTime: "20:00:00",
        // slotDuration: "01:00:00",
+        selectable: true, // Permitir seleccionar rangos de tiempo/días
         locale: 'es', // Descomenta si cargaste el locale 'es' en plantilla.php
-        events: [
-            {
-                title: 'Cita con Juan',
-                start: new Date().toISOString().slice(0,10) + 'T11:00:00', // Evento de ejemplo para hoy
-                allDay: false
+        events: '../ajax/citas.ajax.php?accion=listar', // URL para cargar eventos
+        select: function(selectionInfo) {
+            // selectionInfo contiene start, end, allDay
+            $('#modalCitaLabel').text('Registrar Nueva Cita');
+            $('#formCita')[0].reset(); // Limpiar formulario
+            $('#id_cita').val(''); // Limpiar ID para nuevo registro
+
+            // Formatear fecha y hora para datetime-local input
+            // FullCalendar devuelve fechas en formato ISO. Necesitamos ajustarlo.
+            let startDate = new Date(selectionInfo.startStr);
+            if (!selectionInfo.allDay) {
+                // Ajustar por la zona horaria local para que coincida con el input
+                startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+                $('#fechaHoraCita').val(startDate.toISOString().slice(0, 16));
+            } else {
+                // Si es allDay, podrías querer poner una hora por defecto, ej. 08:00
+                let defaultTime = "08:00";
+                $('#fechaHoraCita').val(selectionInfo.startStr + 'T' + defaultTime);
             }
-            // Aquí puedes añadir más eventos o una URL para cargarlos
-        ]
+
+            $('#estadoCita').val('Pendiente');
+            $('#modalCita').modal('show');
+        },
+        eventClick: function(info) { // Cuando se hace clic en un evento existente
+            $('#modalCitaLabel').text('Editar Cita');
+            $('#formCita')[0].reset(); // Limpiar formulario
+
+            // Hacemos una petición AJAX para obtener los detalles completos de la cita
+            $.ajax({
+                url: '../ajax/citas.ajax.php',
+                type: 'POST',
+                data: {
+                    accion: 'obtenerCitaPorId',
+                    id_cita: info.event.id
+                },
+                dataType: 'json',
+                success: function(cita) {
+                    if (cita) {
+                        $('#id_cita').val(cita.id_cita);
+                        $('#selPaciente').val(cita.id_paciente);
+                        $('#selFisioterapeuta').val(cita.id_fisioterapeuta);
+                        // Asegurarse de que la fecha y hora estén en el formato correcto para datetime-local
+                        // El formato de la BD es 'YYYY-MM-DD HH:MM:SS', el input necesita 'YYYY-MM-DDTHH:MM'
+                        let fechaHoraFormateada = cita.fecha_hora.replace(' ', 'T').substring(0, 16);
+                        $('#fechaHoraCita').val(fechaHoraFormateada);
+                        $('#motivoCita').val(cita.motivo);
+                        $('#estadoCita').val(cita.estado);
+                        $('#modalCita').modal('show');
+                    } else {
+                        Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Problema al obtener datos de la cita.', 'error');
+                }
+            });
+        }
         // Puedes añadir más opciones de FullCalendar aquí
     });
 
@@ -181,5 +288,82 @@
     } else if (botonesVista['dayGridMonth']) { // Fallback a mes si es necesario
         botonesVista['dayGridMonth'].classList.add('active');
     }
+
+    // Cargar Pacientes y Fisioterapeutas en los selects del modal
+    function cargarSelectsModal() {
+        // Cargar Pacientes (asumiendo que tienes un endpoint similar para pacientes)
+        $.ajax({
+            url: '../ajax/pacientes.ajax.php', // Necesitarás crear este endpoint o uno similar
+            type: 'POST',
+            data: { accion: 'listarParaSelect' }, // Una nueva acción en tu AJAX de pacientes
+            dataType: 'json',
+            success: function(pacientes) {
+                $('#selPaciente').empty().append('<option value="">Seleccione Paciente</option>');
+                pacientes.forEach(function(paciente) {
+                    $('#selPaciente').append(`<option value="${paciente.id_paciente}">${paciente.nombre_completo}</option>`);
+                });
+            }
+        });
+
+        // Cargar Fisioterapeutas (reutilizando la lógica de especialistas)
+        $.ajax({
+            url: '../ajax/mao.especialistas.ajax.php',
+            type: 'POST',
+            data: { accion: 1 }, // La acción 1 ya lista especialistas
+            dataType: 'json',
+            success: function(fisioterapeutas) {
+                $('#selFisioterapeuta').empty().append('<option value="">Seleccione Fisioterapeuta</option>');
+                fisioterapeutas.forEach(function(fisio) {
+                    // Asumo que 'nombre_completo' existe o lo construyes como en tu tabla de especialistas
+                    let nombreCompleto = fisio.nombre_completo || `${fisio.nombre} ${fisio.apellido}`;
+                    $('#selFisioterapeuta').append(`<option value="${fisio.id_fisioterapeuta}">${nombreCompleto}</option>`);
+                });
+            }
+        });
+    }
+
+    cargarSelectsModal(); // Llamar al cargar la página
+
+    // Guardar Cita
+    $('#btnGuardarCita').on('click', function() {
+        // Validaciones básicas del formulario (puedes añadir más)
+        if (!$('#selPaciente').val() || !$('#selFisioterapeuta').val() || !$('#fechaHoraCita').val()) {
+            Swal.fire('Error', 'Paciente, Fisioterapeuta y Fecha/Hora son obligatorios.', 'error');
+            return;
+        }
+
+        var datosCita = {
+            // La acción se determinará si id_cita tiene valor o no
+            id_paciente: $('#selPaciente').val(),
+            id_fisioterapeuta: $('#selFisioterapeuta').val(),
+            fecha_hora: $('#fechaHoraCita').val(),
+            motivo: $('#motivoCita').val(),
+            estado: $('#estadoCita').val()
+        };
+
+        datosCita.accion = $('#id_cita').val() ? 'actualizarCita' : 'registrarCita';
+        if ($('#id_cita').val()) datosCita.id_cita = $('#id_cita').val();
+
+        $.ajax({
+            url: '../ajax/citas.ajax.php',
+            type: 'POST',
+            data: datosCita,
+            dataType: 'json',
+            success: function(respuesta) {
+                if (respuesta.resultado === 'ok') {
+                    let mensajeExito = $('#id_cita').val() ? '¡Actualizado!' : '¡Registrado!';
+                    Swal.fire(mensajeExito, respuesta.mensaje || 'La operación se realizó correctamente.', 'success');
+                    $('#modalCita').modal('hide');
+                    calendarInstance.refetchEvents(); // Recargar eventos en el calendario
+                } else {
+                    Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar la cita.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Ocurrió un problema de comunicación con el servidor.', 'error');
+            }
+        });
+    });
+
 })();
 </script>
