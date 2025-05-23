@@ -57,6 +57,10 @@
     background-color: ivory;
    /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
 }
+.modal-header.bg-indigo {
+    cursor: move; /* Cambiar cursor para indicar que es arrastrable */
+   /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
+}
 </style>
 
 <div class="container mt-3">
@@ -76,14 +80,51 @@
         </div>
     </div>
 </div>
+<!-- Modal para Registrar/Editar Sesión -->
+<div class="modal fade" id="modalSesion" tabindex="-1" aria-labelledby="modalSesionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success py-1" id="modalSesionHeader"> <!-- Color verde para sesiones -->
+                <h5 class="modal-title" id="modalSesionLabel">Registrar Nueva Sesión</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSesion">
+                    <input type="hidden" id="id_sesion_editar"> <!-- Para edición -->
+                    <input type="hidden" id="id_cita_sesion"> <!-- ID de la cita a la que pertenece -->
+                    <input type="hidden" id="id_cita_sesion_editar"> <!-- ID de la cita para edicion -->
+
+                    <div class="mb-3">
+                        <label for="selServicio" class="form-label">Servicio</label>
+                        <select class="form-select" id="selServicio" required>
+                            <!-- Opciones se cargarán dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaHoraSesion" class="form-label">Fecha y Hora de la Sesión</label>
+                        <input type="datetime-local" class="form-control" id="fechaHoraSesion" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notasSesion" class="form-label">Notas de la Sesión</label>
+                        <textarea class="form-control" id="notasSesion" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardarSesion">Guardar Sesión</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal para Registrar/Editar Cita -->
 <div class="modal fade" id="modalCita" tabindex="-1" aria-labelledby="modalCitaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+             <div class="modal-header bg-indigo py-1" id="modalCitaHeader"> <!-- Añadido bg-indigo y un ID -->
                 <h5 class="modal-title" id="modalCitaLabel">Registrar Nueva Cita</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="formCita">
@@ -119,8 +160,21 @@
                     </div>
                 </form>
             </div>
+            <!-- Nueva sección para Sesiones dentro del modal de Cita -->
+            <div class="modal-body border-top pt-3">
+                <h5>Sesiones de esta Cita</h5>
+                <button type="button" class="btn btn-sm btn-success mb-2" id="btnAbrirModalNuevaSesion">
+                    <i class="fas fa-plus"></i> Agregar Nueva Sesión
+                </button>
+                <div id="listaSesionesContainer">
+                    <!-- Las sesiones se listarán aquí -->
+                    <p>No hay sesiones registradas para esta cita.</p>
+                </div>
+            </div>
+
+
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar Cita</button>
 
                 <button type="button" class="btn btn-primary" id="btnGuardarCita">Guardar Cita</button>
             </div>
@@ -146,7 +200,10 @@
         console.error("Elemento #calendar no encontrado. El calendario no se puede inicializar.");
         return;
     }
-
+    // Hacer el modal arrastrable
+    $('#modalCita').draggable({
+        handle: "#modalCitaHeader" // Especifica el encabezado como el área para arrastrar
+    });
     if (typeof FullCalendar === 'undefined' || typeof FullCalendar.Calendar === 'undefined') {
         console.error("FullCalendar o FullCalendar.Calendar no está definido. Asegúrate de que la librería esté cargada en plantilla.php.");
         return;
@@ -204,6 +261,8 @@
             $('#modalCitaLabel').text('Editar Cita');
             $('#formCita')[0].reset(); // Limpiar formulario
 
+            $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>'); // Placeholder
+
             // Hacemos una petición AJAX para obtener los detalles completos de la cita
             $.ajax({
                 url: '../ajax/citas.ajax.php',
@@ -225,6 +284,8 @@
                         $('#motivoCita').val(cita.motivo);
                         $('#estadoCita').val(cita.estado);
                         $('#modalCita').modal('show');
+                        // Cargar sesiones para esta cita
+                        cargarSesionesDeCita(cita.id_cita);
                     } else {
                         Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
                     }
@@ -308,7 +369,7 @@
     }
 
     cargarSelectsModal(); // Llamar al cargar la página
-
+    cargarServiciosSelect(); // Cargar servicios para el modal de sesiones
     // Guardar Cita
     $('#btnGuardarCita').on('click', function() {
         // Validaciones básicas del formulario (puedes añadir más)
@@ -349,6 +410,191 @@
             }
         });
     });
+    function cargarServiciosSelect() {
+    // Asumiendo que tienes un endpoint similar para servicios
+    // o puedes adaptar el existente si 'accion: 1' en mao.servicios.ajax.php ya lista los servicios.
+    $.ajax({
+        url: '../ajax/mao.servicios.ajax.php', 
+        type: 'POST',
+        data: { accion: 1 }, // O la acción que liste todos los servicios
+        dataType: 'json',
+        success: function(servicios) {
+            $('#selServicio').empty().append('<option value="">Seleccione Servicio</option>');
+            servicios.forEach(function(servicio) {
+                // Asegúrate que los nombres de las propiedades (id_servicio, nombre_servicio) coincidan con tu respuesta AJAX
+                $('#selServicio').append(`<option value="${servicio.id_servicio}">${servicio.nombre_servicio}</option>`);
+            });
+        },
+        error: function() {
+            console.error("Error al cargar servicios para el select de sesiones.");
+            $('#selServicio').empty().append('<option value="">Error al cargar</option>');
+        }
+    });
+}
 
+function cargarSesionesDeCita(idCita) {
+    $.ajax({
+        url: '../ajax/sesiones.ajax.php',
+        type: 'POST',
+        data: {
+            accionSesion: 'listarPorCita',
+            id_cita_para_sesiones: idCita
+        },
+        dataType: 'json',
+        success: function(sesiones) {
+            var sesionesHtml = '<ul class="list-group list-group-flush">';
+            if (sesiones && sesiones.length > 0) {
+                sesiones.forEach(function(sesion) {
+                    sesionesHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Servicio:</strong> ${sesion.nombre_servicio || 'N/A'} <br>
+                                            <strong>Fecha:</strong> ${new Date(sesion.fecha_hora).toLocaleString()} <br>
+                                            <strong>Notas:</strong> ${sesion.notas || 'Sin notas'}
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-primary btnEditarSesion" data-id-sesion="${sesion.id_sesion}" data-id-cita="${sesion.id_cita}"><i class="fas fa-pencil-alt"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger btnEliminarSesion" data-id-sesion="${sesion.id_sesion}" data-id-cita="${sesion.id_cita}"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                     </li>`;
+                });
+            } else {
+                sesionesHtml += '<li class="list-group-item">No hay sesiones registradas para esta cita.</li>';
+            }
+            sesionesHtml += '</ul>';
+            $('#listaSesionesContainer').html(sesionesHtml);
+        },
+        error: function() {
+            $('#listaSesionesContainer').html('<p class="text-danger">Error al cargar las sesiones.</p>');
+        }
+    });
+}
+
+// Event handler para abrir el modal de nueva sesión
+$(document).on('click', '#btnAbrirModalNuevaSesion', function() {
+    const citaId = $('#id_cita').val(); // Obtener el ID de la cita actual desde el modal de citas
+    if (!citaId) {
+        Swal.fire('Error', 'Primero debe seleccionar o guardar una cita.', 'error');
+        return;
+    }
+    $('#formSesion')[0].reset();
+    $('#id_sesion_editar').val(''); 
+    $('#id_cita_sesion').val(citaId); 
+    $('#modalSesionLabel').text('Registrar Nueva Sesión');
+    // cargarServiciosSelect(); // Ya se llama al inicio, o si prefieres, aquí de nuevo
+    $('#modalSesion').modal('show');
+});
+
+// Event handler para guardar una sesión (nueva o editada)
+$('#btnGuardarSesion').on('click', function() {
+    var idSesionEditar = $('#id_sesion_editar').val();
+    var accionAjax = idSesionEditar ? 'actualizar' : 'registrar';
+    
+    var datosSesion = {
+        accionSesion: accionAjax,
+        id_cita_sesion: $('#id_cita_sesion').val(), 
+        selServicio: $('#selServicio').val(),
+        fechaHoraSesion: $('#fechaHoraSesion').val(),
+        notasSesion: $('#notasSesion').val()
+    };
+
+    if (idSesionEditar) {
+        datosSesion.id_sesion_editar = idSesionEditar;
+        datosSesion.id_cita_sesion_editar = $('#id_cita_sesion_editar').val(); 
+    }
+    
+    if (!datosSesion.selServicio || !datosSesion.fechaHoraSesion) {
+        Swal.fire('Error', 'Servicio y Fecha/Hora son obligatorios para la sesión.', 'error');
+        return;
+    }
+
+    $.ajax({
+        url: '../ajax/sesiones.ajax.php',
+        type: 'POST',
+        data: datosSesion,
+        dataType: 'json',
+        success: function(respuesta) {
+            if (respuesta.resultado === 'ok') {
+                Swal.fire(idSesionEditar ? '¡Actualizada!' : '¡Registrada!', respuesta.mensaje || 'La sesión se guardó correctamente.', 'success');
+                $('#modalSesion').modal('hide');
+                cargarSesionesDeCita(datosSesion.id_cita_sesion || datosSesion.id_cita_sesion_editar); 
+            } else {
+                Swal.fire('Error', respuesta.mensaje || 'No se pudo guardar la sesión.', 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'Ocurrió un problema de comunicación con el servidor para la sesión.', 'error');
+        }
+    });
+});
+
+// Delegated event handler para editar una sesión
+$(document).on('click', '.btnEditarSesion', function() {
+    var idSesion = $(this).data('id-sesion');
+    var idCitaOriginal = $(this).data('id-cita'); 
+
+    $.ajax({
+        url: '../ajax/sesiones.ajax.php',
+        type: 'POST',
+        data: { accionSesion: 'obtenerPorId', id_sesion_obtener: idSesion },
+        dataType: 'json',
+        success: function(sesion) {
+            if (sesion) {
+                $('#formSesion')[0].reset();
+                $('#id_sesion_editar').val(sesion.id_sesion);
+                $('#id_cita_sesion').val(sesion.id_cita); 
+                $('#id_cita_sesion_editar').val(sesion.id_cita); 
+                
+                $('#selServicio').val(sesion.id_servicio);
+                let fechaHoraSesionFormateada = sesion.fecha_hora.replace(' ', 'T').substring(0, 16);
+                $('#fechaHoraSesion').val(fechaHoraSesionFormateada);
+                $('#notasSesion').val(sesion.notas);
+                
+                $('#modalSesionLabel').text('Editar Sesión');
+                $('#modalSesion').modal('show');
+            } else {
+                Swal.fire('Error', 'No se pudieron obtener los detalles de la sesión.', 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'Problema al obtener datos de la sesión para editar.', 'error');
+        }
+    });
+});
+
+// Delegated event handler para eliminar una sesión
+$(document).on('click', '.btnEliminarSesion', function() {
+    var idSesion = $(this).data('id-sesion');
+    var idCitaDeLaSesion = $(this).data('id-cita');
+
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, ¡eliminarla!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '../ajax/sesiones.ajax.php',
+                type: 'POST',
+                data: { accionSesion: 'eliminar', id_sesion_eliminar: idSesion },
+                dataType: 'json',
+                success: function(respuesta) {
+                    if (respuesta.resultado === 'ok') {
+                        Swal.fire('¡Eliminada!', respuesta.mensaje || 'La sesión ha sido eliminada.', 'success');
+                        cargarSesionesDeCita(idCitaDeLaSesion); 
+                    } else {
+                        Swal.fire('Error', respuesta.mensaje || 'No se pudo eliminar la sesión.', 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Problema al eliminar la sesión.', 'error');
+                }
+            });
+        }
+    });
+});
 })();
 </script>
