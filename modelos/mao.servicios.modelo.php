@@ -1,7 +1,134 @@
 <?php
 
 require_once "conexion.php";
+class ModeloServicios{
 
+    /*=============================================
+    MOSTRAR SERVICIOS
+    =============================================*/
+    static public function mdlMostrarServicios($tabla, $item, $valor){
+
+        if($item != null){
+
+            $stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE $item = :$item");
+
+            $stmt -> bindParam(":".$item, $valor, PDO::PARAM_STR);
+
+            $stmt -> execute();
+
+            return $stmt -> fetch();
+
+        }else{
+
+            $stmt = Conexion::conectar()->prepare("SELECT  s.id_servicio ,  s.nombre_servicio,
+             s.descripcion, s.precio, s.id_categoria,
+              c.nombre_categoria FROM tblmao_servicio s LEFT JOIN
+               tblmao_categoria_servicios c ON s.id_categoria=c.id");
+
+            $stmt -> execute();
+
+            return $stmt -> fetchAll();
+
+        }
+        
+
+        $stmt -> close();
+
+        $stmt = null;
+
+    }
+    /*=============================================
+    MOSTRAR categorias
+    =============================================*/
+    static public function mdlMostrarCategoriaServicios($tabla)
+    {
+          $stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla");
+            $stmt -> execute();
+            return $stmt -> fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /*=============================================
+    REGISTRO DE SERVICIO
+    =============================================*/
+    static public function mdlIngresarServicio($tabla, $datos){
+
+        $stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(id_servicio, nombre_servicio, descripcion, precio, id_categoria) VALUES (:id_servicio, :nombre_servicio, :descripcion, :precio, :id_categoria)");
+
+        $stmt->bindParam(":id_servicio", $datos["id_servicio"], PDO::PARAM_INT);
+        $stmt->bindParam(":nombre_servicio", $datos["nombre_servicio"], PDO::PARAM_STR);
+        $stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
+        $stmt->bindParam(":precio", $datos["precio"], PDO::PARAM_STR);
+        $stmt->bindParam(":id_categoria", $datos["id_categoria"], PDO::PARAM_INT);
+
+        if($stmt->execute()){
+
+            return "ok";
+
+        }else{
+
+            return "error";
+        
+        }
+
+        $stmt->close();
+        $stmt = null;
+
+    }
+
+    /*=============================================
+    EDITAR SERVICIO
+    =============================================*/
+    static public function mdlEditarServicio($tabla, $datos){
+
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre_servicio = :nombre_servicio, descripcion = :descripcion, precio = :precio, id_categoria = :id_categoria WHERE id_servicio = :id_servicio");
+
+        $stmt->bindParam(":id_servicio", $datos["id_servicio"], PDO::PARAM_INT);
+        $stmt->bindParam(":nombre_servicio", $datos["nombre_servicio"], PDO::PARAM_STR);
+        $stmt->bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
+        $stmt->bindParam(":precio", $datos["precio"], PDO::PARAM_STR);
+        $stmt->bindParam(":id_categoria", $datos["id_categoria"], PDO::PARAM_INT);
+
+        if($stmt->execute()){
+
+            return "ok";
+
+        }else{
+
+            return "error";
+        
+        }
+
+        $stmt->close();
+        $stmt = null;
+
+    }
+
+    /*=============================================
+    BORRAR SERVICIO
+    =============================================*/
+
+    static public function mdlBorrarServicio($tabla, $datos){
+
+        $stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id_servicio = :id_servicio");
+
+        $stmt -> bindParam(":id_servicio", $datos, PDO::PARAM_INT);
+
+        if($stmt -> execute()){
+
+            return "ok";
+        
+        }else{
+
+            return "error";    
+
+        }
+
+        $stmt -> close();
+
+        $stmt = null;
+
+    }
+}
 class ServicioModelo{
 
     /*===================================================================

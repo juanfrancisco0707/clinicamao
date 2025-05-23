@@ -29,6 +29,7 @@
                             <th>ID</th>
                             <th>Nombre del Servicio</th>
                             <th>Descripción</th>
+                            <th> Categoria</th>
                             <th class="text-right">Precio</th>
                             <th class="text-center">Opciones</th>
                         </tr>
@@ -103,9 +104,19 @@
                                 <div class="invalid-feedback">Debe ingresar el precio</div>
                             </div>
                         </div>
+                        <!-- Columna para registro de la Categoría del Servicio -->
+                        <div class="col-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label class="" for="selCategoria"><i class="fas fa-tags fs-6"></i> <span class="small">Categoría</span><span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" id="selCategoria" required>
+                                    <!-- Opciones se cargarán dinámicamente desde la base de datos -->
+                                </select>
+                                <div class="invalid-feedback">Seleccione la categoría</div>
+                            </div>
+                        </div>
 
                         <!-- creacion de botones para cancelar y guardar el Servicio -->
-                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;" data-bs-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
+                        <button type="button" class="btn btn-danger mt-3 mx-2" style="width:170px;" data-dismiss="modal" id="btnCancelarRegistro">Cancelar</button>
                         <button type="button" style="width:170px;" class="btn btn-primary mt-3 mx-2" id="btnGuardarServicio">Guardar Servicio</button>
                     </div>
                 </form>
@@ -227,7 +238,26 @@
                 // con esto se cambia al idioma español de los elementos del datatable
             }
         });
+        /*===================================================================*/
+        //SOLICITUD AJAX PARA CARGAR SELECT DE CATEGORIAS
+        /*===================================================================*/
+        $.ajax({
+            url: "../ajax/mao.servicios.ajax.php",
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(respuesta) {
 
+                var options = '<option selected value="">Seleccione una Categoría</option>';
+
+                for (let index = 0; index < respuesta.length; index++) {
+                    options = options + '<option value=' + respuesta[index][0] + '>' + respuesta[index][1] + '</option>';
+                }
+
+                $("#selCategoria").append(options);
+            }
+        });
 
 
         $("#btnCancelarRegistro, #btnCerrarModal").on('click', function() {
@@ -328,6 +358,8 @@
     document.getElementById("btnGuardarServicio").addEventListener("click", function() {
 
         // Get the forms we want to add validation styles to
+
+
         var forms = document.getElementsByClassName('needs-validation');
         // Loop over them and prevent submission
         var validation = Array.prototype.filter.call(forms, function(form) {
@@ -355,6 +387,7 @@
                         datos.append("nombre_servicio", $("#iptNombreServicio").val()); //Nombre_Servicio
                         datos.append("descripcion", $("#iptDescripcion").val()); //Descripcion
                         datos.append("precio", $("#iptPrecio").val()); //Precio
+                         datos.append("id_categoria", $("#selCategoria").val()); //Categoria
                         if (accion == 2) {
                             var titulo_msj = "El Servicio se registró correctamente"
                         }
@@ -387,6 +420,7 @@
                                     $("#iptNombreServicio").val("");
                                     $("#iptDescripcion").val("");
                                     $("#iptPrecio").val("");
+                                     $("#selCategoria").val("");
 
 
                                 } else {

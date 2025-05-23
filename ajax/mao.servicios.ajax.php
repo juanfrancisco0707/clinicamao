@@ -9,8 +9,60 @@ class AjaxServicios{
     public $descripcion;
     public $precio;
 
+    public $idServicio;
+    /* Editar Serivicios IA*/
+    public function ajaxEditarServicio(){
 
-    public function ajaxListarServicios(){
+        $item = "id_servicio";
+        $valor = $this->idServicio;
+
+        $respuesta = ControladorServicios::ctrMostrarServicios($item, $valor);
+
+        echo json_encode($respuesta);
+
+    }
+/*=============================================
+    ACTIVAR SERVICIO
+    =============================================*/ 
+
+    public $activarId;
+    public $activarServicio;
+
+    public function ajaxActivarServicio(){
+
+        $tabla = "tblservicios";
+
+        $item1 = "estado";
+        $valor1 = $this->activarServicio;
+
+        $item2 = "id_servicio";
+        $valor2 = $this->activarId;
+
+        $respuesta = ModeloServicios::mdlEditarServicio($tabla, $item1, $valor1, $item2, $valor2);
+
+        echo $respuesta;
+
+    }
+     /*=============================================
+    CARGAR SELECT 2
+    =============================================*/ 
+    public function ajaxListarServicios()
+    {
+        $servicios = ControladorServicios::ctrMostrarServicios(null,null);
+        echo json_encode($servicios);
+    }
+      /*=============================================
+    CARGAR SELECT 2
+    =============================================*/ 
+    public function ajaxListarCategoriaServicios()
+    {
+         $servicios = ControladorServicios::ctrMostrarCategoriaServicios();
+         echo json_encode($servicios);
+    }
+
+
+
+    public function ajaxListarServicios1(){
 
         $servicios = ServicioControlador::ctrListarServicios();
 
@@ -47,10 +99,50 @@ class AjaxServicios{
 
 }
 
+/*=============================================
+EDITAR SERVICIO
+=============================================*/
+if(isset($_POST["idServicio"])){
+
+    $editarServicio = new AjaxServicios();
+    $editarServicio -> idServicio = $_POST["idServicio"];
+    $editarServicio -> ajaxEditarServicio();
+
+}
+
+/*=============================================
+ACTIVAR SERVICIO
+=============================================*/ 
+
+if(isset($_POST["activarId"])){
+
+    $activarServicio = new AjaxServicios();
+    $activarServicio -> activarId = $_POST["activarId"];
+    $activarServicio -> activarServicio = $_POST["activarServicio"];
+    $activarServicio -> ajaxActivarServicio();
+
+}
+/*=============================================
+Listar Servicios
+=============================================*/ 
+if(isset($_POST["accion"]) && $_POST["accion"] == 1){
+$a = new AjaxServicios();
+$a -> ajaxListarServicios();
+
+}
+/*=============================================
+Listar Categorias
+=============================================*/ 
+if(isset($_POST["accion"]) && $_POST["accion"] == 2){
+$a = new AjaxServicios();
+$a -> ajaxListarCategoriaServicios();
+
+}
+/*
 if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar servicios
 
     $servicios = new AjaxServicios();
-    $servicios -> ajaxListarServicios();
+    $servicios -> ajaxListarServicios1();
     
 }else if(isset($_POST['accion']) && $_POST['accion'] == 2){ // parametro para registrar Servicio
 
@@ -93,4 +185,4 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar s
     
   // $listaServicio -> ajaxGetDatosServicios();
 	
-}
+}*/
