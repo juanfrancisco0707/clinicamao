@@ -29,7 +29,7 @@
                             <th>ID</th>
                             <th>Nombre del Servicio</th>
                             <th>Descripción</th>
-                            <th> Categoria</th>
+                            <th>Categoría</th>
                             <th class="text-right">Precio</th>
                             <th class="text-center">Opciones</th>
                         </tr>
@@ -129,6 +129,13 @@
 
 </div>
 <!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
+<style>
+    #tbl_Servicios td {
+        white-space: normal !important; /* Permite que el texto se ajuste en múltiples líneas */
+        word-wrap: break-word; /* Rompe palabras largas si es necesario */
+        vertical-align: top; /* Alinea el contenido de la celda en la parte superior */
+    }
+</style>
 
 <script>
     var accion;
@@ -195,30 +202,41 @@
             columnDefs: [{
                     targets: 0,
                     orderable: false,
-                    width: '10%',
+                    width: '5%',
                     className: 'control'
                 },
                 {
                     targets: 1, // Nombre del Servicio
-                    data: 'id_servicio'
+                    data: 'id_servicio',
+                    width: '5%'
                 },
                 {
                     targets: 2, // Nombre del Servicio
-                    data: 'nombre_servicio'
+                    data: 'nombre_servicio',
+                    width: '25%'
                 },
                 {
                     targets: 3, // Descripción
-                    data: 'descripcion'
+                    data: 'descripcion',
+                    width: '30%'
                 },
                 {
-                targets: 4, 
-                data: 'precio',
-                className: 'dt-body-right',
-                render: $.fn.dataTable.render.number( ',', '.', 0, '$ ' )
-            },
+                    targets: 4, // Categoría
+                    data: 'nombre_categoria', 
+                    width: '15%'
+                },
                 {
-                    targets: 5,
+                    targets: 5, // Precio
+                    data: 'precio',
+                    className: 'dt-body-right text-right',
+                    width: '10%',
+                    render: $.fn.dataTable.render.number(',', '.', 2, '$ ') 
+                },
+                {
+                    targets: 6, // Opciones
                     orderable: false,
+                    width: '10%',
+                    className: 'text-center',
                     render: function(data, type, full, meta) {
                         return "<center>" +
                             "<span class='btnEditarServicio text-primary px-1' style='cursor:pointer;'>" +
@@ -243,19 +261,21 @@
         /*===================================================================*/
         $.ajax({
             url: "../ajax/mao.servicios.ajax.php",
-            cache: false,
-            contentType: false,
-            processData: false,
+            type: 'POST', 
+            data: { accion: 2 }, 
             dataType: 'json',
             success: function(respuesta) {
-
                 var options = '<option selected value="">Seleccione una Categoría</option>';
-
-                for (let index = 0; index < respuesta.length; index++) {
-                    options = options + '<option value=' + respuesta[index][0] + '>' + respuesta[index][1] + '</option>';
+                if (respuesta && respuesta.length > 0) {
+                    for (let index = 0; index < respuesta.length; index++) {
+                        // Asumiendo que las columnas en tblmaocategoria_servicios son 'id' y 'nombre_categoria'
+                        options = options + '<option value="' + respuesta[index].id + '">' + respuesta[index].nombre_categoria + '</option>';
+                    }
                 }
-
-                $("#selCategoria").append(options);
+                $("#selCategoria").empty().append(options);
+            },
+            error: function() {
+                $("#selCategoria").empty().append('<option value="">Error al cargar categorías</option>');
             }
         });
 
@@ -266,6 +286,7 @@
             $("#iptNombreServicio").val("");
             $("#iptDescripcion").val("");
             $("#iptPrecio").val("");
+            $("#selCategoria").val(""); // Limpiar también el select de categoría
 
 
         })
@@ -282,10 +303,11 @@
             var data = table.row($(this).parents('tr')).data();
             // console.log("🚀 ~ file: Servicios.php ~ line 225 ~ $ ~ data", data)
 
-            $("#iptIdServicio").val(data[1]);
-            $("#iptNombreServicio").val(data[2]);
-            $("#iptDescripcion").val(data[3]);
-            $("#iptPrecio").val(data[4]);
+            $("#iptIdServicio").val(data.id_servicio);
+            $("#iptNombreServicio").val(data.nombre_servicio);
+            $("#iptDescripcion").val(data.descripcion);
+            $("#iptPrecio").val(parseFloat(data.precio)); // Convertir a número para el input type number
+            $("#selCategoria").val(data.id_categoria); // Asignar el id_categoria al select
 
         })
 
