@@ -174,7 +174,7 @@
 
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar Cita</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 
                 <button type="button" class="btn btn-primary" id="btnGuardarCita">Guardar Cita</button>
             </div>
@@ -203,6 +203,10 @@
     // Hacer el modal arrastrable
     $('#modalCita').draggable({
         handle: "#modalCitaHeader" // Especifica el encabezado como el área para arrastrar
+    });
+       // Hacer el modal de Sesiones arrastrable
+    $('#modalSesion').draggable({
+        handle: "#modalSesionHeader" // Usa el ID del encabezado del modal de sesiones
     });
     if (typeof FullCalendar === 'undefined' || typeof FullCalendar.Calendar === 'undefined') {
         console.error("FullCalendar o FullCalendar.Calendar no está definido. Asegúrate de que la librería esté cargada en plantilla.php.");
@@ -240,6 +244,9 @@
             $('#modalCitaLabel').text('Registrar Nueva Cita');
             $('#formCita')[0].reset(); // Limpiar formulario
             $('#id_cita').val(''); // Limpiar ID para nuevo registro
+            
+            // Limpiar el contenedor de sesiones para una nueva cita
+            $('#listaSesionesContainer').html('<p>No hay sesiones registradas para esta cita.</p>');
 
             // Formatear fecha y hora para datetime-local input
             // FullCalendar devuelve fechas en formato ISO. Necesitamos ajustarlo.
@@ -596,5 +603,20 @@ $(document).on('click', '.btnEliminarSesion', function() {
         }
     });
 });
+// Ajustar z-index del modal de sesión cuando se muestra, para asegurar que esté encima del modal de cita
+$('#modalSesion').on('shown.bs.modal', function () {
+    var zIndexCita = parseInt($('#modalCita').css('z-index'), 10);
+    var zIndexActualSesion = parseInt($(this).css('z-index'), 10);
+
+    // Si el modal de cita tiene un z-index y el modal de sesión está por debajo o igual,
+    // se incrementa el z-index del modal de sesión.
+    // Bootstrap 4 asigna z-index base de 1050, y para modales apilados va incrementando (ej. 1070 para el segundo).
+    // Este ajuste es por si jQuery UI draggable ha elevado mucho el z-index del modal de cita.
+    if (!isNaN(zIndexCita) && (isNaN(zIndexActualSesion) || zIndexActualSesion <= zIndexCita)) {
+        $(this).css('z-index', zIndexCita + 10); // +10 debería ser suficiente para ponerlo encima
+    }
+    // Bootstrap 4 maneja el z-index de los backdrops apilados automáticamente.
+});
+
 })();
 </script>
