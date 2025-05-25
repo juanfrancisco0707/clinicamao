@@ -54,7 +54,7 @@
         <div class="modal-content">
 
             <!-- cabecera del modal -->
-            <div class="modal-header bg-gray py-1">
+            <div class="modal-header bg-gray py-1"  id="mdlGestionarServicioHeader">
 
                 <h5 class="modal-title">Agregar Servicio</h5>
 
@@ -67,7 +67,7 @@
             <!-- cuerpo del modal -->
             <div class="modal-body">
 
-                <form class="needs-validation" novalidate>
+                <form class="needs-validation" id="formServicio" novalidate>
                     <!-- Abrimos una fila -->
                     <div class="row">
 
@@ -77,7 +77,7 @@
                                 <label class="" for="iptIdServicio"><i class="fas fa-barcode fs-6"></i>
                                     <span class="small">Número</span><span class="text-danger">*</span>
                                 </label>
-                                <input type="number" class="form-control form-control-sm" id="iptIdServicio" name="iptId" placeholder="Identificador" required>
+                                <input type="number" class="form-control form-control-sm" id="iptIdServicio" name="iptId" placeholder="Identificador" required readonly>
                                 <div class="invalid-feedback">Debe ingresar el número del Servicio</div>
                             </div>
                         </div>
@@ -152,6 +152,10 @@
     });
 
     $(document).ready(function() {
+        // Hacer el modal de Gestión de Servicios arrastrable
+        $('#mdlGestionarServicio').draggable({
+            handle: "#mdlGestionarServicioHeader" // Especifica el encabezado como el área para arrastrar
+        });
         /*===================================================================*/
         // CARGA DEL LISTADO CON EL PLUGIN DATATABLE JS
         /*===================================================================*/
@@ -161,6 +165,26 @@
                     text: 'Agregar Servicio',
                     className: 'addNewRecord',
                     action: function(e, dt, node, config) {
+                        // Limpiar formulario y resetear validación
+                        $("#formServicio")[0].reset(); // Asumiendo que tu form tiene id="formServicio"
+                        $(".needs-validation").removeClass("was-validated");
+                        $("#selCategoria").val(""); // Asegúrate de limpiar el select de categoría también
+
+                        // Obtener y mostrar el siguiente ID
+                        $.ajax({
+                            url: "../ajax/mao.servicios.ajax.php",
+                            type: "POST",
+                            data: { accion: "obtenerSiguienteId" },
+                            dataType: 'json',
+                            success: function(respuesta) {
+                                if(respuesta && respuesta.siguiente_id){
+                                    $("#iptIdServicio").val(respuesta.siguiente_id);
+                                }
+                            }
+                        });
+
+
+
                         $("#mdlGestionarServicio").modal('show');
                         accion = 2; //registrar
                     }
@@ -262,7 +286,7 @@
         $.ajax({
             url: "../ajax/mao.servicios.ajax.php",
             type: 'POST', 
-            data: { accion: 2 }, 
+            data: { accion: 22 }, // Cambiado para usar la nueva acción
             dataType: 'json',
             success: function(respuesta) {
                 var options = '<option selected value="">Seleccione una Categoría</option>';
@@ -375,7 +399,7 @@
 
     });
     /*===================================================================*/
-    //EVENTO QUE GUARDA LOS DATOS DEL REPRESENTANTE, PREVIA VALIDACION DEL INGRESO DE LOS DATOS OBLIGATORIOS
+    //EVENTO QUE GUARDA LOS DATOS DEL SERVICIO
     /*===================================================================*/
     document.getElementById("btnGuardarServicio").addEventListener("click", function() {
 
@@ -409,7 +433,7 @@
                         datos.append("nombre_servicio", $("#iptNombreServicio").val()); //Nombre_Servicio
                         datos.append("descripcion", $("#iptDescripcion").val()); //Descripcion
                         datos.append("precio", $("#iptPrecio").val()); //Precio
-                         datos.append("id_categoria", $("#selCategoria").val()); //Categoria
+                        datos.append("id_categoria", $("#selCategoria").val()); //Cambiado a selCategoria para que coincida con el controlador
                         if (accion == 2) {
                             var titulo_msj = "El Servicio se registró correctamente"
                         }

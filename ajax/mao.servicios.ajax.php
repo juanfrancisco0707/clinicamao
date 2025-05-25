@@ -8,6 +8,8 @@ class AjaxServicios{
     public $nombre_servicio;
     public $descripcion;
     public $precio;
+   
+    public $id_categoria;
 
     public $idServicio;
     /* Editar Serivicios IA*/
@@ -70,7 +72,7 @@ class AjaxServicios{
     }
     public function ajaxRegistrarServicio(){
                                                
-        $servicio = ServicioControlador::ctrRegistrarServicio($this->id_servicio, $this->nombre_servicio, $this->descripcion, $this->precio);
+        $servicio = ServicioControlador::ctrRegistrarServicio($this->id_servicio, $this->nombre_servicio, $this->descripcion, $this->precio, $this->id_categoria);
     
         echo json_encode($servicio);
     }  
@@ -95,7 +97,13 @@ class AjaxServicios{
     
         echo json_encode($respuesta);
     }
-    
+     /*=============================================
+    OBTENER SIGUIENTE ID DE SERVICIO
+    =============================================*/
+    public function ajaxObtenerSiguienteIdServicio(){
+        $respuesta = ControladorServicios::ctrObtenerSiguienteIdServicio(); // Usa la clase correcta
+        echo json_encode($respuesta);
+    }
 
 }
 
@@ -133,11 +141,44 @@ $a -> ajaxListarServicios();
 /*=============================================
 Listar Categorias
 =============================================*/ 
-if(isset($_POST["accion"]) && $_POST["accion"] == 2){
+if(isset($_POST["accion"]) && $_POST["accion"] == 22){
 $a = new AjaxServicios();
 $a -> ajaxListarCategoriaServicios();
 
 }
+if(isset($_POST['accion']) && $_POST['accion'] == 2){ // parametro para registrar Servicio
+
+    $registrarServicio = new AjaxServicios();
+    $registrarServicio -> id_servicio = $_POST["id_servicio"];
+    $registrarServicio -> nombre_servicio = $_POST["nombre_servicio"];
+    $registrarServicio -> descripcion = $_POST["descripcion"];
+    $registrarServicio -> precio = $_POST["precio"];
+    $registrarServicio -> id_categoria = $_POST["id_categoria"];
+    
+    $registrarServicio -> ajaxRegistrarServicio();
+    }
+ if(isset($_POST['accion']) && $_POST['accion'] == 4){ // ACCION PARA ACTUALIZAR UN Servicio
+ 
+    $actualizarServicio = new AjaxServicios();
+
+    $data = array(
+        "nombre_servicio" => $_POST["nombre_servicio"],
+        "descripcion" => $_POST["descripcion"],
+        "precio" => $_POST["precio"],
+        "id_categoria" => $_POST["id_categoria"]
+    );
+                           
+    $actualizarServicio -> ajaxActualizarServicio($data);
+
+}   
+/*=============================================
+OBTENER SIGUIENTE ID DE SERVICIO
+=============================================*/
+if(isset($_POST["accion"]) && $_POST["accion"] == "obtenerSiguienteId"){ // Nueva acción
+    $siguienteIdAjax = new AjaxServicios();
+    $siguienteIdAjax -> ajaxObtenerSiguienteIdServicio();
+}
+
 /*
 if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar servicios
 

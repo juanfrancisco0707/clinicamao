@@ -2,6 +2,18 @@
 
 require_once "conexion.php";
 class ModeloServicios{
+    /*=============================================
+    OBTENER SIGUIENTE ID DE SERVICIO
+    =============================================*/
+    static public function mdlObtenerSiguienteIdServicio($tabla){
+        // Asegúrate que $tabla sea el nombre correcto de tu tabla de servicios.
+        // Usaré 'tblmao_servicio' basado en tu mdlMostrarServicios, ajusta si es necesario.
+        $stmt = Conexion::conectar()->prepare("SELECT IFNULL(MAX(id_servicio), 0) + 1 as siguiente_id FROM $tabla");
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = null;
+    }
+
 
     /*=============================================
     MOSTRAR SERVICIOS
@@ -147,17 +159,18 @@ class ServicioModelo{
     /*===================================================================
     REGISTRAR Servicio UNO A UNO DESDE EL FORMULARIO DE Servicios
     ====================================================================*/
-    static public function mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio){        
+    static public function mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio, $id_categoria){        
 
         try{
 
-            $stmt = Conexion::conectar()->prepare("INSERT INTO tblmao_servicio(id_servicio, nombre_servicio, descripcion, precio) 
-                                                VALUES (:id_servicio, :nombre_servicio, :descripcion, :precio)");      
+            $stmt = Conexion::conectar()->prepare("INSERT INTO tblmao_servicio(id_servicio, nombre_servicio, descripcion, precio, id_categoria) 
+                                                VALUES (:id_servicio, :nombre_servicio, :descripcion, :precio, :id_categoria)");      
                                                         
             $stmt -> bindParam(":id_servicio", $id_servicio , PDO::PARAM_INT);
             $stmt -> bindParam(":nombre_servicio", $nombre_servicio, PDO::PARAM_STR);
             $stmt -> bindParam(":descripcion", $descripcion, PDO::PARAM_STR);
             $stmt -> bindParam(":precio", $precio, PDO::PARAM_STR);
+            $stmt->bindParam(":id_categoria", $id_categoria, PDO::PARAM_INT);
 
         
             if($stmt -> execute()){

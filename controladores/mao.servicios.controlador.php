@@ -26,61 +26,25 @@ class ControladorServicios{
     /*=============================================
     CREAR SERVICIO
     =============================================*/
-
-    static public function ctrCrearServicio(){
-
-        if(isset($_POST["iptIdServicio"])){
-
-            if(preg_match('/^[0-9]+$/', $_POST["iptIdServicio"]) &&
-               preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/', $_POST["iptNombreServicio"]) &&
-               preg_match('/^[0-9.]+$/', $_POST["iptPrecio"])){
-
-                $tabla = "tblservicios";
-
-                $datos = array("id_servicio" => $_POST["iptIdServicio"],
-                               "nombre_servicio" => $_POST["iptNombreServicio"],
-                               "descripcion" => $_POST["iptDescripcion"],
-                               "precio" => $_POST["iptPrecio"],
-                               "id_categoria" => $_POST["selCategoria"]);
-
-                $respuesta = ModeloServicios::mdlIngresarServicio($tabla, $datos);
-
-                if($respuesta == "ok"){
-
-                    echo'<script>
-
-                    Swal.fire({
-                          icon: "success",
-                          title: "El servicio ha sido guardado correctamente",
-                          showConfirmButton: false,
-                          timer: 1500
-                        }).then(function(result){
-                                window.location = "servicios";
-                            });
-                    
-                    </script>';
-
-
-                }
-
-            }else{
-
-                echo'<script>
-
-                    Swal.fire({
-                          icon: "error",
-                          title: "¡El servicio no puede ir vacío o llevar caracteres especiales!",
-                          showConfirmButton: false,
-                          timer: 1500
-                        });
-                    
-                    </script>';
-
-            }
-
+    /*===================================================================
+    REGISTRAR Servicio
+    ====================================================================*/
+    static public function ctrCrearServicio($id_servicio, $nombre_servicio, $descripcion, $precio, $id_categoria){
+    
+        // Validar los datos antes de enviarlos al modelo
+        if(!preg_match('/^[0-9]+$/', $id_servicio) ||
+           !preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/', $nombre_servicio) ||
+           !preg_match('/^[0-9.]+$/', $precio)){
+            return "error";
         }
-
+        
+        // Llamar al modelo para registrar el servicio
+    
+       // $registroServicio = ServicioModelo::mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio);
+        $registroServicio = ServicioModelo::mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio, $id_categoria);
+        return $registroServicio;
     }
+ 
 
     /*=============================================
     EDITAR SERVICIO
@@ -173,6 +137,15 @@ class ControladorServicios{
         }
 
     }
+     /*=============================================
+    OBTENER SIGUIENTE ID DE SERVICIO
+    =============================================*/
+    static public function ctrObtenerSiguienteIdServicio(){
+        // Asegúrate que el nombre de la tabla aquí sea el correcto.
+        $tabla = "tblmao_servicio"; 
+        $respuesta = ModeloServicios::mdlObtenerSiguienteIdServicio($tabla);
+        return $respuesta;
+    }
 }
 class ServicioControlador{
 
@@ -190,9 +163,9 @@ class ServicioControlador{
     /*===================================================================
     REGISTRAR Servicio
     ====================================================================*/
-    static public function ctrRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio){
+    static public function ctrRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio, $id_categoria){
     
-        $registroServicio = ServicioModelo::mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio);
+        $registroServicio = ServicioModelo::mdlRegistrarServicio($id_servicio, $nombre_servicio, $descripcion, $precio, $id_categoria);
     
         return $registroServicio;
     }
