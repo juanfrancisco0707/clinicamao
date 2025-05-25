@@ -77,6 +77,40 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 </div>
 <!-- /.content -->
 
+<!-- Sección para la Ficha del Paciente con Pestañas (Inicialmente oculta o se muestra al seleccionar un paciente) -->
+<div class="container-fluid" id="seccionFichaPaciente" style="display: none; margin-top: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Ficha del Paciente: <span id="nombrePacienteEnFicha"></span></h3>
+            <input type="hidden" id="id_paciente_actual_ficha"> <!-- Para guardar el ID del paciente activo en la ficha -->
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="fichaPacienteTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="datos-generales-tab" data-toggle="tab" href="#datos-generales" role="tab" aria-controls="datos-generales" aria-selected="true">Datos Generales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="historial-clinico-tab-paciente" data-toggle="tab" href="#historial-clinico-paciente" role="tab" aria-controls="historial-clinico-paciente" aria-selected="false">Historial Clínico</a>
+                </li>
+                <!-- Puedes añadir más pestañas aquí, por ejemplo, Citas Anteriores, Pagos, etc. -->
+            </ul>
+            <div class="tab-content" id="fichaPacienteTabsContent">
+                <div class="tab-pane fade show active" id="datos-generales" role="tabpanel" aria-labelledby="datos-generales-tab">
+                    <div class="mt-3">
+                        <!-- Aquí cargarías los datos generales del paciente (podría ser un formulario no editable o una vista de detalles) -->
+                        <p>Información detallada del paciente se mostrará aquí...</p>
+                        <button class="btn btn-sm btn-info" id="btnEditarPacienteDesdeFicha">Editar Datos del Paciente</button>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="historial-clinico-paciente" role="tabpanel" aria-labelledby="historial-clinico-tab-paciente">
+                    <!-- El contenido del historial clínico que implementamos anteriormente irá aquí -->
+                    <!-- Incluye el botón "Agregar Nueva Evolución" y el contenedor "#contenedorHistorialClinico" -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Ventana Modal para ingresar o modificar un Paciente -->
 <!-- Ventana Modal para ingresar o modificar un Paciente -->
 <div class="modal fade" id="mdlGestionarPacientes" tabindex="-1" role="dialog" aria-labelledby="modalPacienteLabel" aria-hidden="true">
@@ -275,7 +309,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 
 <!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
                             
-<!-- Ventana Modal para ingresar o modificar un Paciente -->
+<!-- Ventana Modal para modificar un Paciente -->
 <div class="modal fade" id="mdlGestionarPacientesm" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -466,7 +500,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     </div>
 </div>
 
-<!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
+<!-- /. Fin de Ventana Modal para modificar a Pacientes -->
 
 
 <script>
@@ -493,20 +527,430 @@ var Toast = Swal.mixin({
 //});
 
 $(document).ready(function() {
-   /* $.ajax({
+        /* ======================================================================================
+    EVENTO AL DAR CLICK EN EL BOTON VER FICHA DEL PACIENTE
+    =========================================================================================*/
+    $('#tbl_pacientes tbody').on('click', '.btnVerFichaPaciente', function() {
+        var idPaciente = $(this).data('id-paciente');
+        var nombrePaciente = $(this).data('nombre-paciente');
 
-    async: false,
-    url: "../ajax/pacientes.ajax.php",
-    method: "POST",
-    data: {
-        'accion': 11
-    },
-    dataType: 'json',
-    success: function(respuesta) {
-        folio = respuesta["folio"];
-        $("#iptIdReg").val(folio);
+        // Llenar los campos de la ficha
+        $('#id_paciente_actual_ficha').val(idPaciente);
+        $('#nombrePacienteEnFicha').text(nombrePaciente);
+
+        // Aquí deberías cargar los datos generales del paciente en la pestaña "Datos Generales"
+        // Por ejemplo, haciendo una llamada AJAX para obtener los detalles del paciente
+        // y luego poblando los campos correspondientes dentro de la pestaña #datos-generales.
+        // Por ahora, solo mostraremos un mensaje:
+        $('#datos-generales .mt-3').html('<p>Cargando datos generales del paciente ' + nombrePaciente + '...</p>' +
+                                         '<button class="btn btn-sm btn-info" id="btnEditarPacienteDesdeFicha">Editar Datos del Paciente</button>');
+        
+        // Simulación de carga de datos (reemplaza con tu lógica AJAX real)
+        setTimeout(function() {
+            // Suponiendo que tienes una función para cargar los datos del paciente en el formulario de edición
+            // o directamente en elementos de texto dentro de la pestaña de datos generales.
+            // Ejemplo:
+            // $('#campoNombreFicha').text(nombrePaciente);
+            // $('#campoEdadFicha').text(edadDelPaciente); // etc.
+            // Por ahora, solo un mensaje:
+             $('#datos-generales .mt-3').html('<p>Mostrando datos generales de ' + nombrePaciente + '. Implementa la carga de datos aquí.</p>' +
+                                         '<button class="btn btn-sm btn-info" id="btnEditarPacienteDesdeFicha">Editar Datos del Paciente</button>');
+        }, 500);
+
+
+        // Mostrar la sección de la ficha del paciente
+        $('#seccionFichaPaciente').show();
+
+        // Activar la primera pestaña (Datos Generales) por defecto
+        $('#fichaPacienteTabs a[href="#datos-generales"]').tab('show');
+        
+        // Ocultar la tabla de listado de pacientes (opcional, para dar más foco a la ficha)
+        // $('.row:has(#tbl_pacientes)').hide(); // Opcional
+
+        // Si la pestaña de historial clínico ya está activa o se activa, cargar su contenido
+        if ($('#historial-clinico-tab-paciente').hasClass('active')) {
+            cargarHistorialClinico(idPaciente); // Asegúrate que esta función exista y esté definida
+        }
+    });
+
+    // Manejar el clic en la pestaña de Historial Clínico para cargar los datos
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        if (e.target.id === "historial-clinico-tab-paciente") {
+            var idPacienteActual = $("#id_paciente_actual_ficha").val();
+            if (idPacienteActual) {
+                cargarHistorialClinico(idPacienteActual); // Asegúrate que esta función exista
+            }
+        }
+    });
+
+    // (Opcional) Botón para volver al listado de pacientes desde la ficha
+    // Podrías añadir un botón "Volver al Listado" en la #seccionFichaPaciente
+    // y manejar su clic para ocultar la ficha y mostrar la tabla de nuevo.
+    // Ejemplo:
+    // $('#btnVolverAlListado').on('click', function() {
+    //     $('#seccionFichaPaciente').hide();
+    //     $('.row:has(#tbl_pacientes)').show();
+    // });
+
+    // Botón para editar paciente desde la ficha (ejemplo de cómo abrir el modal de edición)
+    $(document).on('click', '#btnEditarPacienteDesdeFicha', function() {
+        var idPaciente = $('#id_paciente_actual_ficha').val();
+        // Aquí simulas el clic en el botón de editar de la tabla para reutilizar tu lógica existente
+        // o llamas directamente a una función que cargue los datos en el modal de edición.
+        
+        // Opción 1: Simular clic (si tienes un botón de editar en la tabla con una clase específica)
+        // $('#tbl_pacientes tbody tr').find('.btnEditarPaciente[data-id="' + idPaciente + '"]').click(); 
+        // Necesitarías añadir data-id al botón de editar en la tabla.
+
+        // Opción 2: Llamar a una función que cargue datos y muestre el modal de edición
+        // Esta es más limpia si no quieres depender de la estructura de la tabla.
+        cargarYMostrarModalEdicionPaciente(idPaciente);
+    });
+
+    function cargarYMostrarModalEdicionPaciente(idPaciente) {
+        // 1. Hacer una llamada AJAX para obtener los datos del paciente por su ID
+        // (similar a como lo harías al editar desde la tabla)
+        // 2. Poblar los campos del modal #mdlGestionarPacientesm con los datos recibidos
+        // 3. Mostrar el modal: $('#mdlGestionarPacientesm').modal('show');
+        
+        // Ejemplo simplificado (debes implementar la carga de datos real):
+        console.log("Abrir modal de edición para paciente ID:", idPaciente);
+        // Aquí iría tu lógica para obtener datos del paciente y poblar el modal #mdlGestionarPacientesm
+        // Por ejemplo:
+        $.ajax({
+            url: '../ajax/pacientes.ajax.php', // Ajusta la URL y la acción
+            type: 'POST',
+            data: { accion: 'obtenerPacientePorId', id_paciente: idPaciente }, // Necesitarás esta acción en tu AJAX
+            dataType: 'json',
+            success: function(paciente) {
+                if(paciente){
+                    $("#iptIdRegm").val(paciente.id); // Asegúrate que las claves coincidan
+                    $("#iptNombreRegm").val(paciente.nombre);
+                    $("#iptSexoRegm").val(paciente.sexo);
+                    $("#iptFecha_NacimientoRegm").val(paciente.fecha_nacimiento);
+                    $("#iptEdadRegm").val(paciente.edad); // Si la edad se calcula, puede que no venga aquí
+                    $("#iptDireccionRegm").val(paciente.direccion);
+                    $("#iptTelefonoRegm").val(paciente.telefono);
+                    $("#iptCorreoRegm").val(paciente.correo);
+                    $("#iptEstado_CivilRegm").val(paciente.estado_civil);
+                    $("#iptEscolaridadRegm").val(paciente.escolaridad);
+                    $("#selOcupacionRegm").val(paciente.id_ocupacion);
+                    $("#selNacionalidadRegm").val(paciente.id_nacionalidad);
+                    $("#iptComorbilidadRegm").val(paciente.comorbilidad);
+                    $("#iptEstatusRegm").val(paciente.estatus);
+                    $("#selEmpresaRegm").val(paciente.id_empresa);
+                    
+                    $('#mdlGestionarPacientesm').modal('show');
+                    accion = 4; // Indicar que es una acción de edición
+                } else {
+                    Swal.fire('Error', 'No se pudieron obtener los datos del paciente para editar.', 'error');
+                }
+            },
+            error: function(){
+                Swal.fire('Error', 'Problema al obtener datos del paciente.', 'error');
+            }
+        });
     }
-    });*/
+
+    // Asegúrate que la función cargarHistorialClinico esté definida
+    // (debería estar en el script que te proporcioné anteriormente para el historial)
+    // function cargarHistorialClinico(idPaciente) { ... }
+
+     // Asume que tienes el ID del paciente actual en un input oculto o variable JS
+    const idPacienteActual = $("#id_paciente_actual").val(); // Ajusta este selector
+
+    // Función para cargar el historial clínico del paciente
+    function cargarHistorialClinico(idPaciente) {
+        $("#contenedorHistorialClinico").html('<p>Cargando historial clínico...</p>');
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php', // Ajusta la ruta
+            type: 'POST',
+            data: {
+                accionHistorial: 'mostrarPorPaciente',
+                id_paciente: idPaciente
+            },
+            dataType: 'json',
+            success: function(historial) {
+                let htmlHistorial = '<ul class="list-group">';
+                if (historial && historial.length > 0) {
+                    historial.forEach(function(entrada) {
+                        htmlHistorial += `
+                            <li class="list-group-item">
+                                <h5>Evaluación del: ${new Date(entrada.fecha_evaluacion).toLocaleString()} (Sesión: ${new Date(entrada.fecha_hora_sesion).toLocaleDateString()})</h5>
+                                <p><strong>Diagnóstico:</strong> ${entrada.nombre_diagnostico || 'No especificado'}</p>
+                                <p><strong>Subjetivo:</strong> ${entrada.subjetivo || 'N/A'}</p>
+                                <p><strong>Objetivo:</strong> ${entrada.objetivo || 'N/A'}</p>
+                                <p><strong>Evolución:</strong> ${entrada.evolucion_notas || 'N/A'}</p>
+                                <p><strong>Plan en sesión:</strong> ${entrada.plan_tratamiento_sesion || 'N/A'}</p>
+                                <button class="btn btn-sm btn-info btnVerDetalleHistorial" data-idhistorial="${entrada.id_historial}">Ver/Editar</button>
+                                <button class="btn btn-sm btn-danger btnEliminarHistorial" data-idhistorial="${entrada.id_historial}">Eliminar</button>
+                            </li>`;
+                    });
+                } else {
+                    htmlHistorial += '<li class="list-group-item">No hay entradas en el historial clínico para este paciente.</li>';
+                }
+                htmlHistorial += '</ul>';
+                $("#contenedorHistorialClinico").html(htmlHistorial);
+            },
+            error: function() {
+                $("#contenedorHistorialClinico").html('<p class="text-danger">Error al cargar el historial clínico.</p>');
+            }
+        });
+    }
+
+    // Cargar el historial cuando se muestra la pestaña
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        if (e.target.id === "historial-clinico-tab" && idPacienteActual) {
+            cargarHistorialClinico(idPacienteActual);
+        }
+    });
+
+    // Si la pestaña de historial es la activa por defecto al cargar la página
+    if ($("#historial-clinico-tab").hasClass('active') && idPacienteActual) {
+         cargarHistorialClinico(idPacienteActual);
+    }
+
+
+    // Función para cargar el select de sesiones sin historial
+    function cargarSesionesParaHistorial(idPaciente, idSesionSeleccionada = null) {
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php',
+            type: 'POST',
+            data: {
+                accionHistorial: 'obtenerSesionesSinHistorial',
+                id_paciente_sesiones: idPaciente
+            },
+            dataType: 'json',
+            success: function(sesiones) {
+                let options = '<option value="">Seleccione una sesión...</option>';
+                if (sesiones && sesiones.length > 0) {
+                    sesiones.forEach(function(sesion) {
+                        options += `<option value="${sesion.id_sesion}" ${idSesionSeleccionada == sesion.id_sesion ? 'selected' : ''}>
+                                        ${new Date(sesion.fecha_hora).toLocaleString()} - ${sesion.nombre_servicio}
+                                    </option>`;
+                    });
+                }
+                 // Si estamos editando y la sesión ya tiene historial, la añadimos manualmente si no está en la lista
+                if (idSesionSeleccionada && !sesiones.find(s => s.id_sesion == idSesionSeleccionada)) {
+                    // Necesitaríamos una forma de obtener los detalles de esta sesión específica si no está en la lista
+                    // Por ahora, si se está editando, el id_sesion ya vendrá y se seleccionará si existe.
+                    // Si la sesión ya tiene historial, no aparecerá en "sesiones sin historial".
+                    // Para edición, el select de sesión debería estar deshabilitado o mostrar la sesión actual.
+                    // Aquí simplificaremos: si es edición, el select se poblará y se seleccionará el valor.
+                }
+
+                $("#id_sesion_historial").html(options);
+                 if (idSesionSeleccionada) { // Asegurar que se seleccione si viene de una edición
+                    $("#id_sesion_historial").val(idSesionSeleccionada);
+                }
+            },
+            error: function() {
+                $("#id_sesion_historial").html('<option value="">Error al cargar sesiones</option>');
+            }
+        });
+    }
+
+    // Función para cargar el catálogo de diagnósticos
+    function cargarCatalogoDiagnosticos(idDiagnosticoSeleccionado = null) {
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php',
+            type: 'POST',
+            data: { accionHistorial: 'obtenerCatalogoDiagnosticos' },
+            dataType: 'json',
+            success: function(diagnosticos) {
+                let options = '<option value="">Seleccione un diagnóstico...</option>';
+                if (diagnosticos && diagnosticos.length > 0) {
+                    diagnosticos.forEach(function(diag) {
+                        options += `<option value="${diag.id_diagnostico}" ${idDiagnosticoSeleccionado == diag.id_diagnostico ? 'selected' : ''}>
+                                        ${diag.codigo_estandar ? diag.codigo_estandar + ' - ' : ''}${diag.nombre_diagnostico}
+                                    </option>`;
+                    });
+                }
+                $("#diagnostico_historial").html(options);
+                if (idDiagnosticoSeleccionado) {
+                    $("#diagnostico_historial").val(idDiagnosticoSeleccionado);
+                }
+            }
+        });
+    }
+
+
+    // Abrir modal para NUEVA evolución
+    $("#btnAbrirModalNuevaEvolucion").on("click", function() {
+        if (!idPacienteActual) {
+            Swal.fire("Error", "No se ha identificado un paciente.", "error");
+            return;
+        }
+        $("#formHistorialClinico")[0].reset();
+        $("#id_historial_form").val(""); // Limpiar ID para nuevo registro
+        $("#modalHistorialClinicoLabel").text("Registrar Nueva Evolución Clínica");
+        $("#id_sesion_historial").prop("disabled", false); // Habilitar select de sesión
+        
+        cargarSesionesParaHistorial(idPacienteActual); // Cargar sesiones disponibles
+        cargarCatalogoDiagnosticos(); // Cargar diagnósticos
+        
+        // Poner fecha y hora actual por defecto
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        $("#fecha_evaluacion_historial").val(`${year}-${month}-${day}T${hours}:${minutes}`);
+
+        $("#modalHistorialClinico").modal("show");
+    });
+
+    // Abrir modal para EDITAR/VER evolución (delegado)
+    $("#contenedorHistorialClinico").on("click", ".btnVerDetalleHistorial", function() {
+        const idHistorial = $(this).data("idhistorial");
+        $("#formHistorialClinico")[0].reset();
+        $("#modalHistorialClinicoLabel").text("Editar Evolución Clínica");
+
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php',
+            type: 'POST',
+            data: {
+                accionHistorial: 'obtenerPorId',
+                id_historial_editar: idHistorial
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data) {
+                    $("#id_historial_form").val(data.id_historial);
+                    
+                    // Cargar y seleccionar la sesión. Para edición, la sesión no debería cambiar.
+                    // Podrías deshabilitar el select o cargarlo con la sesión actual.
+                    // Aquí lo cargaremos y seleccionaremos, pero idealmente se deshabilita.
+                    cargarSesionesParaHistorial(idPacienteActual, data.id_sesion); 
+                    $("#id_sesion_historial").val(data.id_sesion).prop("disabled", true); // Deshabilitar para edición
+
+                    let fechaEval = data.fecha_evaluacion.replace(' ', 'T').substring(0, 16);
+                    $("#fecha_evaluacion_historial").val(fechaEval);
+                    $("#subjetivo_historial").val(data.subjetivo);
+                    $("#objetivo_historial").val(data.objetivo);
+                    
+                    cargarCatalogoDiagnosticos(data.id_diagnostico); // Cargar y seleccionar diagnóstico
+                    
+                    $("#plan_tratamiento_historial").val(data.plan_tratamiento_sesion);
+                    $("#objetivos_corto_historial").val(data.objetivos_corto_plazo);
+                    $("#objetivos_largo_historial").val(data.objetivos_largo_plazo);
+                    $("#recomendaciones_historial").val(data.recomendaciones_domiciliarias);
+                    $("#evolucion_historial").val(data.evolucion_notas);
+                    $("#proxima_cita_historial").val(data.proxima_cita_sugerida);
+                    
+                    $("#modalHistorialClinico").modal("show");
+                } else {
+                    Swal.fire("Error", "No se pudieron obtener los datos de la evolución.", "error");
+                }
+            },
+            error: function() {
+                 Swal.fire("Error", "Ocurrió un problema al cargar la evolución.", "error");
+            }
+        });
+    });
+
+    // Guardar (Registrar o Editar) Historial Clínico
+    $("#btnGuardarHistorialClinico").on("click", function() {
+        // Validación simple del lado del cliente (puedes mejorarla)
+        if (!$("#id_sesion_historial").val() || !$("#fecha_evaluacion_historial").val()) {
+            Swal.fire("Atención", "La sesión asociada y la fecha de evaluación son obligatorias.", "warning");
+            return;
+        }
+
+        const idHistorial = $("#id_historial_form").val();
+        const accion = idHistorial ? "editar" : "registrar";
+        let formData = $("#formHistorialClinico").serializeArray(); // Obtiene datos del form
+        formData.push({name: "accionHistorial", value: accion});
+        // El id_historial_form ya está en el serialize si tiene valor.
+        // El id_sesion_historial también.
+        // Los nombres de los campos en el form deben coincidir con los esperados por el controlador.
+        // Ejemplo: name="subjetivo_historial" en el textarea.
+
+        // Convertir serializeArray a un objeto para facilitar el acceso
+        let dataToSend = {};
+        formData.forEach(item => {
+            dataToSend[item.name] = item.value;
+        });
+        // Asegurar que el id_sesion se envíe correctamente si estaba deshabilitado
+        if (accion === "editar") {
+            dataToSend["id_sesion_historial"] = $("#id_sesion_historial").val();
+        }
+
+
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php',
+            type: 'POST',
+            data: dataToSend,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === "ok") {
+                    Swal.fire("¡Guardado!", `La evolución clínica ha sido ${accion === 'registrar' ? 'registrada' : 'actualizada'}.`, "success");
+                    $("#modalHistorialClinico").modal("hide");
+                    if (idPacienteActual) {
+                        cargarHistorialClinico(idPacienteActual); // Recargar la lista
+                    }
+                } else {
+                    Swal.fire("Error", response.message || "No se pudo guardar la evolución.", "error");
+                }
+            },
+            error: function() {
+                Swal.fire("Error", "Ocurrió un problema de comunicación.", "error");
+            }
+        });
+    });
+
+    // Eliminar Historial (delegado)
+    $("#contenedorHistorialClinico").on("click", ".btnEliminarHistorial", function() {
+        const idHistorial = $(this).data("idhistorial");
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, ¡eliminar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../ajax/historialclinico.ajax.php',
+                    type: 'POST',
+                    data: {
+                        accionHistorial: 'eliminar',
+                        id_historial_eliminar: idHistorial
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === "ok") {
+                            Swal.fire('¡Eliminado!', 'La entrada del historial ha sido eliminada.', 'success');
+                            if (idPacienteActual) {
+                                cargarHistorialClinico(idPacienteActual);
+                            }
+                        } else {
+                            Swal.fire('Error', response.message || 'No se pudo eliminar la entrada.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Ocurrió un problema de comunicación.', 'error');
+                    }
+                });
+            }
+        });
+    });
+
+
+
+
+
+
+    /* ************************************************************************************************************************ */
+
+
+
+
+    /*===================================================================*/
     $.ajax({
         async: false,
         url: "../ajax/mao.folio.ajax.php",
@@ -874,7 +1318,10 @@ $(document).ready(function() {
                 targets: 20,
                 orderable: false,
                 render: function(data, type, full, meta) {
-                    return "<center>" +                        
+                    return "<center>" +
+                    "<span class='btnVerFichaPaciente text-info px-1' style='cursor:pointer;' data-id-paciente='" + full.id + "' data-nombre-paciente='" + full.nombre + "'>" + // Asumiendo que 'full.id' es el ID y 'full.nombre' es el nombre
+                        "<i class='fas fa-eye fs-5'></i>" +
+                        "</span>" +                        
                         "<span class='btnEditarPaciente text-primary px-1' style='cursor:pointer;'>" +
                         "<i class='fas fa-pencil-alt fs-5'></i>" +
                         "</span>" +
