@@ -103,8 +103,15 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
                     </div>
                 </div>
                 <div class="tab-pane fade" id="historial-clinico-paciente" role="tabpanel" aria-labelledby="historial-clinico-tab-paciente">
-                    <!-- El contenido del historial clínico que implementamos anteriormente irá aquí -->
-                    <!-- Incluye el botón "Agregar Nueva Evolución" y el contenedor "#contenedorHistorialClinico" -->
+                    <div class="mt-3">
+                        <button class="btn btn-primary mb-3" id="btnAbrirModalNuevaEvolucion">
+                            <i class="fas fa-plus"></i> Agregar Nueva Evolución
+                        </button>
+                        <div id="contenedorHistorialClinico">
+                            <!-- El historial se cargará aquí mediante AJAX -->
+                            <p>Cargando historial clínico...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
