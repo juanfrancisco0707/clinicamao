@@ -116,6 +116,13 @@
                                 <p>Horarios</p>
                             </a>
                         </li>
+                         <li class="nav-item">
+                            <a style="cursor: pointer;" class="nav-link" id="mcategoria_diagnostico"
+                                onclick="CargarContenido('../vistas/mao.categoria.diagnostico.php','content-wrapper')">
+                                <i class="fa fa-user-secret" aria-hidden="true"></i>&nbsp;&nbsp;
+                                <p>Categorias de diagnósticos</p>
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a style="cursor: pointer;" class="nav-link" id="minventario"
                                 onclick="CargarContenido('../vistas/mao.inventario.php','content-wrapper')">
@@ -405,6 +412,9 @@
                         case '33':
                             $("#minventario").show();
                             break;
+                             case '34':
+                            $("#mcategoria_diagnostico").show();
+                            break;
 
                         default:
                             break;
@@ -451,6 +461,7 @@
         $("#mdashboardo").hide();
         $("#mmodulos").hide();
         $("#minventario").hide();
+         $("#mcategoria_diagnostico").hide();
         
 
 
