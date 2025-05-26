@@ -161,7 +161,7 @@ class ModeloHistorialClinico
             "SELECT s.id_sesion, s.fecha_hora, serv.nombre_servicio
             FROM tblSesiones s
             JOIN Citas ct ON s.id_cita = ct.id_cita
-            JOIN Servicios serv ON s.id_servicio = serv.id_servicio
+            JOIN tblmao_Servicio serv ON s.id_servicio = serv.id_servicio
             LEFT JOIN HistorialClinicoSesion hc ON s.id_sesion = hc.id_sesion
             WHERE ct.id_paciente = :id_paciente AND hc.id_historial IS NULL AND ct.estado = 'Completada'
             ORDER BY s.fecha_hora DESC"

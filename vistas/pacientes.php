@@ -508,6 +508,90 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 </div>
 
 <!-- /. Fin de Ventana Modal para modificar a Pacientes -->
+<!-- Modal para Registrar/Editar Historial Clínico -->
+<div class="modal fade" id="modalHistorialClinico" tabindex="-1" role="dialog" aria-labelledby="modalHistorialClinicoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHistorialClinicoLabel">Registrar Evolución Clínica</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formHistorialClinico"> 
+                    <input type="hidden" id="id_historial_form">
+
+                    <div class="form-group">
+                        <label for="id_sesion_historial">Sesión Asociada <span class="text-danger">*</span></label>
+                        <select class="form-control" id="id_sesion_historial" name="id_sesion_historial" required>
+                            <!-- Opciones se cargarán dinámicamente -->
+                        </select>
+                        <small class="form-text text-muted">Seleccione la sesión a la que corresponde esta evolución.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_evaluacion_historial">Fecha de Evaluación <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="fecha_evaluacion_historial" name="fecha_evaluacion_historial" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subjetivo_historial">Subjetivo (S.O.A.P.)</label>
+                        <textarea class="form-control" id="subjetivo_historial" name="subjetivo_historial" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objetivo_historial">Objetivo (S.O.A.P.)</label>
+                        <textarea class="form-control" id="objetivo_historial" name="objetivo_historial" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diagnostico_historial">Diagnóstico Fisioterapéutico</label>
+                        <select class="form-control" id="diagnostico_historial" name="diagnostico_historial">
+                            <option value="">Seleccione un diagnóstico...</option>
+                            <!-- Opciones se cargarán dinámicamente -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plan_tratamiento_historial">Plan de Tratamiento / Intervención en Sesión</label>
+                        <textarea class="form-control" id="plan_tratamiento_historial" name="plan_tratamiento_historial" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="evolucion_historial">Evolución / Análisis (S.O.A.P.)</label>
+                        <textarea class="form-control" id="evolucion_historial" name="evolucion_historial" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objetivos_corto_historial">Objetivos a Corto Plazo</label>
+                        <textarea class="form-control" id="objetivos_corto_historial" name="objetivos_corto_historial" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="objetivos_largo_historial">Objetivos a Largo Plazo</label>
+                        <textarea class="form-control" id="objetivos_largo_historial" name="objetivos_largo_historial" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recomendaciones_historial">Recomendaciones Domiciliarias / Plan (S.O.A.P.)</label>
+                        <textarea class="form-control" id="recomendaciones_historial" name="recomendaciones_historial" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proxima_cita_historial">Próxima Cita Sugerida</label>
+                        <input type="date" class="form-control" id="proxima_cita_historial" name="proxima_cita_historial">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarHistorialClinico">Guardar Evolución</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -664,7 +748,7 @@ $(document).ready(function() {
     // function cargarHistorialClinico(idPaciente) { ... }
 
      // Asume que tienes el ID del paciente actual en un input oculto o variable JS
-    const idPacienteActual = $("#id_paciente_actual").val(); // Ajusta este selector
+    const idPacienteActual = $("#id_paciente_actual_ficha").val(); // Ajusta este selector
 
     // Función para cargar el historial clínico del paciente
     function cargarHistorialClinico(idPaciente) {
@@ -784,16 +868,23 @@ $(document).ready(function() {
 
     // Abrir modal para NUEVA evolución
     $("#btnAbrirModalNuevaEvolucion").on("click", function() {
-        if (!idPacienteActual) {
+      /*  if (!idPacienteActual) {
             Swal.fire("Error", "No se ha identificado un paciente.", "error");
             return;
-        }
+        }*/
+       var idPacienteActual = $("#id_paciente_actual_ficha").val();
+        // Opción 1: Detener con un alert y ver el valor
+       // alert("El idPacienteActual es: " + idPacienteActual + ". La ejecución se detendrá aquí.");
+        // Si quieres que la ejecución NO continúe después del alert, puedes añadir un return:
+        // return; 
         $("#formHistorialClinico")[0].reset();
         $("#id_historial_form").val(""); // Limpiar ID para nuevo registro
         $("#modalHistorialClinicoLabel").text("Registrar Nueva Evolución Clínica");
         $("#id_sesion_historial").prop("disabled", false); // Habilitar select de sesión
         
+        // alert("antes de cargar sesiones");
         cargarSesionesParaHistorial(idPacienteActual); // Cargar sesiones disponibles
+       
         cargarCatalogoDiagnosticos(); // Cargar diagnósticos
         
         // Poner fecha y hora actual por defecto
@@ -804,7 +895,7 @@ $(document).ready(function() {
         const hours = now.getHours().toString().padStart(2, '0');
         const minutes = now.getMinutes().toString().padStart(2, '0');
         $("#fecha_evaluacion_historial").val(`${year}-${month}-${day}T${hours}:${minutes}`);
-
+       
         $("#modalHistorialClinico").modal("show");
     });
 
