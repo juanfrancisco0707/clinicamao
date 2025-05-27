@@ -85,7 +85,22 @@ class ModeloHistorialClinico
         return $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt = null;
     }
-    
+    /**
+     * Obtiene los detalles de una sesión específica por su ID para el select.
+     */
+    static public function mdlObtenerDetallesSesionPorId($idSesion)
+    {
+        $stmt = Conexion::conectar()->prepare(
+            "SELECT s.id_sesion, s.fecha_hora, serv.nombre_servicio
+            FROM tblSesiones s  -- Asegúrate que el nombre de tu tabla de sesiones sea correcto
+            JOIN tblmao_Servicio serv ON s.id_servicio = serv.id_servicio -- Asegúrate que el nombre de tu tabla de servicios sea correcto
+            WHERE s.id_sesion = :id_sesion"
+        );
+        $stmt->bindParam(":id_sesion", $idSesion, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = null;
+    }
     /**
      * Obtiene una entrada específica del historial por id_sesion.
      */

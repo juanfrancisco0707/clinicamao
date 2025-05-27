@@ -507,7 +507,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
     </div>
 </div>
 
-<!-- /. Fin de Ventana Modal para modificar a Pacientes -->
+<!-- /. Fin de Ventana Modal para modificar a Pacientes name="id_historial_form -->
 <!-- Modal para Registrar/Editar Historial Clínico -->
 <div class="modal fade" id="modalHistorialClinico" tabindex="-1" role="dialog" aria-labelledby="modalHistorialClinicoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -520,7 +520,7 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
             </div>
             <div class="modal-body">
                 <form id="formHistorialClinico"> 
-                    <input type="hidden" id="id_historial_form">
+                    <input type="hidden" id="id_historial_form" name="id_historial_form" value="">
 
                     <div class="form-group">
                         <label for="id_sesion_historial">Sesión Asociada <span class="text-danger">*</span></label>
@@ -803,7 +803,8 @@ $(document).ready(function() {
 
 
     // Función para cargar el select de sesiones sin historial
-    function cargarSesionesParaHistorial(idPaciente, idSesionSeleccionada = null) {
+    //function cargarSesionesParaHistorial(idPaciente, idSesionSeleccionada = null) {
+    function cargarSesionesParaHistorial(idPaciente, idSesionActualEdicion = null, callback) {
         $.ajax({
             url: '../ajax/historialclinico.ajax.php',
             type: 'POST',
@@ -816,24 +817,52 @@ $(document).ready(function() {
                 let options = '<option value="">Seleccione una sesión...</option>';
                 if (sesiones && sesiones.length > 0) {
                     sesiones.forEach(function(sesion) {
-                        options += `<option value="${sesion.id_sesion}" ${idSesionSeleccionada == sesion.id_sesion ? 'selected' : ''}>
-                                        ${new Date(sesion.fecha_hora).toLocaleString()} - ${sesion.nombre_servicio}
+                        options += `<option value="${sesion.id_sesion}" ${idSesionActualEdicion  == sesion.id_sesion ? 'selected' : ''}>
+                                        ${new Date(sesion.fecha_hora).toLocaleString()} - ${sesion.nombre_servicio || 'Servicio no especificado'}
                                     </option>`;
                     });
                 }
-                 // Si estamos editando y la sesión ya tiene historial, la añadimos manualmente si no está en la lista
+                 /* Si estamos editando y la sesión ya tiene historial, la añadimos manualmente si no está en la lista
                 if (idSesionSeleccionada && !sesiones.find(s => s.id_sesion == idSesionSeleccionada)) {
                     // Necesitaríamos una forma de obtener los detalles de esta sesión específica si no está en la lista
                     // Por ahora, si se está editando, el id_sesion ya vendrá y se seleccionará si existe.
                     // Si la sesión ya tiene historial, no aparecerá en "sesiones sin historial".
                     // Para edición, el select de sesión debería estar deshabilitado o mostrar la sesión actual.
                     // Aquí simplificaremos: si es edición, el select se poblará y se seleccionará el valor.
+                }*/
+                 // Si estamos editando y la sesión actual no está en la lista de "sesiones sin historial",
+                // la obtenemos y la añadimos.
+                if (idSesionActualEdicion && (!sesiones || !sesiones.find(s => s.id_sesion == idSesionActualEdicion))) {
+                    $.ajax({
+                        url: '../ajax/historialclinico.ajax.php',
+                        type: 'POST',
+                        data: {
+                            accionHistorial: 'obtenerDetallesSesionPorId',
+                            id_sesion_detalle: idSesionActualEdicion
+                        },
+                        dataType: 'json',
+                        success: function(sesionActual) {
+                            if (sesionActual) {
+                                options = `<option value="${sesionActual.id_sesion}" selected>
+                                                ${new Date(sesionActual.fecha_hora).toLocaleString()} - ${sesionActual.nombre_servicio || 'Servicio no especificado'} (Sesión actual)
+                                           </option>` + options.replace('<option value="">Seleccione una sesión...</option>', ''); // Evitar duplicar el placeholder
+                            }
+                            $("#id_sesion_historial").html(options);
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $("#id_sesion_historial").html(options);
+                    if (idSesionActualEdicion) {
+                        $("#id_sesion_historial").val(idSesionActualEdicion);
+                    }
+                    if (callback) callback();
                 }
-
+                /*
                 $("#id_sesion_historial").html(options);
                  if (idSesionSeleccionada) { // Asegurar que se seleccione si viene de una edición
                     $("#id_sesion_historial").val(idSesionSeleccionada);
-                }
+                }*/
             },
             error: function() {
                 $("#id_sesion_historial").html('<option value="">Error al cargar sesiones</option>');
@@ -874,17 +903,18 @@ $(document).ready(function() {
         }*/
        var idPacienteActual = $("#id_paciente_actual_ficha").val();
         // Opción 1: Detener con un alert y ver el valor
-       // alert("El idPacienteActual es: " + idPacienteActual + ". La ejecución se detendrá aquí.");
+       // alert("El idPacienteActual es: " + idPacienteActucontenedorHistorialClinicoal + ". La ejecución se detendrá aquí.");
         // Si quieres que la ejecución NO continúe después del alert, puedes añadir un return:
         // return; 
+         const idPacienteFicha = $("#id_paciente_actual_ficha").val();
         $("#formHistorialClinico")[0].reset();
         $("#id_historial_form").val(""); // Limpiar ID para nuevo registro
         $("#modalHistorialClinicoLabel").text("Registrar Nueva Evolución Clínica");
         $("#id_sesion_historial").prop("disabled", false); // Habilitar select de sesión
         
         // alert("antes de cargar sesiones");
-        cargarSesionesParaHistorial(idPacienteActual); // Cargar sesiones disponibles
-       
+        //cargarSesionesParaHistorial(idPacienteActual); // Cargar sesiones disponibles
+        cargarSesionesParaHistorial(idPacienteFicha); // Cargar sesiones disponibles
         cargarCatalogoDiagnosticos(); // Cargar diagnósticos
         
         // Poner fecha y hora actual por defecto
@@ -902,6 +932,7 @@ $(document).ready(function() {
     // Abrir modal para EDITAR/VER evolución (delegado)
     $("#contenedorHistorialClinico").on("click", ".btnVerDetalleHistorial", function() {
         const idHistorial = $(this).data("idhistorial");
+         const idPacienteFicha = $("#id_paciente_actual_ficha").val();
         $("#formHistorialClinico")[0].reset();
         $("#modalHistorialClinicoLabel").text("Editar Evolución Clínica");
 
@@ -920,9 +951,13 @@ $(document).ready(function() {
                     // Cargar y seleccionar la sesión. Para edición, la sesión no debería cambiar.
                     // Podrías deshabilitar el select o cargarlo con la sesión actual.
                     // Aquí lo cargaremos y seleccionaremos, pero idealmente se deshabilita.
-                    cargarSesionesParaHistorial(idPacienteActual, data.id_sesion); 
-                    $("#id_sesion_historial").val(data.id_sesion).prop("disabled", true); // Deshabilitar para edición
-
+                   // cargarSesionesParaHistorial(idPacienteActual, data.id_sesion); 
+                   // $("#id_sesion_historial").val(data.id_sesion).prop("disabled", true); // Deshabilitar para edición
+                    // Cargar sesiones, asegurando que la sesión actual esté y se seleccione.
+                    // El select permanecerá habilitado para permitir cambios.
+                    cargarSesionesParaHistorial(idPacienteFicha, data.id_sesion, function() {
+                        $("#id_sesion_historial").val(data.id_sesion).prop("disabled", false); 
+                    }); 
                     let fechaEval = data.fecha_evaluacion.replace(' ', 'T').substring(0, 16);
                     $("#fecha_evaluacion_historial").val(fechaEval);
                     $("#subjetivo_historial").val(data.subjetivo);
@@ -950,12 +985,13 @@ $(document).ready(function() {
 
     // Guardar (Registrar o Editar) Historial Clínico
     $("#btnGuardarHistorialClinico").on("click", function() {
+        
         // Validación simple del lado del cliente (puedes mejorarla)
         if (!$("#id_sesion_historial").val() || !$("#fecha_evaluacion_historial").val()) {
             Swal.fire("Atención", "La sesión asociada y la fecha de evaluación son obligatorias.", "warning");
             return;
         }
-
+        
         const idHistorial = $("#id_historial_form").val();
         const accion = idHistorial ? "editar" : "registrar";
         let formData = $("#formHistorialClinico").serializeArray(); // Obtiene datos del form
@@ -985,8 +1021,10 @@ $(document).ready(function() {
                 if (response.status === "ok") {
                     Swal.fire("¡Guardado!", `La evolución clínica ha sido ${accion === 'registrar' ? 'registrada' : 'actualizada'}.`, "success");
                     $("#modalHistorialClinico").modal("hide");
-                    if (idPacienteActual) {
-                        cargarHistorialClinico(idPacienteActual); // Recargar la lista
+                    if (idPacienteFicha) { // Usar el id de la ficha
+                        cargarHistorialClinico(idPacienteFicha); // Recargar la lista
+                    //if (idPacienteActual) {
+                    //    cargarHistorialClinico(idPacienteActual); // Recargar la lista
                     }
                 } else {
                     Swal.fire("Error", response.message || "No se pudo guardar la evolución.", "error");
@@ -1417,13 +1455,13 @@ $(document).ready(function() {
                 orderable: false,
                 render: function(data, type, full, meta) {
                     return "<center>" +
-                    "<span class='btnVerFichaPaciente text-info px-1' style='cursor:pointer;' data-id-paciente='" + full.id + "' data-nombre-paciente='" + full.nombre + "'>" + // Asumiendo que 'full.id' es el ID y 'full.nombre' es el nombre
+                    "<span class='btnVerFichaPaciente text-info px-1' style='cursor:pointer;' data-toggle='tooltip' title='Ver Ficha del Paciente' data-id-paciente='" + full.id + "' data-nombre-paciente='" + full.nombre + "'>" +
                         "<i class='fas fa-eye fs-5'></i>" +
                         "</span>" +                        
-                        "<span class='btnEditarPaciente text-primary px-1' style='cursor:pointer;'>" +
+                        "<span class='btnEditarPaciente text-primary px-1' style='cursor:pointer;' data-toggle='tooltip' title='Editar Paciente'>" +
                         "<i class='fas fa-pencil-alt fs-5'></i>" +
                         "</span>" +
-                        "<span class='btnEliminarPaciente text-danger px-1' style='cursor:pointer;'>" +
+                        "<span class='btnEliminarPaciente text-danger px-1' style='cursor:pointer;' data-toggle='tooltip' title='Eliminar Paciente'>" +
                         "<i class='fas fa-trash fs-5'></i>" +
                         "</span>" +
                         "</center>"
@@ -2259,5 +2297,13 @@ function cargarfolio(){
 }
 var clinica2 = '<?php echo $_SESSION['S_CLINICA']; ?>';
 
+</script>
+<script>
+    // Inicializar tooltips de Bootstrap después de que la tabla se haya dibujado
+    $(document).ready(function() {
+        $('#tbl_pacientes').on('draw.dt', function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    });
 </script>
       

@@ -187,6 +187,9 @@
     var calendarEl = document.getElementById('calendar');
     var scheduleEl = document.getElementById('schedule');
     var calendarInstance; // Declarar la instancia aquí para que sea accesible en changeView
+    // Variables para el contexto de la cita/sesión activa para el historial
+    let idPacienteCitaActiva = null;
+    let idCitaParaRefrescarSesiones = null;
 
     // Seleccionar los botones de vista
     const botonesVista = {
@@ -292,7 +295,7 @@
                         $('#estadoCita').val(cita.estado);
                         $('#modalCita').modal('show');
                         // Cargar sesiones para esta cita
-                        cargarSesionesDeCita(cita.id_cita);
+                        cargarSesionesDeCita(cita.id_cita, cita.id_paciente); // Pasar id_paciente
                     } else {
                         Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
                     }
@@ -301,6 +304,10 @@
                     Swal.fire('Error', 'Problema al obtener datos de la cita.', 'error');
                 }
             });
+        },
+        eventDidMount: function(info) {
+            // Inicializar tooltips para los eventos del calendario si es necesario
+            // $(info.el).tooltip({ title: info.event.extendedProps.tooltipContent || info.event.title });
         }
         // Puedes añadir más opciones de FullCalendar aquí
     });
@@ -379,10 +386,11 @@
     cargarServiciosSelect(); // Cargar servicios para el modal de sesiones
     // Guardar Cita
     $('#btnGuardarCita').on('click', function() {
+        const idCitaActual = $('#id_cita').val();
         // Validaciones básicas del formulario (puedes añadir más)
         if (!$('#selPaciente').val() || !$('#selFisioterapeuta').val() || !$('#fechaHoraCita').val()) {
             Swal.fire('Error', 'Paciente, Fisioterapeuta y Fecha/Hora son obligatorios.', 'error');
-            return;
+            return; 
         }
 
         var datosCita = {
@@ -394,8 +402,8 @@
             estado: $('#estadoCita').val()
         };
 
-        datosCita.accion = $('#id_cita').val() ? 'actualizarCita' : 'registrarCita';
-        if ($('#id_cita').val()) datosCita.id_cita = $('#id_cita').val();
+        datosCita.accion = idCitaActual ? 'actualizarCita' : 'registrarCita';
+        if (idCitaActual) datosCita.id_cita = idCitaActual;
 
         $.ajax({
             url: '../ajax/citas.ajax.php',
@@ -404,7 +412,7 @@
             dataType: 'json',
             success: function(respuesta) {
                 if (respuesta.resultado === 'ok') {
-                    let mensajeExito = $('#id_cita').val() ? '¡Actualizado!' : '¡Registrado!';
+                    let mensajeExito = idCitaActual ? '¡Actualizado!' : '¡Registrado!';
                     Swal.fire(mensajeExito, respuesta.mensaje || 'La operación se realizó correctamente.', 'success');
                     $('#modalCita').modal('hide');
                     calendarInstance.refetchEvents(); // Recargar eventos en el calendario
@@ -439,7 +447,10 @@
     });
 }
 
-function cargarSesionesDeCita(idCita) {
+function cargarSesionesDeCita(idCita, idPacienteDeLaCita) {
+    // Guardar el idPaciente de la cita actual para usarlo después si es necesario
+    idPacienteCitaActiva = idPacienteDeLaCita;
+    idCitaParaRefrescarSesiones = idCita;
     $.ajax({
         url: '../ajax/sesiones.ajax.php',
         type: 'POST',
@@ -459,6 +470,14 @@ function cargarSesionesDeCita(idCita) {
                                             <strong>Notas:</strong> ${sesion.notas || 'Sin notas'}
                                         </div>
                                         <div>
+                                            <button class="btn btn-sm btn-info btnGestionarEvolucionSesion" 
+                                                    data-id-sesion="${sesion.id_sesion}" 
+                                                    data-id-cita="${sesion.id_cita}"
+                                                    data-id-paciente="${idPacienteDeLaCita}"
+                                                    data-fecha-sesion="${sesion.fecha_hora}"
+                                                    data-toggle="tooltip" title="Ver/Registrar Evolución Clínica">
+                                                <i class="fas fa-notes-medical"></i> Evolución
+                                            </button>
                                             <button class="btn btn-sm btn-outline-primary btnEditarSesion" data-id-sesion="${sesion.id_sesion}" data-id-cita="${sesion.id_cita}"><i class="fas fa-pencil-alt"></i></button>
                                             <button class="btn btn-sm btn-outline-danger btnEliminarSesion" data-id-sesion="${sesion.id_sesion}" data-id-cita="${sesion.id_cita}"><i class="fas fa-trash"></i></button>
                                         </div>
@@ -469,13 +488,66 @@ function cargarSesionesDeCita(idCita) {
             }
             sesionesHtml += '</ul>';
             $('#listaSesionesContainer').html(sesionesHtml);
+            // Reinicializar tooltips para los nuevos botones
+            $('[data-toggle="tooltip"]').tooltip();
         },
         error: function() {
             $('#listaSesionesContainer').html('<p class="text-danger">Error al cargar las sesiones.</p>');
         }
     });
 }
+  // Guardar (Registrar o Editar) Historial Clínico
+$("#btnGuardarHistorialClinico").on("click", function() {
+        
+        // Validación simple del lado del cliente (puedes mejorarla)
+        if (!$("#id_sesion_historial").val() || !$("#fecha_evaluacion_historial").val()) {
+            Swal.fire("Atención", "La sesión asociada y la fecha de evaluación son obligatorias.", "warning");
+            return;
+        }
+        
+        const idHistorial = $("#id_historial_form").val();
+        const accion = idHistorial ? "editar" : "registrar";
+        let formData = $("#formHistorialClinico").serializeArray(); // Obtiene datos del form
+        formData.push({name: "accionHistorial", value: accion});
+        // El id_historial_form ya está en el serialize si tiene valor.
+        // El id_sesion_historial también.
+        // Los nombres de los campos en el form deben coincidir con los esperados por el controlador.
+        // Ejemplo: name="subjetivo_historial" en el textarea.
 
+        // Convertir serializeArray a un objeto para facilitar el acceso
+        let dataToSend = {};
+        formData.forEach(item => {
+            dataToSend[item.name] = item.value;
+        });
+        // Asegurar que el id_sesion se envíe correctamente si estaba deshabilitado
+        if (accion === "editar") {
+            dataToSend["id_sesion_historial"] = $("#id_sesion_historial").val();
+        }
+
+
+        $.ajax({
+            url: '../ajax/historialclinico.ajax.php',
+            type: 'POST',
+            data: dataToSend,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === "ok") {
+                    Swal.fire("¡Guardado!", `La evolución clínica ha sido ${accion === 'registrar' ? 'registrada' : 'actualizada'}.`, "success");
+                    $("#modalHistorialClinico").modal("hide");
+                    if (idPacienteFicha) { // Usar el id de la ficha
+                        cargarHistorialClinico(idPacienteFicha); // Recargar la lista
+                    //if (idPacienteActual) {
+                    //    cargarHistorialClinico(idPacienteActual); // Recargar la lista
+                    }
+                } else {
+                    Swal.fire("Error", response.message || "No se pudo guardar la evolución.", "error");
+                }
+            },
+            error: function() {
+                Swal.fire("Error", "Ocurrió un problema de comunicación.", "error");
+            }
+        });
+});
 // Event handler para abrir el modal de nueva sesión
 $(document).on('click', '#btnAbrirModalNuevaSesion', function() {
     const citaId = $('#id_cita').val(); // Obtener el ID de la cita actual desde el modal de citas
@@ -523,7 +595,13 @@ $('#btnGuardarSesion').on('click', function() {
             if (respuesta.resultado === 'ok') {
                 Swal.fire(idSesionEditar ? '¡Actualizada!' : '¡Registrada!', respuesta.mensaje || 'La sesión se guardó correctamente.', 'success');
                 $('#modalSesion').modal('hide');
-                cargarSesionesDeCita(datosSesion.id_cita_sesion || datosSesion.id_cita_sesion_editar); 
+                // Necesitamos el id_paciente para recargar las sesiones correctamente
+                // Asumimos que idPacienteCitaActiva tiene el ID del paciente de la cita que está abierta
+                let idCitaParaRecargar = datosSesion.id_cita_sesion || datosSesion.id_cita_sesion_editar;
+                 if (idCitaParaRecargar && idPacienteCitaActiva) {
+                    cargarSesionesDeCita(idCitaParaRecargar, idPacienteCitaActiva);
+                }
+                // cargarSesionesDeCita(datosSesion.id_cita_sesion || datosSesion.id_cita_sesion_editar); 
             } else {
                 Swal.fire('Error', respuesta.mensaje || 'No se pudo guardar la sesión.', 'error');
             }
@@ -536,9 +614,10 @@ $('#btnGuardarSesion').on('click', function() {
 
 // Delegated event handler para editar una sesión
 $(document).on('click', '.btnEditarSesion', function() {
+    alert("Entrando al evento de edición de sesión");
     var idSesion = $(this).data('id-sesion');
     var idCitaOriginal = $(this).data('id-cita'); 
-
+    alert("idCitaOriginal: " + idCitaOriginal);
     $.ajax({
         url: '../ajax/sesiones.ajax.php',
         type: 'POST',
@@ -591,7 +670,11 @@ $(document).on('click', '.btnEliminarSesion', function() {
                 success: function(respuesta) {
                     if (respuesta.resultado === 'ok') {
                         Swal.fire('¡Eliminada!', respuesta.mensaje || 'La sesión ha sido eliminada.', 'success');
-                        cargarSesionesDeCita(idCitaDeLaSesion); 
+                        // Necesitamos el id_paciente para recargar las sesiones correctamente
+                        // Asumimos que idPacienteCitaActiva tiene el ID del paciente de la cita que está abierta
+                        if (idCitaDeLaSesion && idPacienteCitaActiva) {
+                            cargarSesionesDeCita(idCitaDeLaSesion, idPacienteCitaActiva);
+                        }
                     } else {
                         Swal.fire('Error', respuesta.mensaje || 'No se pudo eliminar la sesión.', 'error');
                     }
