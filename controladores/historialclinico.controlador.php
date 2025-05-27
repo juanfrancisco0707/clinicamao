@@ -68,7 +68,7 @@ class ControladorHistorialClinico
     static public function ctrEditarHistorial()
     {
         if (
-            isset($_POST["id_historial_form"]) && isset($_POST["id_sesion_historial"]) && isset($_POST["fecha_evaluacion_historial"])
+            isset($_POST["id_sesion_historial"]) && isset($_POST["fecha_evaluacion_historial"])
         ) {
             $datos = array(
                 "id_historial" => $_POST["id_historial_form"],
@@ -116,4 +116,13 @@ class ControladorHistorialClinico
         $respuesta = ModeloHistorialClinico::mdlObtenerCatalogoDiagnosticos();
         return $respuesta;
     }
+    static public function ctrObtenerDetallesSesionPorId() {
+        if (isset($_POST["id_sesion_detalle"])) {
+            $idSesion = $_POST["id_sesion_detalle"];
+            $respuesta = ModeloHistorialClinico::mdlObtenerDetallesSesionPorId($idSesion);
+            return $respuesta;
+        }
+        return false;
+    }
+
 }

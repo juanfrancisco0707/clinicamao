@@ -54,13 +54,17 @@ class AjaxHistorialClinico
         $respuesta = ControladorHistorialClinico::ctrObtenerCatalogoDiagnosticos();
         echo json_encode($respuesta);
     }
+    public function ajaxObtenerDetallesSesionPorId() {
+        $respuesta = ControladorHistorialClinico::ctrObtenerDetallesSesionPorId();
+        echo json_encode($respuesta);
+    }
 }
 
 if (isset($_POST["accionHistorial"])) {
     $accion = $_POST["accionHistorial"];
     $historialAjax = new AjaxHistorialClinico();
 
-    switch ($accion) {
+    switch ($accion) { 
         case "mostrarPorPaciente":
             $historialAjax->ajaxMostrarHistorialPorPaciente();
             break;
@@ -84,6 +88,9 @@ if (isset($_POST["accionHistorial"])) {
             break;
         case "obtenerCatalogoDiagnosticos":
             $historialAjax->ajaxObtenerCatalogoDiagnosticos();
+            break;
+        case "obtenerDetallesSesionPorId":
+            $historialAjax->ajaxObtenerDetallesSesionPorId();
             break;
     }
 }
