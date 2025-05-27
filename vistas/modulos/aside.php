@@ -43,7 +43,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                      
+
                         <li class="nav-item">
                             <a style="cursor: pointer;" class="nav-link" id="mpacientes"
                                 onclick="CargarContenido('../vistas/pacientes.php','content-wrapper')">
@@ -116,7 +116,15 @@
                                 <p>Horarios</p>
                             </a>
                         </li>
-                         <li class="nav-item">
+
+                        <li class="nav-item">
+                            <a style="cursor: pointer;" class="nav-link" id="mcatalogo_diagnosticos"
+                                onclick="CargarContenido('../vistas/mao.catalogo.diagnosticos.php','content-wrapper')">
+                                <i class="fa fa-book" aria-hidden="true"></i>&nbsp;&nbsp;
+                                <p>Catalogo de diagnosticos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a style="cursor: pointer;" class="nav-link" id="mcategoria_diagnostico"
                                 onclick="CargarContenido('../vistas/mao.categoria.diagnostico.php','content-wrapper')">
                                 <i class="fa fa-user-secret" aria-hidden="true"></i>&nbsp;&nbsp;
@@ -130,7 +138,7 @@
                                 <p>Inventario</p>
                             </a>
                         </li>
-                        
+
 
                     </ul>
                 </li>
@@ -208,7 +216,7 @@
                     <!-- Reportes -->
                     <ul class="nav nav-treeview">
 
-                  
+
                     </ul>
                 </li>
                 <!--CONFIGURACION -->
@@ -412,8 +420,11 @@
                         case '33':
                             $("#minventario").show();
                             break;
-                             case '34':
+                        case '34':
                             $("#mcategoria_diagnostico").show();
+                            break;
+                        case '35':
+                            $("#mcatalogo_diagnosticos").show();
                             break;
 
                         default:
@@ -461,8 +472,10 @@
         $("#mdashboardo").hide();
         $("#mmodulos").hide();
         $("#minventario").hide();
-         $("#mcategoria_diagnostico").hide();
-        
+        $("#mcategoria_diagnostico").hide();
+        $("#mcatalogo_diagnosticos").hide();
+
+
 
 
 
