@@ -121,14 +121,14 @@
                             <a style="cursor: pointer;" class="nav-link" id="mcatalogo_diagnosticos"
                                 onclick="CargarContenido('../vistas/mao.catalogo.diagnosticos.php','content-wrapper')">
                                 <i class="fa fa-book" aria-hidden="true"></i>&nbsp;&nbsp;
-                                <p>Catalogo de diagnosticos</p>
+                                <p>Catálogo de diagnósticos</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a style="cursor: pointer;" class="nav-link" id="mcategoria_diagnostico"
                                 onclick="CargarContenido('../vistas/mao.categoria.diagnostico.php','content-wrapper')">
                                 <i class="fa fa-user-secret" aria-hidden="true"></i>&nbsp;&nbsp;
-                                <p>Categorias de diagnósticos</p>
+                                <p>Categoráas de diagnósticos</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -147,7 +147,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-shopping-cart text-ligth"></i>
                         <p>
-                            Ingresos
+                            Pagos
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -156,14 +156,14 @@
                             onclick="CargarContenido('../vistas/Ingresos.php','content-wrapper')">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>&nbsp;
                             <p>
-                                Captura de Ingresos
+                                Captura de Pagos
                             </p>
                         </a>
                         <a style="cursor: pointer;" class="nav-link" id="madministraingresos"
                             onclick="CargarContenido('../vistas/administra_ingresos.php','content-wrapper')">
                             <i class="fa fa-cart-plus" aria-hidden="true"></i>&nbsp;
                             <p>
-                                Administrar Ingresos
+                                Administrar Pagos
                             </p>
                         </a>
                     </ul>
