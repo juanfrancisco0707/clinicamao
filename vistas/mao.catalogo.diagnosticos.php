@@ -220,7 +220,7 @@
                 details: { type: 'column' }
             },
             columnDefs: [
-                { targets: 0, orderable: false, className: 'control', width: '3%' },
+                { targets: 0, data: null, defaultContent: '', orderable: false, className: 'control', width: '3%' },
                 { targets: 1, data: 'id_diagnostico', width: '5%' },
                 { targets: 2, data: 'codigo_estandar', width: '10%', render: function (data) { return data ? data : 'N/A'; } },
                 { targets: 3, data: 'nombre_diagnostico', width: '25%' },

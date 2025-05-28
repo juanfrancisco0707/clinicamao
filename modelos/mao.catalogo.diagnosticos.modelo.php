@@ -39,7 +39,7 @@ class ModeloDiagnosticos {
             } else {
                 $stmt = Conexion::conectar()->prepare(
                     "SELECT cd.id_diagnostico, cd.codigo_estandar, cd.nombre_diagnostico, 
-                            cd.descripcion_detallada, cd.id_categoria_diagnostico, 
+                            cd.descripcion_detallada,  
                             catd.nombre_categoria AS nombre_categoria_diagnostico, 
                             cd.creado_en, cd.actualizado_en 
                      FROM $tabla cd 

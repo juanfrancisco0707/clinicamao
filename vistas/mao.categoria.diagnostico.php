@@ -71,25 +71,25 @@
             </div>
         </div>
     </div>
-
+   
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.5.1.js"></script>-->
     <!-- Popper.js, necesario para tooltips y popovers de Bootstrap 4 -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
     <!-- Bootstrap 4 JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
     <!-- DataTables JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>-->
     <!-- DataTables Bootstrap 4 JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>-->
     <!-- DataTables Responsive JS (opcional, pero recomendado) -->
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+   <!-- <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>-->
     <!-- SweetAlert2 (opcional, para mejores alertas) -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>-->
     <!-- jQuery UI (opcional, para hacer el modal arrastrable) -->
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>-->
+    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
 
 
     <script>

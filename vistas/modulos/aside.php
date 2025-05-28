@@ -128,7 +128,7 @@
                             <a style="cursor: pointer;" class="nav-link" id="mcategoria_diagnostico"
                                 onclick="CargarContenido('../vistas/mao.categoria.diagnostico.php','content-wrapper')">
                                 <i class="fa fa-user-secret" aria-hidden="true"></i>&nbsp;&nbsp;
-                                <p>Categoráas de diagnósticos</p>
+                                <p>Categorías de diagnósticos</p>
                             </a>
                         </li>
                         <li class="nav-item">
