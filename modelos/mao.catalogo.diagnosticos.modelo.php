@@ -105,15 +105,15 @@ class ModeloDiagnosticos {
             } else {
                 return "error";
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             // Considerar loggear el error $e->getMessage()
             return "error";
         } finally {
             if ($stmt) {
                 // Para INSERT/UPDATE/DELETE, closeCursor no es aplicable.
                 // Si 'close' es un método específico del wrapper de conexión del ejemplo:
-                if (method_exists($stmt, 'close')) {
-                     $stmt->close();
+                if (method_exists($stmt, 'closeCursor')) {
+                    $stmt->closeCursor();
                 }
                 $stmt = null;
             }
@@ -146,14 +146,12 @@ class ModeloDiagnosticos {
             } else {
                 return "error";
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             // Considerar loggear el error $e->getMessage()
             return "error";
         } finally {
             if ($stmt) {
-                 if (method_exists($stmt, 'close')) {
-                     $stmt->close();
-                 }
+                 
                 $stmt = null;
             }
         }
@@ -173,14 +171,12 @@ class ModeloDiagnosticos {
             } else {
                 return "error";
             }
-        } catch (Exception $e) {
-            // Considerar loggear el error $e->getMessage()
+        } catch (PDOException $e) { // Capturar específicamente PDOException
+            // Considerar loggear el error $e->getMessage() para depuración
             return "error";
         } finally {
             if ($stmt) {
-                 if (method_exists($stmt, 'close')) {
-                     $stmt->close();
-                 }
+                 
                 $stmt = null;
             }
         }
