@@ -344,7 +344,7 @@
 
             var data = table.row($(this).parents('tr')).data();
 
-            var id_servicio = data[1];
+            var id_servicio = data[0];
 
             Swal.fire({
                 title: 'Está seguro de eliminar el Servicio?',
@@ -362,7 +362,7 @@
 
                     datos.append("accion", accion);
                     datos.append("id_servicio", id_servicio); //id_Servicios             
-
+                    alert(id_servicio);
                     $.ajax({
                         url: "../ajax/mao.servicios.ajax.php",
                         method: "POST",
