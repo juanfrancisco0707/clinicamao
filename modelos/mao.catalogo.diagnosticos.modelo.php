@@ -67,8 +67,8 @@ class ModeloDiagnosticos {
         $resultado = null;
         try {
             $stmt = Conexion::conectar()->prepare(
-                "SELECT id_categoria_diagnostico, nombre_categoria, descripcion_categoria, creado_en, actualizado_en 
-                 FROM $tablaCategorias"
+                "SELECT id_categoria_diagnostico, nombre_categoria, descripcion_categoria
+                                FROM $tablaCategorias"
             );
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);

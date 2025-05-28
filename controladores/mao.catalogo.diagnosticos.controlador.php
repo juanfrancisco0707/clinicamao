@@ -133,48 +133,24 @@ class ControladorDiagnosticos {
             }
         }
     }
+// Dentro de la clase ControladorDiagnosticos
 
-    /*=============================================
-    BORRAR DIAGNOSTICO
-    =============================================*/
-    static public function ctrBorrarDiagnostico() {
-        if (isset($_GET["idDiagnostico"])) { // Parámetro GET con el ID del diagnóstico a borrar
-            $tabla = "catalogodiagnosticos";
-            $idDiagnostico = $_GET["idDiagnostico"];
+/*=============================================
+ELIMINAR DIAGNOSTICO (Respuesta simple para AJAX)
+=============================================*/
+static public function ctrEliminarDiagnosticoSimple($tabla, $idDiagnostico, $nameId) {
+    // $nameId podría no ser necesario si mdlBorrarDiagnostico solo usa el ID.
 
-            // Podrías añadir una validación para $idDiagnostico si es necesario
-            // if(!preg_match('/^[0-9]+$/', $idDiagnostico)){ /* error */ }
-
-            $respuesta = ModeloDiagnosticos::mdlBorrarDiagnostico($tabla, $idDiagnostico);
-
-            if ($respuesta == "ok") {
-                echo '<script>
-
-                Swal.fire({
-                      icon: "success",
-                      title: "El diagnóstico ha sido borrado correctamente",
-                      showConfirmButton: false,
-                      timer: 1500
-                    }).then(function(result){
-                            window.location = "diagnosticos"; // Ajusta esta ruta
-                        });
-                
-                </script>';
-            } else {
-                 echo '<script>
-
-                    Swal.fire({
-                          icon: "error",
-                          title: "¡Error al borrar el diagnóstico!",
-                           text: "' . (is_array($respuesta) ? implode(" ", $respuesta) : $respuesta) . '",
-                          showConfirmButton: false,
-                          timer: 1500
-                        });
-                    
-                    </script>';
-            }
-        }
+    // Opcional: Validación del ID
+    if (!isset($idDiagnostico) || !is_numeric($idDiagnostico)) {
+        return "error_id_invalido";
     }
+
+    $respuestaModelo = ModeloDiagnosticos::mdlBorrarDiagnostico($tabla, $idDiagnostico);
+
+    // mdlBorrarDiagnostico debería devolver "ok" o "error"
+    return $respuestaModelo; 
+}
 
     /*=============================================
     OBTENER SIGUIENTE ID DE DIAGNOSTICO

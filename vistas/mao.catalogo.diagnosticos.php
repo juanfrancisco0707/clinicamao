@@ -21,9 +21,9 @@
     <div class="container-fluid">
         <!-- row para listado de Diagnósticos -->
         <div class="row">
-            <div class="col-lg-12"> <!-- Ajustado a col-lg-12 para más espacio si es necesario -->
+            <div class="col-lg-12">
                 <table id="tbl_Diagnosticos" class="table table-striped w-100 shadow">
-                    <thead class="bg-primary text-white"> <!-- Cambiado color a primary -->
+                    <thead class="bg-primary text-white">
                         <tr style="font-size: 12px;">
                             <th></th> <!-- Para control de DataTables responsive -->
                             <th>ID</th>
@@ -52,7 +52,6 @@
         <div class="modal-content">
             <!-- cabecera del modal -->
             <div class="modal-header bg-primary text-white py-2" id="mdlGestionarDiagnosticoHeader">
-                <!-- Cambiado color y padding -->
                 <h5 class="modal-title">Agregar Diagnóstico</h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"
                     id="btnCerrarModal">
@@ -63,10 +62,8 @@
             <!-- cuerpo del modal -->
             <div class="modal-body">
                 <form class="needs-validation" id="formDiagnostico" novalidate>
-                    <!-- Abrimos una fila -->
+                    <!-- Fila para ID y Código Estándar -->
                     <div class="row">
-
-                        <!-- Columna para registro del ID del Diagnóstico -->
                         <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
                                 <label for="iptIdDiagnostico"><i class="fas fa-id-card fs-6"></i>
@@ -77,8 +74,6 @@
                                 <div class="invalid-feedback">Debe ingresar el ID del diagnóstico.</div>
                             </div>
                         </div>
-
-                        <!-- Columna para registro del Código Estándar -->
                         <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
                                 <label for="iptCodigoEstandar"><i class="fas fa-barcode fs-6"></i>
@@ -88,8 +83,6 @@
                                     name="iptCodigoEstandar" placeholder="Código Estándar (Opcional)">
                             </div>
                         </div>
-
-                        <!-- Columna para registro de la Categoría del Diagnóstico -->
                         <div class="col-12 col-lg-4">
                             <div class="form-group mb-2">
                                 <label for="selCategoriaDiagnostico"><i class="fas fa-tags fs-6"></i> <span
@@ -101,8 +94,10 @@
                                 <div class="invalid-feedback">Seleccione una categoría.</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Columna para registro del Nombre del Diagnóstico -->
+                    <!-- Fila para Nombre del Diagnóstico -->
+                    <div class="row">
                         <div class="col-12">
                             <div class="form-group mb-2">
                                 <label for="iptNombreDiagnostico"><i class="fas fa-file-signature fs-6"></i> <span
@@ -113,8 +108,10 @@
                                 <div class="invalid-feedback">Debe ingresar el nombre del diagnóstico.</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Columna para Descripcion Detallada -->
+                    <!-- Fila para Descripción Detallada -->
+                    <div class="row">
                         <div class="col-12">
                             <div class="form-group mb-2">
                                 <label for="iptDescripcionDetallada"><i class="fas fa-align-left fs-6"></i> <span
@@ -124,12 +121,14 @@
                                     placeholder="Descripción detallada del diagnóstico"></textarea>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Botones de acción -->
+                    <!-- Fila para Botones de acción -->
+                    <div class="row">
                         <div class="col-12 mt-3 d-flex justify-content-end">
                             <button type="button" class="btn btn-danger mr-2" data-dismiss="modal"
                                 id="btnCancelarRegistro">Cancelar</button>
-                            <button type="button" class="btn btn-primary" id="btnGuardarDiagnostico">Guardar
+                            <button type="submit" class="btn btn-primary" id="btnGuardarDiagnostico">Guardar
                                 Diagnóstico</button>
                         </div>
                     </div>
@@ -148,65 +147,62 @@
     }
 
     .modal-header .close {
-        /* Bootstrap 4 close button styling */
         padding: 0.75rem 1.25rem;
         margin: -0.75rem -1.25rem -0.75rem auto;
     }
 </style>
 
 <script>
-    var accionDiagnostico; // Cambiado para evitar conflictos si hay otras variables 'accion'
+    var accionDiagnostico;
     var tablaDiagnosticos;
-    //var ajaxUrlDiagnosticos = "../mao/ajax/mao.catalogo.diagnosticos.ajax.php"; // Ruta al archivo AJAX de diagnósticos
-    var ajaxUrlDiagnosticos = "../ajax/mao.catalogo.diagnosticos.ajax.php"; // Ruta al archivo AJAX de diagnósticos
-    
+    var ajaxUrlDiagnosticos = "../ajax/mao.catalogo.diagnosticos.ajax.php"; // Ajusta esta ruta
+
     var Toast = Swal.mixin({
         toast: true,
-        position: 'top-end', // Cambiado a top-end
+        position: 'top-end',
         showConfirmButton: false,
         timer: 3000,
-        timerProgressBar: true // Añadido progress bar
+        timerProgressBar: true
     });
 
     $(document).ready(function () {
-        // Hacer el modal arrastrable
         $('#mdlGestionarDiagnostico').draggable({
             handle: "#mdlGestionarDiagnosticoHeader"
         });
 
-        // Carga del listado con DataTables
         tablaDiagnosticos = $("#tbl_Diagnosticos").DataTable({
             dom: 'Bfrtip',
             buttons: [{
                 text: 'Agregar Diagnóstico',
-                className: 'btn btn-success btn-sm', // Estilo Bootstrap
+                className: 'btn btn-success btn-sm',
                 action: function (e, dt, node, config) {
                     $("#formDiagnostico")[0].reset();
                     $(".needs-validation").removeClass("was-validated");
                     $("#selCategoriaDiagnostico").val("");
-                    $(".modal-title").text("Agregar Diagnóstico"); // Título del modal
+                    $(".modal-title").text("Agregar Diagnóstico");
+                    $("#iptIdDiagnostico").removeAttr("readonly"); // Permitir edición para nuevo
 
                     $.ajax({
                         url: ajaxUrlDiagnosticos,
                         type: "POST",
-                        data: { accion: "obtenerSiguienteIdDiagnostico" }, // Acción para obtener ID
+                        data: { accion: "obtenerSiguienteIdDiagnostico" },
                         dataType: 'json',
                         success: function (respuesta) {
                             if (respuesta && respuesta.siguiente_id) {
-                                $("#iptIdDiagnostico").val(respuesta.siguiente_id);
+                                $("#iptIdDiagnostico").val(respuesta.siguiente_id).attr("readonly", true);
                             } else {
-                                $("#iptIdDiagnostico").val(1); // Fallback si no se obtiene ID
-                                console.warn("No se pudo obtener el siguiente ID, se usó 1 como fallback.");
+                                $("#iptIdDiagnostico").val("").removeAttr("readonly"); // Permitir ingreso manual si falla
+                                console.warn("No se pudo obtener el siguiente ID.");
                             }
                         },
                         error: function () {
-                            $("#iptIdDiagnostico").val(1); // Fallback en caso de error
+                            $("#iptIdDiagnostico").val("").removeAttr("readonly");
                             Toast.fire({ icon: 'error', title: 'Error al obtener el siguiente ID.' });
                         }
                     });
 
                     $("#mdlGestionarDiagnostico").modal('show');
-                    accionDiagnostico = "registrarDiagnostico"; // Acción para registrar
+                    accionDiagnostico = "registrarDiagnostico";
                 }
             },
             { extend: 'excel', text: 'Excel', className: 'btn btn-sm' },
@@ -218,7 +214,7 @@
                 url: ajaxUrlDiagnosticos,
                 dataSrc: '',
                 type: "POST",
-                data: { 'accion': 'listarDiagnosticos' }, // Acción para listar
+                data: { 'accion': 'listarDiagnosticos' },
             },
             responsive: {
                 details: { type: 'column' }
@@ -228,7 +224,7 @@
                 { targets: 1, data: 'id_diagnostico', width: '5%' },
                 { targets: 2, data: 'codigo_estandar', width: '10%', render: function (data) { return data ? data : 'N/A'; } },
                 { targets: 3, data: 'nombre_diagnostico', width: '25%' },
-                { targets: 4, data: 'descripcion_detallada', width: '27%', render: function (data) { return data ? data : 'N/A'; } },
+                { targets: 4, data: 'descripcion_detallada', width: '27%', render: function (data) { return data ? data.substring(0, 50) + (data.length > 50 ? '...' : '') : 'N/A'; } },
                 { targets: 5, data: 'nombre_categoria_diagnostico', width: '10%', render: function (data) { return data ? data : 'Sin categoría'; } },
                 { targets: 6, data: 'creado_en', width: '10%', render: function (data) { return moment(data).format('DD/MM/YYYY HH:mm'); } },
                 { targets: 7, data: 'actualizado_en', width: '10%', render: function (data) { return moment(data).format('DD/MM/YYYY HH:mm'); } },
@@ -239,25 +235,23 @@
                     className: 'text-center',
                     render: function (data, type, full, meta) {
                         return "<center>" +
-                            "<span class='btnEditarDiagnostico text-primary px-1' style='cursor:pointer;' title='Editar'>" +
+                            "<span class='btnEditarDiagnostico text-primary px-1' style='cursor:pointer;' title='Editar' data-id='" + full.id_diagnostico + "'>" +
                             "<i class='fas fa-pencil-alt fs-5'></i>" +
                             "</span>" +
-                            // El botón de eliminar se manejará por el controlador directamente si sigue el patrón del ejemplo
-                            // "<span class='btnEliminarDiagnostico text-danger px-1' style='cursor:pointer;' title='Eliminar'>" +
-                            // "<i class='fas fa-trash fs-5'></i>" +
-                            // "</span>" +
+                            "<span class='btnEliminarDiagnostico text-danger px-1' style='cursor:pointer;' title='Eliminar' data-id='" + full.id_diagnostico + "'>" +
+                            "<i class='fas fa-trash fs-5'></i>" +
+                            "</span>" +
                             "</center>";
                     }
                 }
             ],
-            language: { "url": "../vistas/assets/json/Spanish.json" } // Asegúrate que esta ruta sea correcta
+            language: { "url": "../vistas/assets/json/Spanish.json" }
         });
 
-        // Cargar Select de Categorías de Diagnóstico
         $.ajax({
             url: ajaxUrlDiagnosticos,
             type: 'POST',
-            data: { accion: 'listarCategoriasDiagnostico' }, // Acción para listar categorías
+            data: { accion: 'listarCategoriasDiagnostico' },
             dataType: 'json',
             success: function (respuesta) {
                 var options = '<option selected value="">Seleccione una Categoría...</option>';
@@ -274,17 +268,16 @@
             }
         });
 
-        // Limpiar formulario al cerrar modal con botón de cancelar o 'x'
         $("#btnCancelarRegistro, #btnCerrarModal").on('click', function () {
             $("#formDiagnostico")[0].reset();
             $(".needs-validation").removeClass("was-validated");
             $("#selCategoriaDiagnostico").val("");
         });
 
-        // Evento para Editar Diagnóstico
         $('#tbl_Diagnosticos tbody').on('click', '.btnEditarDiagnostico', function () {
-            accionDiagnostico = "actualizarDiagnostico"; // Esta acción es para el frontend, el backend usará la del form
+            accionDiagnostico = "actualizarDiagnostico";
             $(".modal-title").text("Editar Diagnóstico");
+            $("#iptIdDiagnostico").attr("readonly", true); // ID no editable al actualizar
 
             var data = tablaDiagnosticos.row($(this).parents('tr')).data();
 
@@ -297,12 +290,12 @@
             $("#mdlGestionarDiagnostico").modal('show');
         });
 
-        // Evento para Guardar (Registrar o Actualizar) Diagnóstico
-        $("#btnGuardarDiagnostico").on("click", function () {
-            var form = document.getElementById('formDiagnostico');
+        // Evento para el envío del formulario (Registrar o Actualizar)
+        $("#formDiagnostico").on("submit", function (event) {
+            event.preventDefault(); // Prevenir el envío tradicional del formulario
+            var form = this;
 
             if (form.checkValidity() === false) {
-                event.preventDefault();
                 event.stopPropagation();
                 form.classList.add('was-validated');
                 Toast.fire({ icon: 'error', title: 'Por favor, complete los campos requeridos.' });
@@ -323,123 +316,136 @@
                 cancelButtonText: 'Cancelar',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var datos = new FormData();
-                    // El controlador ctrCrearDiagnostico y ctrEditarDiagnostico esperan los datos del POST directamente
-                    // No se envía 'accion' aquí porque el controlador lo maneja por la presencia de ciertos campos POST
-                    // o por la URL a la que se envía el formulario (si fuera un submit tradicional).
-                    // Para AJAX, el controlador determinará la acción basado en si es un nuevo ID o uno existente.
 
-                    // Para el controlador `ctrCrearDiagnostico` (que toma parámetros individuales):
-                    // Si `accionDiagnostico` es "registrarDiagnostico", podrías enviar una acción específica.
-                    // Para `ctrEditarDiagnostico` (que lee `$_POST` directamente):
-                    // Los nombres de los inputs deben coincidir con los esperados por el controlador.
-
-                    // Construimos los datos para el AJAX que llama a los métodos del controlador
-                    // que esperan los datos directamente de $_POST (para editar) o como parámetros (para crear)
-                    // El archivo ajax.diagnosticos.php se encargará de llamar al método correcto del controlador.
-
-                    var formData = {
-                        id_diagnostico: $("#iptIdDiagnostico").val(),
-                        codigo_estandar: $("#iptCodigoEstandar").val(),
-                        nombre_diagnostico: $("#iptNombreDiagnostico").val(),
-                        descripcion_detallada: $("#iptDescripcionDetallada").val(),
-                        id_categoria_diagnostico: $("#selCategoriaDiagnostico").val()
+                    var postData = {
+                        iptIdDiagnostico: $("#iptIdDiagnostico").val(),
+                        iptCodigoEstandar: $("#iptCodigoEstandar").val(),
+                        iptNombreDiagnostico: $("#iptNombreDiagnostico").val(),
+                        iptDescripcionDetallada: $("#iptDescripcionDetallada").val(),
+                        selCategoriaDiagnostico: $("#selCategoriaDiagnostico").val()
                     };
 
-                    // Determinar la acción para el archivo AJAX
-                    var ajaxAction = (accionDiagnostico === "registrarDiagnostico") ? "registrarDiagnostico" : "actualizarDiagnosticoViaForm";
-                    // 'actualizarDiagnosticoViaForm' es una acción hipotética si el controlador de edición
-                    // espera un POST simple y no una llamada AJAX específica con 'accion'.
-                    // Si tu `ControladorDiagnosticos::ctrEditarDiagnostico` maneja `$_POST` directamente,
-                    // el envío del formulario (incluso vía AJAX) debería funcionar.
-
-                    // Si usas el archivo ajax.diagnosticos.php para registrar:
                     if (accionDiagnostico === "registrarDiagnostico") {
-                        formData.accion = "registrarDiagnostico"; // Acción para el archivo AJAX
+                        // Para registrar, usamos el archivo AJAX que llama a ctrCrearDiagnostico
+                        var formDataAjax = {
+                            accion: "registrarDiagnostico",
+                            id_diagnostico: $("#iptIdDiagnostico").val(),
+                            codigo_estandar: $("#iptCodigoEstandar").val(),
+                            nombre_diagnostico: $("#iptNombreDiagnostico").val(),
+                            descripcion_detallada: $("#iptDescripcionDetallada").val(),
+                            id_categoria_diagnostico: $("#selCategoriaDiagnostico").val()
+                        };
                         $.ajax({
-                            url: ajaxUrlDiagnosticos, // Llama al archivo AJAX
+                            url: ajaxUrlDiagnosticos,
                             method: "POST",
-                            data: formData, // Envía los datos del formulario
+                            data: formDataAjax,
                             dataType: 'json',
                             success: function (respuesta) {
                                 if (respuesta == "ok") {
                                     Toast.fire({ icon: 'success', title: 'Diagnóstico registrado correctamente.' });
                                     tablaDiagnosticos.ajax.reload();
                                     $("#mdlGestionarDiagnostico").modal('hide');
-                                    $("#formDiagnostico")[0].reset();
-                                    $(".needs-validation").removeClass("was-validated");
                                 } else {
-                                    Toast.fire({ icon: 'error', title: 'Error al registrar el diagnóstico: ' + respuesta });
+                                    Toast.fire({ icon: 'error', title: 'Error al registrar: ' + (respuesta.mensaje || respuesta) });
                                 }
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
-                                Toast.fire({ icon: 'error', title: 'Error en la solicitud AJAX: ' + textStatus });
+                                Toast.fire({ icon: 'error', title: 'Error AJAX: ' + textStatus });
                             }
                         });
-                    } else { // Para actualizar, el controlador ctrEditarDiagnostico maneja el POST
-                        // Se envía el formulario directamente al script del controlador que maneja la edición.
-                        // Esto asume que tu `ControladorDiagnosticos::ctrEditarDiagnostico` está en un archivo
-                        // que puede ser el target de un form action, o que el archivo AJAX lo redirige.
-                        // Para simplificar y seguir el patrón de tu AJAX, podrías tener una acción en ajax.diagnosticos.php
-                        // que llame a ctrEditarDiagnostico.
-                        // Por ahora, vamos a simular el envío del formulario al controlador directamente.
-                        // Esto requiere que el controlador esté configurado para manejar un POST de esta forma.
-                        // La forma más limpia es que el controlador `ctrEditarDiagnostico` se llame desde el archivo AJAX.
-                        // Como el controlador `ctrEditarDiagnostico` ya genera la respuesta con SweetAlert,
-                        // simplemente enviamos el formulario a un script que lo procese.
-                        // Aquí, asumimos que el controlador se invoca y devuelve el script de SweetAlert.
-
-                        // Para que esto funcione como el ejemplo de servicios, el form se enviaría a una página
-                        // que incluya y ejecute el `ControladorDiagnosticos::ctrEditarDiagnostico()`.
-                        // Y esa página devolvería el script.
-                        // Si quieres una respuesta JSON y manejarla aquí, el controlador debe cambiar.
-
-                        // Solución: Enviar el formulario al mismo archivo PHP que contiene el controlador
-                        // y que este ejecute la función de edición.
-                        // O, mejor, que el archivo AJAX maneje la llamada al controlador de edición.
-                        // Como el controlador `ctrEditarDiagnostico` ya está hecho para manejar `$_POST`,
-                        // podemos hacer un POST a un script que lo llame.
-                        // Para este ejemplo, vamos a asumir que el controlador se llama y la página se recarga
-                        // o el controlador devuelve el script de SweetAlert.
-
-                        // Para que funcione con el `ControladorDiagnosticos::ctrEditarDiagnostico` que genera HTML/JS:
-                        var formElement = $("#formDiagnostico")[0];
-                        var datosPost = new FormData(formElement);
-                        // Añadimos los nombres que espera el controlador si son diferentes
-                        datosPost.set("iptIdDiagnostico", $("#iptIdDiagnostico").val());
-                        datosPost.set("iptCodigoEstandar", $("#iptCodigoEstandar").val());
-                        datosPost.set("iptNombreDiagnostico", $("#iptNombreDiagnostico").val());
-                        datosPost.set("iptDescripcionDetallada", $("#iptDescripcionDetallada").val());
-                        datosPost.set("selCategoriaDiagnostico", $("#selCategoriaDiagnostico").val());
-
+                    } else { // Para actualizar, el controlador ctrEditarDiagnostico maneja el POST directamente
+                        // La URL debe apuntar a un script PHP que ejecute ControladorDiagnosticos::ctrEditarDiagnostico()
+                        // Este script PHP devolverá el script de SweetAlert.
                         $.ajax({
-                            url: 'ruta_a_tu_script_que_ejecuta_ctrEditarDiagnostico.php', // DEBES CAMBIAR ESTO
+                            url: '../ajax/mao.catalogo.diagnosticos.ajax.php', // DEBES CREAR ESTE ARCHIVO O AJUSTAR LA RUTA
                             method: "POST",
-                            data: datosPost,
-                            contentType: false,
-                            processData: false,
+                            data: $(form).serialize(), // Envía los datos del formulario serializados
                             success: function (respuestaHTML) {
-                                // El controlador ctrEditarDiagnostico devuelve HTML con script de SweetAlert
-                                $("body").append(respuestaHTML); // Añade el script a la página para que se ejecute
+                                $("body").append(respuestaHTML); // Añade el script de SweetAlert a la página
                                 $("#mdlGestionarDiagnostico").modal('hide');
-                                // La recarga de la tabla y limpieza del form se haría por el script de SweetAlert
-                                // o podrías hacerlo aquí si la respuesta es solo "ok"
-                                // tablaDiagnosticos.ajax.reload();
-                                // $("#formDiagnostico")[0].reset();
+                                // La recarga de la tabla es manejada por el script de SweetAlert (window.location)
                             },
                             error: function () {
-                                Toast.fire({ icon: 'error', title: 'Error al actualizar el diagnóstico.' });
+                                Toast.fire({ icon: 'error', title: 'Error al conectar para actualizar.' });
                             }
                         });
                     }
                 }
             });
+            form.classList.remove('was-validated'); // Limpiar validación para el próximo uso
         });
 
-        // Limpiar mensajes de validación al cancelar
+ /* ======================================================================================
+        EVENTO AL DAR CLICK EN EL BOTON ELIMINAR Servicio
+        =========================================================================================*/
+        $('#tbl_Diagnosticos tbody').on('click', '.btnEliminarDiagnostico', function () {
+
+            accion = "eliminarDiagnostico"; //seteamos la accion para editar
+            var id_diagnostico = $(this).data('id');
+           // var data = table.row($(this).parents('tr')).data();
+
+           // var idDiagnostico = data[0];
+
+            Swal.fire({
+                title: 'Está seguro de eliminar el Diagnóstico?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, deseo eliminarlo!',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    var datos = new FormData();
+
+                    datos.append("accion", accion);
+                    datos.append("id_diagnostico", id_diagnostico); //idDiagnostico             
+
+                    $.ajax({
+                        url: "../ajax/mao.catalogo.diagnosticos.ajax.php",
+                        method: "POST",
+                        data: datos,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function (respuesta) {
+
+                            if (respuesta == "ok") {
+
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'El Diagnóstico se eliminó correctamente'
+                                });
+
+                                tablaDiagnosticos.ajax.reload();
+
+                            } else {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: 'El Diagnóstico no se pudo eliminar'
+                                });
+                            }
+
+                        }
+                    });
+
+                }
+            })
+        })
+
+
         $("#btnCancelarRegistro").on("click", function () {
             $(".needs-validation").removeClass("was-validated");
+            $("#formDiagnostico")[0].reset();
         });
+        $('#mdlGestionarDiagnostico').on('hidden.bs.modal', function () {
+            $(".needs-validation").removeClass("was-validated");
+            $("#formDiagnostico")[0].reset();
+        });
+
 
     }); // Fin document.ready
 </script>

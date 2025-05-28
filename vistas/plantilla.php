@@ -63,7 +63,11 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 
     <!-- jQuery -->
     <script src="../vistas/assets/plugins/jquery/jquery.min.js"></script>
-    
+    <!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es.js"></script> <!-- Opcional: para localización en español -->
+
+
     <!-- Bootstrap 4 -->
     <script src="../vistas/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     
