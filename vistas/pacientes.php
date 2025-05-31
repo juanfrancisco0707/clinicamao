@@ -618,7 +618,56 @@ var Toast = Swal.mixin({
 //});
 
 $(document).ready(function() {
-        /* ======================================================================================
+    // Nueva lógica para manejar el parámetro id_paciente_ficha desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const idPacienteFichaDesdeUrl = urlParams.get('id_paciente_ficha');
+
+    if (idPacienteFichaDesdeUrl) {
+        // console.log("ID Paciente desde URL para ficha:", idPacienteFichaDesdeUrl);
+
+        // Usamos la función existente para cargar y mostrar el modal de edición.
+        // Esta función ya hace una llamada AJAX para obtener los datos del paciente.
+        cargarYMostrarModalEdicionPaciente(idPacienteFichaDesdeUrl);
+
+        // Adicionalmente, si quieres mostrar también la sección de la ficha del paciente
+        // antes o junto con el modal, puedes adaptar la lógica de '.btnVerFichaPaciente'.
+        // Por ejemplo, para mostrar la ficha (esto es opcional si solo quieres el modal):
+        $.ajax({
+            url: '../ajax/pacientes.ajax.php',
+            type: 'POST',
+            data: { accion: 'obtenerPacientePorId', id_paciente: idPacienteFichaDesdeUrl }, // Reutiliza la acción existente
+            dataType: 'json',
+            success: function(paciente) {
+                if (paciente && paciente.nombre) {
+                    $('#id_paciente_actual_ficha').val(idPacienteFichaDesdeUrl);
+                    $('#nombrePacienteEnFicha').text(paciente.nombre);
+                    
+                    // Simulación de carga de datos generales en la ficha
+                    $('#datos-generales .mt-3').html(
+                        '<p>Mostrando datos generales de ' + paciente.nombre + '. Implementa la carga de datos aquí si es necesario.</p>' +
+                        '<button class="btn btn-sm btn-info" id="btnEditarPacienteDesdeFicha">Editar Datos del Paciente</button>'
+                    );
+                    
+                    $('#seccionFichaPaciente').show();
+                    $('#fichaPacienteTabs a[href="#datos-generales"]').tab('show');
+                    
+                    // Opcional: Desplazarse a la sección de la ficha si es muy larga la página
+                    // $('html, body').animate({
+                    //     scrollTop: $("#seccionFichaPaciente").offset().top
+                    // }, 500);
+
+                } else {
+                    // No mostrar error si el modal de edición ya se está abriendo.
+                    // Podrías querer un manejo más sutil aquí.
+                    console.warn("No se pudo obtener el nombre del paciente para el título de la ficha, pero el modal de edición se abrirá.");
+                }
+            },
+            error: function() {
+                 console.error("Error al obtener datos del paciente para el título de la ficha.");
+            }
+        });
+    }
+    /* ======================================================================================
     EVENTO AL DAR CLICK EN EL BOTON VER FICHA DEL PACIENTE
     =========================================================================================*/
     $('#tbl_pacientes tbody').on('click', '.btnVerFichaPaciente', function() {

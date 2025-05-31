@@ -48,9 +48,11 @@ class CitasModelo {
             "SELECT
                 c.id_cita,
                 c.fecha_hora,
+                c.id_paciente,      -- Añadido id_paciente
+                c.id_fisioterapeuta, -- Añadido id_fisioterapeuta
                 c.motivo,
                 c.estado,
-                p.NOMBRE AS nombre_paciente, -- Columna NOMBRE de tblpacientes
+                p.NOMBRE AS nombre_paciente,
                 CONCAT(f.nombre, ' ', f.apellido) AS nombre_fisioterapeuta
             FROM citas c
             INNER JOIN tblpacientes p ON c.id_paciente = p.id AND c.id_empresa = p.id_empresa -- Clave compuesta
@@ -63,6 +65,21 @@ class CitasModelo {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = null;
     }
+    // Dentro de la clase ModeloCitas
+
+    static public function mdlObtenerSesionesPorCita($idCita) {
+        // Asumo que tu tabla de sesiones se llama 'sesiones' y tiene 'id_cita' e 'id_servicio'
+        $stmt = Conexion::conectar()->prepare("SELECT s.*, serv.nombre_servicio, serv.precio 
+                                            FROM tblsesiones s
+                                            JOIN tblmao_servicio serv ON s.id_servicio = serv.id_servicio
+                                            WHERE s.id_cita = :id_cita");
+        $stmt->bindParam(":id_cita", $idCita, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+    }
+
 
     /*=============================================
     OBTENER CITA POR ID (Añadir filtro por empresa por seguridad)

@@ -357,7 +357,7 @@ class PacientesModelo{
 /*===================================================================
     BUSCAR POR ID DEL PACIENTE
     ====================================================================*/
-    static public function mdlGetDatosPaciente($id){
+    static public function mdlGetDatosPaciente($id_paciente, $id_empresa_paciente){
 
         $stmt = Conexion::conectar()->prepare("SELECT 
         p.id, p.nombre, p.sexo, p.fecha_nacimiento, p.edad, p.direccion,
@@ -366,9 +366,10 @@ class PacientesModelo{
         p.fecha_creacion, p.id_empresa, e.nombre as nombre_clinica                                                  
         FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
         inner join tblnacionalidad n on p.id_nacionalidad = n.id
-        inner join tblempresa e on p.id_empresa = e.id WHERE p.id = :id");
+        inner join tblempresa e on p.id_empresa = e.id WHERE p.id = :id_paciente AND p.id_empresa = :id_empresa_paciente");
         
-        $stmt -> bindParam(":id",$id,PDO::PARAM_INT);
+        $stmt -> bindParam(":id_paciente", $id_paciente, PDO::PARAM_INT);
+        $stmt -> bindParam(":id_empresa_paciente", $id_empresa_paciente, PDO::PARAM_INT);
 
         $stmt -> execute();
 

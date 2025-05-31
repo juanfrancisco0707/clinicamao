@@ -265,6 +265,128 @@
         </div>
     </div>
 </div>
+<!-- Modal para el Menú Contextual del Calendario -->
+<div class="modal fade" id="modalMenuContextualCalendario" tabindex="-1" aria-labelledby="modalMenuContextualLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm"> <!-- modal-sm para un menú más pequeño -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMenuContextualLabel">Acciones</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    <!-- Las opciones se añadirán/mostrarán dinámicamente aquí -->
+                    <button type="button" class="list-group-item list-group-item-action" id="btnMenuAgregarCita" style="display: none;">
+                        <i class="fas fa-plus-circle"></i> Agregar Nueva Cita
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" id="btnMenuEditarCita" style="display: none;">
+                        <i class="fas fa-edit"></i> Editar Cita
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" id="btnMenuEditarPaciente" style="display: none;">
+                        <i class="fas fa-user-edit"></i> Ver/Editar Paciente
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action" id="btnMenuPagos" style="display: none;">
+                        <i class="fas fa-dollar-sign"></i> Gestionar Pagos
+                    </button>
+                    <!-- Puedes añadir más opciones si es necesario -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para Gestionar Pagos -->
+<div class="modal fade" id="modalPagos" tabindex="-1" aria-labelledby="modalPagosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-purple py-1" id="modalPagosHeader"> <!-- Puedes definir .bg-purple en tu CSS -->
+                <h5 class="modal-title" id="modalPagosLabel">Gestionar Pagos de Cita</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formPago">
+                    <input type="hidden" id="pago_id_cita_actual">
+                    <input type="hidden" id="pago_id_paciente_actual">
+                    <input type="hidden" id="pago_id_fisioterapeuta_actual"> <!-- Para mostrar nombre del fisio -->
+
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Paciente:</strong> <span id="pago_display_nombre_paciente"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Fisioterapeuta:</strong> <span id="pago_display_nombre_fisioterapeuta"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <strong>Fecha Cita:</strong> <span id="pago_display_fecha_cita"></span>
+                        </div>
+                    </div>
+
+                    <h6>Detalle de Servicios de la Cita:</h6>
+                    <div id="pago_detalle_servicios_container" class="mb-3" style="max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+                        <!-- Los servicios se listarán aquí -->
+                        <p>Cargando servicios...</p>
+                    </div>
+
+                    <div class="row mb-3 alert alert-info">
+                        <div class="col-md-4"><strong>Total Calculado:</strong> S./ <span id="pago_monto_total_calculado_cita">0.00</span></div>
+                        <div class="col-md-4"><strong>Total Abonado:</strong> S./ <span id="pago_total_ya_pagado_cita">0.00</span></div>
+                        <div class="col-md-4 text-danger"><strong>Monto Pendiente:</strong> S./ <span id="pago_monto_pendiente_cita">0.00</span></div>
+                    </div>
+                    
+                    <hr>
+                    <h6>Registrar Nuevo Pago:</h6>
+                     <div class="row align-items-end">
+                        <div class="col-md-3 mb-3">
+                            <label for="pago_monto_a_pagar" class="form-label">Monto a Pagar <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="pago_monto_a_pagar" step="0.01" required>
+                        </div>
+                         <div class="col-md-3 mb-3">
+                            <label for="pago_descuento" class="form-label">Descuento</label>
+                            <input type="number" class="form-control" id="pago_descuento" step="0.01" value="0.00">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="pago_metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
+                            <select class="form-select form-control" id="pago_metodo_pago" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                                <option value="Transferencia SPEI">Transferencia SPEI</option>
+                                <!-- <option value="OXXO Pay">OXXO Pay</option> --> <!-- Opcional si aplica -->
+                                <!-- <option value="Cheque">Cheque</option> --> <!-- Opcional si aplica -->
+                                <!-- <option value="Otro">Otro</option> --> <!-- Mantener si quieres una opción genérica -->
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="pago_referencia" class="form-label">Referencia</label>
+                            <input type="text" class="form-control" id="pago_referencia" placeholder="Ej: ID Transacción">
+                        </div>
+                        
+                    <div class="row mb-3">
+                        <div class="col-md-12"><strong>Monto Neto de esta Transacción: S./ <span id="pago_monto_neto_transaccion">0.00</span></strong></div>
+
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="pago_notas" class="form-label">Notas Adicionales</label>
+                        <textarea class="form-control" id="pago_notas" rows="2"></textarea>
+                    </div>
+                </form>
+
+                <hr>
+                <h6>Historial de Pagos de esta Cita:</h6>
+                <div id="pago_historial_pagos_container" style="max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+                    <p>No hay pagos registrados para esta cita.</p>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnRegistrarPago">Registrar Pago</button> 
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 (function() {
@@ -274,7 +396,9 @@
     // Variables para el contexto de la cita/sesión activa para el historial
     let idPacienteCitaActiva = null;
     let idCitaParaRefrescarSesiones = null;
-
+    // Variables para guardar la información del clic en el calendario para el menú contextual
+    let currentSelectionInfo = null;
+    let currentEventInfo = null;
     // Seleccionar los botones de vista
     const botonesVista = {
         'timeGridDay': document.querySelector('button[onclick="changeView(\'timeGridDay\')"]'),
@@ -327,37 +451,61 @@
         locale: 'es', // Descomenta si cargaste el locale 'es' en plantilla.php
         events: '../ajax/citas.ajax.php?accion=listar', // URL para cargar eventos
         select: function(selectionInfo) {
-            // selectionInfo contiene start, end, allDay
+            currentSelectionInfo = selectionInfo; // Guardar info de la selección
+            currentEventInfo = null; // No hay evento existente
+
+            // Configurar y mostrar el menú contextual para "Agregar Cita"
+            $('#btnMenuAgregarCita').show();
+            $('#btnMenuEditarCita').hide();
+            $('#btnMenuEditarPaciente').hide();
+            $('#btnMenuPagos').hide();
+            $('#modalMenuContextualCalendario').modal('show');
+            /*
             $('#modalCitaLabel').text('Registrar Nueva Cita');
-            $('#formCita')[0].reset(); // Limpiar formulario
-            $('#id_cita').val(''); // Limpiar ID para nuevo registro
+            $('#formCita')[0].reset(); 
+            $('#id_cita').val(''); 
             
-            // Limpiar el contenedor de sesiones para una nueva cita
+            
             $('#listaSesionesContainer').html('<p>No hay sesiones registradas para esta cita.</p>');
 
-            // Formatear fecha y hora para datetime-local input
-            // FullCalendar devuelve fechas en formato ISO. Necesitamos ajustarlo.
+            
             let startDate = new Date(selectionInfo.startStr);
             if (!selectionInfo.allDay) {
-                // Ajustar por la zona horaria local para que coincida con el input
+                
                 startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
                 $('#fechaHoraCita').val(startDate.toISOString().slice(0, 16));
             } else {
-                // Si es allDay, podrías querer poner una hora por defecto, ej. 08:00
+                
                 let defaultTime = "08:00";
                 $('#fechaHoraCita').val(selectionInfo.startStr + 'T' + defaultTime);
             }
 
             $('#estadoCita').val('Pendiente');
-            $('#modalCita').modal('show');
+            $('#modalCita').modal('show');*/
         },
         eventClick: function(info) { // Cuando se hace clic en un evento existente
-            $('#modalCitaLabel').text('Editar Cita');
-            $('#formCita')[0].reset(); // Limpiar formulario
+            currentEventInfo = info; // Guardar info del evento
+            currentSelectionInfo = null; // No es una nueva selección
 
-            $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>'); // Placeholder
+            // Configurar y mostrar el menú contextual para cita existente
+            $('#btnMenuAgregarCita').hide();
+            $('#btnMenuEditarCita').show();
+            $('#btnMenuEditarPaciente').show(); // Mostrar si hay id_paciente
+            $('#btnMenuPagos').show(); // Mostrar si es relevante
 
-            // Hacemos una petición AJAX para obtener los detalles completos de la cita
+            // Podrías querer ocultar "Editar Paciente" o "Pagos" si no hay un paciente asociado
+            // if (!info.event.extendedProps || !info.event.extendedProps.id_paciente) {
+            //     $('#btnMenuEditarPaciente').hide();
+            //     $('#btnMenuPagos').hide(); // O solo pagos si depende del paciente
+            // }
+
+            $('#modalMenuContextualCalendario').modal('show');
+
+
+          /*  $('#modalCitaLabel').text('Editar Cita');
+            $('#formCita')[0].reset(); 
+
+            $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>'); /
             $.ajax({
                 url: '../ajax/citas.ajax.php',
                 type: 'POST',
@@ -371,15 +519,13 @@
                         $('#id_cita').val(cita.id_cita);
                         $('#selPaciente').val(cita.id_paciente);
                         $('#selFisioterapeuta').val(cita.id_fisioterapeuta);
-                        // Asegurarse de que la fecha y hora estén en el formato correcto para datetime-local
-                        // El formato de la BD es 'YYYY-MM-DD HH:MM:SS', el input necesita 'YYYY-MM-DDTHH:MM'
-                        let fechaHoraFormateada = cita.fecha_hora.replace(' ', 'T').substring(0, 16);
+                          let fechaHoraFormateada = cita.fecha_hora.replace(' ', 'T').substring(0, 16);
                         $('#fechaHoraCita').val(fechaHoraFormateada);
                         $('#motivoCita').val(cita.motivo);
                         $('#estadoCita').val(cita.estado);
                         $('#modalCita').modal('show');
-                        // Cargar sesiones para esta cita
-                        cargarSesionesDeCita(cita.id_cita, cita.id_paciente); // Pasar id_paciente
+                      
+                        cargarSesionesDeCita(cita.id_cita, cita.id_paciente); 
                     } else {
                         Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
                     }
@@ -387,7 +533,7 @@
                 error: function() {
                     Swal.fire('Error', 'Problema al obtener datos de la cita.', 'error');
                 }
-            });
+            });*/
         },
         eventDidMount: function(info) {
             // Inicializar tooltips para los eventos del calendario si es necesario
@@ -475,6 +621,25 @@
         if (!$('#selPaciente').val() || !$('#selFisioterapeuta').val() || !$('#fechaHoraCita').val()) {
             Swal.fire('Error', 'Paciente, Fisioterapeuta y Fecha/Hora son obligatorios.', 'error');
             return; 
+        }
+
+        // Validación para el estado "Completada"
+        const estadoSeleccionado = $('#estadoCita').val();
+        const fechaHoraCitaStr = $('#fechaHoraCita').val();
+
+        if (estadoSeleccionado === 'Completada') {
+            const fechaHoraCitaDate = new Date(fechaHoraCitaStr);
+            const fechaHoraActual = new Date();
+
+            // Ajustar la fecha de la cita para compararla correctamente (puede que no sea necesario si el input datetime-local ya está en la zona horaria correcta)
+            // Si tu input datetime-local ya maneja la zona horaria local correctamente, puedes omitir el ajuste de zona horaria.
+            // fechaHoraCitaDate.setMinutes(fechaHoraCitaDate.getMinutes() - fechaHoraCitaDate.getTimezoneOffset());
+
+
+            if (fechaHoraCitaDate > fechaHoraActual) {
+                Swal.fire('Acción no permitida', 'No se puede marcar una cita como "Completada" si su fecha y hora aún no ha llegado.', 'warning');
+                return; // Detener la ejecución
+            }
         }
 
         var datosCita = {
@@ -1029,6 +1194,305 @@ $('#modalSesion').on('shown.bs.modal', function () {
     }
     // Bootstrap 4 maneja el z-index de los backdrops apilados automáticamente.
 });
+// --- INICIO: Lógica para el Menú Contextual del Calendario ---
 
+$('#btnMenuAgregarCita').on('click', function() {
+    $('#modalMenuContextualCalendario').modal('hide');
+    if (currentSelectionInfo) {
+        $('#modalCitaLabel').text('Registrar Nueva Cita');
+        $('#formCita')[0].reset();
+        $('#id_cita').val('');
+        $('#listaSesionesContainer').html('<p>No hay sesiones registradas para esta cita.</p>');
+
+        let startDate = new Date(currentSelectionInfo.startStr);
+        if (!currentSelectionInfo.allDay) {
+            startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+            $('#fechaHoraCita').val(startDate.toISOString().slice(0, 16));
+        } else {
+            let defaultTime = "08:00";
+            $('#fechaHoraCita').val(currentSelectionInfo.startStr + 'T' + defaultTime);
+        }
+        $('#estadoCita').val('Pendiente');
+        $('#modalCita').modal('show');
+    }
+});
+
+$('#btnMenuEditarCita').on('click', function() {
+    $('#modalMenuContextualCalendario').modal('hide');
+    if (currentEventInfo && currentEventInfo.event) {
+        $('#modalCitaLabel').text('Editar Cita');
+        $('#formCita')[0].reset();
+        $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>');
+
+        $.ajax({
+            url: '../ajax/citas.ajax.php',
+            type: 'POST',
+            data: {
+                accion: 'obtenerCitaPorId',
+                id_cita: currentEventInfo.event.id
+            },
+            dataType: 'json',
+            success: function(cita) {
+                if (cita) {
+                    $('#id_cita').val(cita.id_cita);
+                    $('#selPaciente').val(cita.id_paciente);
+                    $('#selFisioterapeuta').val(cita.id_fisioterapeuta);
+                    let fechaHoraFormateada = cita.fecha_hora.replace(' ', 'T').substring(0, 16);
+                    $('#fechaHoraCita').val(fechaHoraFormateada);
+                    $('#motivoCita').val(cita.motivo);
+                    $('#estadoCita').val(cita.estado);
+                    $('#modalCita').modal('show');
+                    cargarSesionesDeCita(cita.id_cita, cita.id_paciente);
+                } else {
+                    Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Problema al obtener datos de la cita.', 'error');
+            }
+        });
+    }
+});
+
+$('#btnMenuEditarPaciente').on('click', function() {
+    $('#modalMenuContextualCalendario').modal('hide');
+    alert(currentEventInfo.event.extendedProps.id_paciente); // Aquí puedes implementar la lógica para editar el paciente
+    if (currentEventInfo && currentEventInfo.event && currentEventInfo.event.extendedProps && currentEventInfo.event.extendedProps.id_paciente) {
+        const idPaciente = currentEventInfo.event.extendedProps.id_paciente;
+        // Opción 1: Redirigir a la vista de pacientes con el ID para mostrar la ficha
+        // window.location.href = 'index.php?pagina=pacientes&id_paciente_ficha=' + idPaciente;
+        
+        // Cargar la vista de pacientes, pasando el id_paciente_ficha como parámetro.
+        // La vista pacientes.php se encargará de mostrar la ficha y/o el modal de edición.
+        CargarContenido('pacientes.php?id_paciente_ficha=' + idPaciente, 'content-wrapper');
+        
+    } else {
+        Swal.fire('Error', 'No hay un paciente asociado a esta cita para editar.', 'error');
+    }
+});
+
+/*$('#btnMenuPagos').on('click', function() {
+    $('#modalMenuContextualCalendario').modal('hide');
+    Swal.fire('Próximamente', 'La funcionalidad de Pagos se implementará aquí.', 'info');
+    // Aquí iría la lógica para abrir el modal de pagos o redirigir a la sección de pagos
+});*/
+
+// --- FIN: Lógica para el Menú Contextual del Calendario ---
+// Hacer el modal de Pagos arrastrable
+$('#modalPagos').draggable({
+    handle: "#modalPagosHeader"
+});
+
+// Evento para el botón "Gestionar Pagos" del menú contextual
+$('#btnMenuPagos').on('click', function() {
+    $('#modalMenuContextualCalendario').modal('hide');
+
+    if (currentEventInfo && currentEventInfo.event) {
+        const idCita = currentEventInfo.event.id;
+        // Asumimos que id_paciente y id_fisioterapeuta están en extendedProps
+        const idPaciente = currentEventInfo.event.extendedProps.id_paciente;
+        const idFisioterapeuta = currentEventInfo.event.extendedProps.id_fisioterapeuta;
+
+        if (!idPaciente) {
+            Swal.fire('Error', 'No hay un paciente asociado a esta cita para gestionar pagos.', 'error');
+            return;
+        }
+
+        $('#pago_id_cita_actual').val(idCita);
+        $('#pago_id_paciente_actual').val(idPaciente);
+        $('#pago_id_fisioterapeuta_actual').val(idFisioterapeuta); // Guardar para mostrar nombre
+
+        // Limpiar campos antes de cargar nueva info
+        $('#pago_display_nombre_paciente').text('Cargando...');
+        $('#pago_display_nombre_fisioterapeuta').text('Cargando...');
+        $('#pago_display_fecha_cita').text('Cargando...');
+        $('#pago_detalle_servicios_container').html('<p>Cargando servicios...</p>');
+        $('#pago_monto_total_calculado_cita').text('0.00');
+        $('#pago_total_ya_pagado_cita').text('0.00');
+        $('#pago_monto_pendiente_cita').text('0.00');
+        $('#pago_historial_pagos_container').html('<p>Cargando historial...</p>');
+        $('#formPago')[0].reset(); // Resetear el formulario de nuevo pago
+
+        // AJAX para obtener información de la cita y pagos
+        $.ajax({
+            url: '../ajax/pagos.ajax.php', // Crear este archivo
+            type: 'POST',
+            data: {
+                accion: 'obtener_info_pago_cita',
+                id_cita: idCita
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data) {
+                    $('#pago_display_nombre_paciente').text(data.nombre_paciente || 'N/A');
+                    $('#pago_display_nombre_fisioterapeuta').text(data.nombre_fisioterapeuta || 'N/A');
+                    $('#pago_display_fecha_cita').text(new Date(data.fecha_cita.replace(' ', 'T')).toLocaleString() || 'N/A');
+
+                    let serviciosHtml = '<ul class="list-group list-group-flush">';
+                    if (data.sesiones_detalle && data.sesiones_detalle.length > 0) {
+                        data.sesiones_detalle.forEach(function(detalle) {
+                            serviciosHtml += `<li class="list-group-item">${detalle.nombre_servicio}: S./ ${parseFloat(detalle.precio_servicio).toFixed(2)}</li>`;
+                        });
+                    } else {
+                        serviciosHtml += '<li class="list-group-item">No hay servicios detallados para esta cita.</li>';
+                    }
+                    serviciosHtml += '</ul>';
+                    $('#pago_detalle_servicios_container').html(serviciosHtml);
+
+                    $('#pago_monto_total_calculado_cita').text(parseFloat(data.monto_total_calculado_cita).toFixed(2));
+                    $('#pago_total_ya_pagado_cita').text(parseFloat(data.total_ya_pagado_cita).toFixed(2));
+                    $('#pago_monto_pendiente_cita').text(parseFloat(data.monto_pendiente_cita).toFixed(2));
+                    
+                    $('#pago_descuento').val('0.00');
+
+                    // Pre-llenar el monto a pagar con el monto pendiente (que ya considera descuentos previos)
+                    // O con el total calculado si no hay pagos previos.
+                    if (parseFloat(data.monto_pendiente_cita) > 0 || parseFloat(data.monto_total_calculado_cita) > 0 && parseFloat(data.total_ya_pagado_cita) == 0) {
+
+                        $('#pago_monto_a_pagar').val(parseFloat(data.monto_pendiente_cita).toFixed(2));
+                    }
+
+
+                    let historialHtml = '<ul class="list-group list-group-flush">';
+                    if (data.historial_pagos && data.historial_pagos.length > 0) {
+                        data.historial_pagos.forEach(function(pago) {
+                            historialHtml += `<li class="list-group-item">
+                                                ${new Date(pago.fecha_pago.replace(' ', 'T')).toLocaleString()}: 
+                                                S./ ${parseFloat(pago.monto_transaccion).toFixed(2)} 
+                                                (${pago.metodo_pago})
+                                               ${parseFloat(pago.descuento_aplicado) > 0 ? ' (Desc: S./ ' + parseFloat(pago.descuento_aplicado).toFixed(2) + ')' : ''}
+                                                ${pago.notas_pago ? ' - <small><i>' + pago.notas_pago + '</i></small>' : ''}
+                                                <button class="btn btn-sm btn-outline-secondary btnVerDetallesPago" 
+                                                        data-id-pago="${pago.id_pago}" 
+                                                        data-toggle="tooltip" title="Ver detalles del pago">
+                                                    <i class="fas fa-eye
+                                              </li>`;
+                        });
+                    } else {
+                        historialHtml += '<li class="list-group-item">No hay pagos registrados para esta cita.</li>';
+                    }
+                    historialHtml += '</ul>';
+                    $('#pago_historial_pagos_container').html(historialHtml);
+                      actualizarMontoNetoTransaccion(); // Actualizar monto neto al cargar
+
+
+                    $('#modalPagos').modal('show');
+                } else {
+                    Swal.fire('Error', 'No se pudo obtener la información de pago para esta cita.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Problema al conectar con el servidor para obtener datos de pago.', 'error');
+            }
+        });
+
+    } else {
+        Swal.fire('Error', 'No se ha seleccionado una cita válida.', 'error');
+    }
+});
+// Función para actualizar el monto neto de la transacción
+function actualizarMontoNetoTransaccion() {
+    const montoAPagar = parseFloat($('#pago_monto_a_pagar').val()) || 0;
+    const descuento = parseFloat($('#pago_descuento').val()) || 0;
+    let montoNeto = montoAPagar - descuento;
+    if (montoNeto < 0) montoNeto = 0; // El monto neto no puede ser negativo
+    $('#pago_monto_neto_transaccion').text(montoNeto.toFixed(2));
+}
+
+// Eventos para recalcular el monto neto cuando cambian el monto a pagar o el descuento
+$('#pago_monto_a_pagar, #pago_descuento').on('keyup change', function() {
+    actualizarMontoNetoTransaccion();
+});
+// Evento para el botón "Registrar Pago" dentro del modal de Pagos
+$('#btnRegistrarPago').on('click', function() {
+    console.log("Botón #btnRegistrarPago clickeado!"); // Para depuración
+    const idCita = $('#pago_id_cita_actual').val();
+    const idPaciente = $('#pago_id_paciente_actual').val();
+    const montoBrutoAPagar = parseFloat($('#pago_monto_a_pagar').val()) || 0;
+    const descuentoAplicado = parseFloat($('#pago_descuento').val()) || 0;
+    const metodoPago = $('#pago_metodo_pago').val();
+    const referenciaPago = $('#pago_referencia').val();
+    const notasPago = $('#pago_notas').val();
+    const montoPendiente = parseFloat($('#pago_monto_pendiente_cita').text()) || 0;
+
+    const montoNetoTransaccion = montoBrutoAPagar - descuentoAplicado;
+
+    if (montoBrutoAPagar <= 0) {
+        Swal.fire('Error', 'El "Monto a Pagar" (antes de descuento) debe ser mayor a cero.', 'error');
+        return;
+    }
+
+    if (montoNetoTransaccion < 0) {
+        Swal.fire('Error', 'El monto neto de la transacción (después del descuento) no puede ser negativo.', 'error');
+        return;
+    }
+
+    if (!metodoPago) {
+        Swal.fire('Error', 'Debe seleccionar un método de pago.', 'error');
+        return;
+    }
+
+    // Comprobar si el monto neto a pagar excede el monto pendiente
+    if (montoNetoTransaccion > montoPendiente) { 
+         Swal.fire({
+            title: 'Monto Excedente',
+            text: `El monto neto a pagar (S./ ${montoNetoTransaccion.toFixed(2)}) es mayor al monto pendiente (S./ ${montoPendiente.toFixed(2)}). ¿Desea continuar y registrar el pago?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar pago',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                procederConRegistroPago(); 
+            }
+        });
+    } else {
+         procederConRegistroPago(); // Proceder directamente si el monto no excede
+    }
+
+    function procederConRegistroPago() {
+        console.log("Ejecutando procederConRegistroPago..."); // Para depuración
+        $.ajax({
+            url: '../ajax/pagos.ajax.php', 
+            type: 'POST',
+            data: {
+                accion: 'registrar_pago',
+                id_cita: idCita,
+                id_paciente: idPaciente,
+                monto_transaccion: montoNetoTransaccion.toFixed(2), 
+                descuento_aplicado: descuentoAplicado.toFixed(2), // Enviar el descuento
+                metodo_pago: metodoPago,
+                referencia_pago: referenciaPago,
+                notas_pago: notasPago
+                // id_usuario_registra se tomará de la sesión en el backend
+            },
+            dataType: 'json',
+            success: function(respuesta) {
+                if (respuesta.resultado === 'ok') {
+                    Swal.fire('¡Pago Registrado!', respuesta.mensaje || 'El pago se registró correctamente.', 'success');
+                    $('#modalPagos').modal('hide');
+                    if (typeof calendarInstance !== 'undefined' && calendarInstance.refetchEvents) {
+                        calendarInstance.refetchEvents(); 
+                    }
+                    // Para actualizar la info en el modal si se vuelve a abrir, es mejor que el clic en btnMenuPagos siempre recargue.
+                } else {
+                    Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar el pago.', 'error');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error AJAX en registrar_pago:", textStatus, errorThrown, jqXHR.responseText);
+                Swal.fire('Error de Comunicación', 'Problema al conectar con el servidor para registrar el pago. Revise la consola para más detalles.', 'error');
+            }
+        });
+    }
+});
+
+
+// --- FIN: Lógica para Pagos ---
 })();
+// --- INICIO: Lógica para Pagos ---
+
+
 </script>

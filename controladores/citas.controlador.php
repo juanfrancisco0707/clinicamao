@@ -98,7 +98,13 @@ class CitasControlador {
                 "estado" => $fila["estado"],
                 "backgroundColor" => $backgroundColor,
                 "borderColor" => $backgroundColor, // Usualmente el mismo que el fondo
-                "textColor" => $textColor
+                "textColor" => $textColor,
+                "extendedProps" => array(
+                    "id_paciente" => $fila["id_paciente"], // Asegúrate que esta columna exista en tu consulta de mdlListarCitas
+                    "id_fisioterapeuta" => $fila["id_fisioterapeuta"], // Ejemplo, si también lo necesitas
+                    // "motivo_cita" => $fila["motivo"], // Ya lo tienes fuera, pero podrías moverlo aquí
+                    // "estado_cita" => $fila["estado"] // Ya lo tienes fuera, pero podrías moverlo aquí
+                )
             );
         }
         return $eventos;
