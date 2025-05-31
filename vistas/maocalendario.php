@@ -1356,13 +1356,23 @@ $('#btnMenuPagos').on('click', function() {
                     let historialHtml = '<ul class="list-group list-group-flush">';
                     if (data.historial_pagos && data.historial_pagos.length > 0) {
                         data.historial_pagos.forEach(function(pago) {
-                            historialHtml += `<li class="list-group-item">
-                                                ${new Date(pago.fecha_pago.replace(' ', 'T')).toLocaleString()}: 
-                                                S./ ${parseFloat(pago.monto_transaccion).toFixed(2)} 
-                                                (${pago.metodo_pago})
-                                               ${parseFloat(pago.descuento_aplicado) > 0 ? ' (Desc: S./ ' + parseFloat(pago.descuento_aplicado).toFixed(2) + ')' : ''}
-                                                ${pago.notas_pago ? ' - <small><i>' + pago.notas_pago + '</i></small>' : ''}
-                                                <button class="btn btn-sm btn-outline-secondary btnVerDetallesPago" 
+                            historialHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    ${new Date(pago.fecha_pago.replace(' ', 'T')).toLocaleString()}: 
+                                                    S./ ${parseFloat(pago.monto_transaccion).toFixed(2)} 
+                                                    (${pago.metodo_pago})
+                                                   ${parseFloat(pago.descuento_aplicado) > 0 ? ' (Desc: S./ ' + parseFloat(pago.descuento_aplicado).toFixed(2) + ')' : ''}
+                                                    ${pago.notas_pago ? ' <br><small><i>' + pago.notas_pago + '</i></small>' : ''}
+                                                </div>
+                                                <div>
+                                                    <button class="btn btn-sm btn-outline-primary btnImprimirTicketHistorial" data-id-pago="${pago.id_pago}" data-toggle="tooltip" title="Imprimir Ticket">
+                                                        <i class="fas fa-print"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-secondary btnEnviarCorreoTicketHistorial" data-id-pago="${pago.id_pago}" data-correo-paciente="${data.correo_paciente || ''}" data-toggle="tooltip" title="Enviar por Correo">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </button>
+                                                </div>
+                                                        <button class="btn btn-sm btn-outline-secondary btnVerDetallesPago" 
                                                         data-id-pago="${pago.id_pago}" 
                                                         data-toggle="tooltip" title="Ver detalles del pago">
                                                     <i class="fas fa-eye
@@ -1373,6 +1383,7 @@ $('#btnMenuPagos').on('click', function() {
                     }
                     historialHtml += '</ul>';
                     $('#pago_historial_pagos_container').html(historialHtml);
+                    $('[data-toggle="tooltip"]').tooltip(); // Reinicializar tooltips
                       actualizarMontoNetoTransaccion(); // Actualizar monto neto al cargar
 
 
@@ -1390,6 +1401,8 @@ $('#btnMenuPagos').on('click', function() {
         Swal.fire('Error', 'No se ha seleccionado una cita válida.', 'error');
     }
 });
+
+
 // Función para actualizar el monto neto de la transacción
 function actualizarMontoNetoTransaccion() {
     const montoAPagar = parseFloat($('#pago_monto_a_pagar').val()) || 0;
@@ -1453,7 +1466,7 @@ $('#btnRegistrarPago').on('click', function() {
     }
 
     function procederConRegistroPago() {
-        console.log("Ejecutando procederConRegistroPago..."); // Para depuración
+        //console.log("Ejecutando procederConRegistroPago..."); // Para depuración
         $.ajax({
             url: '../ajax/pagos.ajax.php', 
             type: 'POST',
@@ -1471,11 +1484,30 @@ $('#btnRegistrarPago').on('click', function() {
             dataType: 'json',
             success: function(respuesta) {
                 if (respuesta.resultado === 'ok') {
-                    Swal.fire('¡Pago Registrado!', respuesta.mensaje || 'El pago se registró correctamente.', 'success');
-                    $('#modalPagos').modal('hide');
-                    if (typeof calendarInstance !== 'undefined' && calendarInstance.refetchEvents) {
-                        calendarInstance.refetchEvents(); 
-                    }
+                   Swal.fire({
+                        title: '¡Pago Registrado!',
+                        text: respuesta.mensaje || 'El pago se registró correctamente.',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="fas fa-download"></i> Descargar Ticket',
+                        cancelButtonText: '<i class="fas fa-envelope"></i> Enviar por Correo',
+                        showDenyButton: true,
+                        denyButtonText: 'Cerrar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Descargar Ticket
+                            window.open('../reportes/generar_ticket_pago.php?id_pago=' + respuesta.id_pago, '_blank');
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            // Enviar por Correo (Implementación futura)
+                            Swal.fire('Próximamente', 'La función de enviar ticket por correo se implementará pronto.', 'info');
+                            // Aquí llamarías a la función para enviar correo, pasando respuesta.id_pago
+                        }
+                        $('#modalPagos').modal('hide');
+                        if (typeof calendarInstance !== 'undefined' && calendarInstance.refetchEvents) {
+                            calendarInstance.refetchEvents(); 
+                        }
+                    });
                     // Para actualizar la info en el modal si se vuelve a abrir, es mejor que el clic en btnMenuPagos siempre recargue.
                 } else {
                     Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar el pago.', 'error');
@@ -1488,7 +1520,31 @@ $('#btnRegistrarPago').on('click', function() {
         });
     }
 });
+// --- INICIO: Eventos para botones en el Historial de Pagos ---
+$(document).on('click', '.btnImprimirTicketHistorial', function() {
+    const idPago = $(this).data('id-pago');
+    if (idPago) {
+        window.open('../reportes/generar_ticket_pago.php?id_pago=' + idPago, '_blank');
+    } else {
+        Swal.fire('Error', 'No se pudo obtener el ID del pago para imprimir el ticket.', 'error');
+    }
+});
 
+$(document).on('click', '.btnEnviarCorreoTicketHistorial', function() {
+    const idPago = $(this).data('id-pago');
+    const correoPaciente = $(this).data('correo-paciente');
+
+    if (!idPago) {
+        Swal.fire('Error', 'No se pudo obtener el ID del pago.', 'error');
+        return;
+    }
+    // Por ahora, solo un mensaje. La implementación real requeriría AJAX y PHPMailer.
+    Swal.fire('Próximamente', `Se enviaría el ticket del pago ID: ${idPago} al correo: ${correoPaciente || 'No disponible'}. Esta función aún no está implementada.`, 'info');
+    
+    // Aquí iría la lógica para llamar a un AJAX que envíe el correo con el ticket.
+    // Ejemplo: enviarTicketPorCorreo(idPago, correoPaciente);
+});
+// --- FIN: Eventos para botones en el Historial de Pagos ---
 
 // --- FIN: Lógica para Pagos ---
 })();

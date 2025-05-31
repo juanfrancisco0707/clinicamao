@@ -16,7 +16,8 @@ class ModeloPagos {
         $stmt->bindParam(":id_usuario_registra", $datos["id_usuario_registra"], PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            return "ok";
+            //return "ok";
+            return Conexion::conectar()->lastInsertId(); // Devolver el ID del último registro insertado
         } else {
             // Considera loguear $stmt->errorInfo() para depuración
             return "error";

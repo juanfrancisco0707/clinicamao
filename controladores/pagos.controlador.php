@@ -73,11 +73,11 @@ class PagosControlador {
         // Validar datos
         // ...
 
-        // Insertar en PagosModelo::mdlIngresarPago
-        $respuesta = ModeloPagos::mdlIngresarPago("tblmao_pagos", $datos);
+        // Insertar en ModeloPagos::mdlIngresarPago
+        $respuestaModelo = ModeloPagos::mdlIngresarPago("tblmao_pagos", $datos);
 
-        if ($respuesta == "ok") {
-            return array("resultado" => "ok", "mensaje" => "Pago registrado exitosamente.");
+        if (is_numeric($respuestaModelo) && $respuestaModelo > 0) { // Si la respuesta es un ID numérico > 0
+            return array("resultado" => "ok", "mensaje" => "Pago registrado exitosamente.", "id_pago" => $respuestaModelo);
         } else {
             return array("resultado" => "error", "mensaje" => "No se pudo registrar el pago.");
         }
