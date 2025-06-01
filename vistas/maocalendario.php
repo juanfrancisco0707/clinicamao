@@ -61,6 +61,28 @@
     cursor: move; /* Cambiar cursor para indicar que es arrastrable */
    /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
 }
+
+/* Estilos para el Menú Contextual del Calendario */
+#modalMenuContextualCalendario .modal-dialog {
+    max-width: 280px; /* Un poco más ancho para mejor espaciado */
+}
+
+#modalMenuContextualCalendario .modal-header {
+    background-color: #f8f9fa; /* Un fondo claro para el header */
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 1rem; /* Ajustar padding */
+}
+
+#modalMenuContextualCalendario .modal-title {
+    font-size: 1.1rem; /* Tamaño de fuente del título */
+    color: #495057;
+}
+
+#modalMenuContextualCalendario .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.75rem 1.25rem; /* Ajustar padding de los items */
+}
 </style>
 
 <div class="container mt-3">
@@ -328,9 +350,13 @@
                     </div>
 
                     <div class="row mb-3 alert alert-info">
-                        <div class="col-md-4"><strong>Total Calculado:</strong> S./ <span id="pago_monto_total_calculado_cita">0.00</span></div>
-                        <div class="col-md-4"><strong>Total Abonado:</strong> S./ <span id="pago_total_ya_pagado_cita">0.00</span></div>
-                        <div class="col-md-4 text-danger"><strong>Monto Pendiente:</strong> S./ <span id="pago_monto_pendiente_cita">0.00</span></div>
+                        <div class="col-md-4"><strong>Total Calculado:</strong> $ <span id="pago_monto_total_calculado_cita">0.00</span></div>
+                        <div class="col-md-4"><strong>Total Abonado:</strong> $ <span id="pago_total_ya_pagado_cita">0.00</span></div>
+                        <div class="col-md-4"><strong>Monto Pendiente:</strong> <span id="pago_monto_pendiente_cita_wrapper" class="text-danger">$ <span id="pago_monto_pendiente_cita">0.00</span></span></div>
+                    </div>
+                    
+                    <div id="mensajeCitaPagada" class="alert alert-success" style="display: none;">
+                        Esta cita ya ha sido pagada en su totalidad.
                     </div>
                     
                     <hr>
@@ -363,7 +389,7 @@
                         </div>
                         
                     <div class="row mb-3">
-                        <div class="col-md-12"><strong>Monto Neto de esta Transacción: S./ <span id="pago_monto_neto_transaccion">0.00</span></strong></div>
+                        <div class="col-md-12"><strong>Monto Neto de esta Transacción: $ <span id="pago_monto_neto_transaccion">0.00</span></strong></div>
 
 
                     </div>
@@ -418,6 +444,11 @@
        // Hacer el modal de Sesiones arrastrable
     $('#modalSesion').draggable({
         handle: "#modalSesionHeader" // Usa el ID del encabezado del modal de sesiones
+    });
+    // Hacer el modal del Menú Contextual arrastrable
+    $('#modalMenuContextualCalendario').draggable({
+        handle: ".modal-header" // Asume que el header del modal contextual tiene la clase .modal-header
+        // Aquí iría la lógica para abrir el modal de pagos o redirigir a la sección de pagos
     });
     if (typeof FullCalendar === 'undefined' || typeof FullCalendar.Calendar === 'undefined') {
         console.error("FullCalendar o FullCalendar.Calendar no está definido. Asegúrate de que la librería esté cargada en plantilla.php.");
@@ -487,25 +518,47 @@
             currentEventInfo = info; // Guardar info del evento
             currentSelectionInfo = null; // No es una nueva selección
 
-            // Configurar y mostrar el menú contextual para cita existente
-            $('#btnMenuAgregarCita').hide();
+            // Ocultar todos los botones del menú contextual inicialmente
+            $('#btnMenuAgregarCita, #btnMenuEditarCita, #btnMenuEditarPaciente, #btnMenuPagos').hide();
+
+            const idCita = info.event.id;
+            const estadoCita = info.event.extendedProps.estado; // Asegúrate que 'estado' sea el nombre correcto de la propiedad
+            const idPaciente = info.event.extendedProps.id_paciente;
+
+            // Mostrar opciones básicas
             $('#btnMenuEditarCita').show();
-            $('#btnMenuEditarPaciente').show(); // Mostrar si hay id_paciente
-            $('#btnMenuPagos').show(); // Mostrar si es relevante
+            if (idPaciente) {
+                $('#btnMenuEditarPaciente').show();
+            }
 
-            // Podrías querer ocultar "Editar Paciente" o "Pagos" si no hay un paciente asociado
-            // if (!info.event.extendedProps || !info.event.extendedProps.id_paciente) {
-            //     $('#btnMenuEditarPaciente').hide();
-            //     $('#btnMenuPagos').hide(); // O solo pagos si depende del paciente
-            // }
-
-            $('#modalMenuContextualCalendario').modal('show');
-
-
-          /*  $('#modalCitaLabel').text('Editar Cita');
-            $('#formCita')[0].reset(); 
-
-            $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>'); /
+            // Verificar condiciones para "Gestionar Pagos"
+            if (estadoCita === 'Confirmada' || estadoCita === 'Completada') {
+                // Hacer AJAX para verificar si hay sesiones
+                $.ajax({
+                    url: '../ajax/sesiones.ajax.php', // O la ruta a tu AJAX de sesiones
+                    type: 'POST',
+                    data: {
+                        accionSesion: 'contarSesionesDeCita',
+                        id_cita_contar: idCita
+                    },
+                    dataType: 'json',
+                    success: function(respuestaConteo) {
+                        if (respuestaConteo && respuestaConteo.total_sesiones > 0) {
+                            $('#btnMenuPagos').show();
+                        }
+                        $('#modalMenuContextualCalendario').modal('show');
+                    },
+                    error: function() {
+                        console.error("Error al verificar sesiones para la cita " + idCita);
+                        // Igualmente mostrar el menú, pero sin la opción de pagos si falla la verificación
+                        $('#modalMenuContextualCalendario').modal('show');
+                    }
+                });
+            } else {
+                // Si el estado no es Confirmada o Completada, no mostrar pagos y abrir menú
+                $('#modalMenuContextualCalendario').modal('show');
+            }
+            /* // Lógica anterior para abrir directamente el modal de edición de cita:
             $.ajax({
                 url: '../ajax/citas.ajax.php',
                 type: 'POST',
@@ -617,12 +670,14 @@
     // Guardar Cita
     $('#btnGuardarCita').on('click', function() {
         const idCitaActual = $('#id_cita').val();
+        const estadoOriginalCita = $('#formCita').data('estado-original'); // Recuperar estado original
+        const nuevoEstadoCita = $('#estadoCita').val();
+
         // Validaciones básicas del formulario (puedes añadir más)
         if (!$('#selPaciente').val() || !$('#selFisioterapeuta').val() || !$('#fechaHoraCita').val()) {
             Swal.fire('Error', 'Paciente, Fisioterapeuta y Fecha/Hora son obligatorios.', 'error');
             return; 
         }
-
         // Validación para el estado "Completada"
         const estadoSeleccionado = $('#estadoCita').val();
         const fechaHoraCitaStr = $('#fechaHoraCita').val();
@@ -642,13 +697,42 @@
             }
         }
 
+        // Nueva validación: Si se está editando y se intenta cambiar a "Cancelada" y tiene sesiones
+        if (idCitaActual && nuevoEstadoCita === 'Cancelada' && estadoOriginalCita !== 'Cancelada') {
+            $.ajax({
+                url: '../ajax/sesiones.ajax.php',
+                type: 'POST',
+                data: {
+                    accionSesion: 'contarSesionesDeCita',
+                    id_cita_contar: idCitaActual
+                },
+                dataType: 'json',
+                success: function(respuestaConteo) {
+                    if (respuestaConteo && respuestaConteo.total_sesiones > 0) {
+                        Swal.fire('Acción no permitida', 'No se puede cancelar una cita que ya tiene sesiones registradas. Por favor, elimine primero las sesiones asociadas.', 'warning');
+                        $('#estadoCita').val(estadoOriginalCita); // Revertir al estado original en el select
+                    } else {
+                        // No tiene sesiones, proceder a guardar
+                        procederConGuardadoCita(idCitaActual, estadoOriginalCita);
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'No se pudo verificar el número de sesiones. No se guardó la cita.', 'error');
+                }
+            });
+        } else {
+            // Si no es el caso de cancelación con sesiones, proceder a guardar directamente
+            procederConGuardadoCita(idCitaActual, estadoOriginalCita);
+        }
+    });
+
+    function procederConGuardadoCita(idCitaActual, estadoOriginalCita) {
         var datosCita = {
-            // La acción se determinará si id_cita tiene valor o no
             id_paciente: $('#selPaciente').val(),
             id_fisioterapeuta: $('#selFisioterapeuta').val(),
             fecha_hora: $('#fechaHoraCita').val(),
             motivo: $('#motivoCita').val(),
-            estado: $('#estadoCita').val()
+            estado: $('#estadoCita').val() // El nuevo estado
         };
 
         datosCita.accion = idCitaActual ? 'actualizarCita' : 'registrarCita';
@@ -664,16 +748,17 @@
                     let mensajeExito = idCitaActual ? '¡Actualizado!' : '¡Registrado!';
                     Swal.fire(mensajeExito, respuesta.mensaje || 'La operación se realizó correctamente.', 'success');
                     $('#modalCita').modal('hide');
-                    calendarInstance.refetchEvents(); // Recargar eventos en el calendario
+                    calendarInstance.refetchEvents(); 
                 } else {
-                    Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar la cita.', 'error');
+                    Swal.fire('Error', respuesta.mensaje || 'No se pudo guardar la cita.', 'error');
                 }
             },
             error: function() {
                 Swal.fire('Error', 'Ocurrió un problema de comunicación con el servidor.', 'error');
             }
         });
-    });
+    }
+
     function cargarServiciosSelect() {
     // Asumiendo que tienes un endpoint similar para servicios
     // o puedes adaptar el existente si 'accion: 1' en mao.servicios.ajax.php ya lista los servicios.
@@ -1224,6 +1309,7 @@ $('#btnMenuEditarCita').on('click', function() {
         $('#formCita')[0].reset();
         $('#listaSesionesContainer').html('<p>Cargando sesiones...</p>');
 
+        // Primero, obtener los detalles de la cita
         $.ajax({
             url: '../ajax/citas.ajax.php',
             type: 'POST',
@@ -1232,8 +1318,9 @@ $('#btnMenuEditarCita').on('click', function() {
                 id_cita: currentEventInfo.event.id
             },
             dataType: 'json',
-            success: function(cita) {
+            success: function(cita) { // Success de obtenerCitaPorId
                 if (cita) {
+                    // Poblar campos básicos del modal de cita
                     $('#id_cita').val(cita.id_cita);
                     $('#selPaciente').val(cita.id_paciente);
                     $('#selFisioterapeuta').val(cita.id_fisioterapeuta);
@@ -1241,8 +1328,44 @@ $('#btnMenuEditarCita').on('click', function() {
                     $('#fechaHoraCita').val(fechaHoraFormateada);
                     $('#motivoCita').val(cita.motivo);
                     $('#estadoCita').val(cita.estado);
-                    $('#modalCita').modal('show');
-                    cargarSesionesDeCita(cita.id_cita, cita.id_paciente);
+
+                    const estadoActualCita = cita.estado;
+                    const idCitaActual = cita.id_cita;
+
+                    // Deshabilitar "Agregar Sesión" si la cita está cancelada
+                    if (estadoActualCita === 'Cancelada') {
+                        $('#btnAbrirModalNuevaSesion').prop('disabled', true).attr('title', 'No se pueden agregar sesiones a citas canceladas.');
+                    } else {
+                        $('#btnAbrirModalNuevaSesion').prop('disabled', false).removeAttr('title');
+                    }
+
+                    // Segundo, contar las sesiones para aplicar lógica de estados
+                    $.ajax({
+                        url: '../ajax/sesiones.ajax.php',
+                        type: 'POST',
+                        data: {
+                            accionSesion: 'contarSesionesDeCita',
+                            id_cita_contar: idCitaActual
+                        },
+                        dataType: 'json',
+                        success: function(respuestaConteo) { // Success de contarSesionesDeCita
+                            let numeroDeSesiones = 0;
+                            if (respuestaConteo && typeof respuestaConteo.total_sesiones !== 'undefined') {
+                                numeroDeSesiones = parseInt(respuestaConteo.total_sesiones, 10);
+                            }
+
+                            // Aplicar lógica de habilitación/deshabilitación de estados
+                            actualizarOpcionesEstadoCita(estadoActualCita, numeroDeSesiones);
+
+                            $('#modalCita').modal('show');
+                            cargarSesionesDeCita(idCitaActual, cita.id_paciente);
+                        },
+                        error: function() { // Error de contarSesionesDeCita
+                            Swal.fire('Error', 'No se pudo verificar el número de sesiones. Algunas opciones de estado podrían no estar correctamente restringidas.', 'warning');
+                            $('#modalCita').modal('show'); // Mostrar modal igualmente
+                            cargarSesionesDeCita(idCitaActual, cita.id_paciente);
+                        }
+                    });
                 } else {
                     Swal.fire('Error', 'No se pudieron obtener los detalles de la cita.', 'error');
                 }
@@ -1253,6 +1376,41 @@ $('#btnMenuEditarCita').on('click', function() {
         });
     }
 });
+
+function actualizarOpcionesEstadoCita(estadoActual, numSesiones) {
+    const $selectEstado = $('#estadoCita');
+    // Habilitar todas las opciones primero
+    $selectEstado.find('option').prop('disabled', false);
+
+    if (numSesiones > 0) {
+        if (estadoActual === 'Confirmada') {
+            $selectEstado.find('option[value="Pendiente"]').prop('disabled', true);
+            $selectEstado.find('option[value="Cancelada"]').prop('disabled', true);
+        } else if (estadoActual === 'Completada') {
+            $selectEstado.find('option[value="Pendiente"]').prop('disabled', true);
+            $selectEstado.find('option[value="Cancelada"]').prop('disabled', true);
+            $selectEstado.find('option[value="Confirmada"]').prop('disabled', true);
+        }
+        // Si está Pendiente y tiene sesiones (caso anómalo, pero por si acaso),
+        // podría restringirse el cambio a Cancelada.
+        // else if (estadoActual === 'Pendiente') {
+        //     $selectEstado.find('option[value="Cancelada"]').prop('disabled', true);
+        // }
+        // Si está Cancelada y tiene sesiones, no se debería poder cambiar fácilmente.
+        // else if (estadoActual === 'Cancelada') {
+        //     $selectEstado.find('option').not('[value="Cancelada"]').prop('disabled', true);
+        // }
+    }
+
+    // Si una opción deshabilitada es la actualmente seleccionada,
+    // el navegador podría mostrar la primera opción habilitada.
+    // Aseguramos que el estado actual siga seleccionado si es válido.
+    if ($selectEstado.find('option[value="' + estadoActual + '"]').is(':disabled')) {
+        // Esto es un caso complejo. Si el estado actual se vuelve inválido por las reglas,
+        // se necesitaría una lógica para seleccionar un estado válido por defecto o advertir.
+        // Por ahora, la deshabilitación se aplica, y el navegador manejará la selección.
+    }
+}
 
 $('#btnMenuEditarPaciente').on('click', function() {
     $('#modalMenuContextualCalendario').modal('hide');
@@ -1311,6 +1469,7 @@ $('#btnMenuPagos').on('click', function() {
         $('#pago_total_ya_pagado_cita').text('0.00');
         $('#pago_monto_pendiente_cita').text('0.00');
         $('#pago_historial_pagos_container').html('<p>Cargando historial...</p>');
+        $('#mensajeCitaPagada').hide(); // Ocultar mensaje de cita pagada
         $('#formPago')[0].reset(); // Resetear el formulario de nuevo pago
 
         // AJAX para obtener información de la cita y pagos
@@ -1331,7 +1490,7 @@ $('#btnMenuPagos').on('click', function() {
                     let serviciosHtml = '<ul class="list-group list-group-flush">';
                     if (data.sesiones_detalle && data.sesiones_detalle.length > 0) {
                         data.sesiones_detalle.forEach(function(detalle) {
-                            serviciosHtml += `<li class="list-group-item">${detalle.nombre_servicio}: S./ ${parseFloat(detalle.precio_servicio).toFixed(2)}</li>`;
+                            serviciosHtml += `<li class="list-group-item">${detalle.nombre_servicio}: $ ${parseFloat(detalle.precio_servicio).toFixed(2)}</li>`;
                         });
                     } else {
                         serviciosHtml += '<li class="list-group-item">No hay servicios detallados para esta cita.</li>';
@@ -1342,16 +1501,28 @@ $('#btnMenuPagos').on('click', function() {
                     $('#pago_monto_total_calculado_cita').text(parseFloat(data.monto_total_calculado_cita).toFixed(2));
                     $('#pago_total_ya_pagado_cita').text(parseFloat(data.total_ya_pagado_cita).toFixed(2));
                     $('#pago_monto_pendiente_cita').text(parseFloat(data.monto_pendiente_cita).toFixed(2));
-                    
                     $('#pago_descuento').val('0.00');
 
-                    // Pre-llenar el monto a pagar con el monto pendiente (que ya considera descuentos previos)
-                    // O con el total calculado si no hay pagos previos.
-                    if (parseFloat(data.monto_pendiente_cita) > 0 || parseFloat(data.monto_total_calculado_cita) > 0 && parseFloat(data.total_ya_pagado_cita) == 0) {
+                    const montoPendienteNum = parseFloat(data.monto_pendiente_cita);
 
+                    if (montoPendienteNum <= 0) {
+                        // Cita completamente pagada
+                        $('#pago_monto_pendiente_cita_wrapper').removeClass('text-danger').addClass('text-success');
+                        $('#mensajeCitaPagada').show();
+                        // Deshabilitar campos del formulario de nuevo pago
+                        $('#pago_monto_a_pagar, #pago_descuento, #pago_metodo_pago, #pago_referencia, #pago_notas').prop('disabled', true);
+                        $('#btnRegistrarPago').prop('disabled', true);
+                        $('#pago_monto_a_pagar').val('0.00'); // Poner monto a pagar en 0
+                    } else {
+                        // Cita con monto pendiente
+                        $('#pago_monto_pendiente_cita_wrapper').removeClass('text-success').addClass('text-danger');
+                        $('#mensajeCitaPagada').hide();
+                        // Habilitar campos del formulario de nuevo pago
+                        $('#pago_monto_a_pagar, #pago_descuento, #pago_metodo_pago, #pago_referencia, #pago_notas').prop('disabled', false);
+                        $('#btnRegistrarPago').prop('disabled', false);
+                        // Pre-llenar el monto a pagar con el monto pendiente
                         $('#pago_monto_a_pagar').val(parseFloat(data.monto_pendiente_cita).toFixed(2));
                     }
-
 
                     let historialHtml = '<ul class="list-group list-group-flush">';
                     if (data.historial_pagos && data.historial_pagos.length > 0) {
@@ -1359,9 +1530,9 @@ $('#btnMenuPagos').on('click', function() {
                             historialHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
                                                 <div>
                                                     ${new Date(pago.fecha_pago.replace(' ', 'T')).toLocaleString()}: 
-                                                    S./ ${parseFloat(pago.monto_transaccion).toFixed(2)} 
+                                                    $ ${parseFloat(pago.monto_transaccion).toFixed(2)} 
                                                     (${pago.metodo_pago})
-                                                   ${parseFloat(pago.descuento_aplicado) > 0 ? ' (Desc: S./ ' + parseFloat(pago.descuento_aplicado).toFixed(2) + ')' : ''}
+                                                   ${parseFloat(pago.descuento_aplicado) > 0 ? ' (Desc: $ ' + parseFloat(pago.descuento_aplicado).toFixed(2) + ')' : ''}
                                                     ${pago.notas_pago ? ' <br><small><i>' + pago.notas_pago + '</i></small>' : ''}
                                                 </div>
                                                 <div>
@@ -1419,6 +1590,12 @@ $('#pago_monto_a_pagar, #pago_descuento').on('keyup change', function() {
 // Evento para el botón "Registrar Pago" dentro del modal de Pagos
 $('#btnRegistrarPago').on('click', function() {
     console.log("Botón #btnRegistrarPago clickeado!"); // Para depuración
+
+    // Doble verificación por si el estado cambió mientras el modal estaba abierto
+    if (parseFloat($('#pago_monto_pendiente_cita').text()) <= 0) {
+        Swal.fire('Información', 'Esta cita ya ha sido pagada en su totalidad. No se pueden registrar más pagos.', 'info');
+        return;
+    }
     const idCita = $('#pago_id_cita_actual').val();
     const idPaciente = $('#pago_id_paciente_actual').val();
     const montoBrutoAPagar = parseFloat($('#pago_monto_a_pagar').val()) || 0;
@@ -1449,7 +1626,7 @@ $('#btnRegistrarPago').on('click', function() {
     if (montoNetoTransaccion > montoPendiente) { 
          Swal.fire({
             title: 'Monto Excedente',
-            text: `El monto neto a pagar (S./ ${montoNetoTransaccion.toFixed(2)}) es mayor al monto pendiente (S./ ${montoPendiente.toFixed(2)}). ¿Desea continuar y registrar el pago?`,
+            text: `El monto neto a pagar ($ ${montoNetoTransaccion.toFixed(2)}) es mayor al monto pendiente ($ ${montoPendiente.toFixed(2)}). ¿Desea continuar y registrar el pago?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -1510,7 +1687,7 @@ $('#btnRegistrarPago').on('click', function() {
                     });
                     // Para actualizar la info en el modal si se vuelve a abrir, es mejor que el clic en btnMenuPagos siempre recargue.
                 } else {
-                    Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar el pago.', 'error');
+                    Swal.fire('Error', respuesta.mensaje || 'No se pudo registrar el pago. vista', 'error');
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -1538,11 +1715,40 @@ $(document).on('click', '.btnEnviarCorreoTicketHistorial', function() {
         Swal.fire('Error', 'No se pudo obtener el ID del pago.', 'error');
         return;
     }
-    // Por ahora, solo un mensaje. La implementación real requeriría AJAX y PHPMailer.
-    Swal.fire('Próximamente', `Se enviaría el ticket del pago ID: ${idPago} al correo: ${correoPaciente || 'No disponible'}. Esta función aún no está implementada.`, 'info');
-    
-    // Aquí iría la lógica para llamar a un AJAX que envíe el correo con el ticket.
-    // Ejemplo: enviarTicketPorCorreo(idPago, correoPaciente);
+    if (!correoPaciente) {
+        Swal.fire('Advertencia', 'El paciente no tiene un correo electrónico registrado para enviar el ticket.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Enviando correo...',
+        text: `Se enviará el ticket del pago ID: ${idPago} a ${correoPaciente}.`,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: '../ajax/enviar_ticket_correo.ajax.php', // Script AJAX para enviar correo
+        type: 'POST',
+        data: {
+            id_pago: idPago,
+            correo_paciente: correoPaciente 
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === "ok") {
+                Swal.fire('¡Enviado!', response.message || 'El ticket ha sido enviado por correo.', 'success');
+            } else {
+                Swal.fire('Error al Enviar', response.message || 'No se pudo enviar el correo. Verifique la configuración del servidor de correo.', 'error');
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Error AJAX en btnEnviarCorreoTicketHistorial:", textStatus, errorThrown, jqXHR.responseText);
+            Swal.fire('Error de Comunicación', 'Ocurrió un problema al intentar enviar el correo. Revise la consola para más detalles.', 'error');
+        }
+    });
 });
 // --- FIN: Eventos para botones en el Historial de Pagos ---
 

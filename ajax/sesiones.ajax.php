@@ -6,7 +6,12 @@ require_once "../modelos/sesiones.modelo.php";
 require_once "../modelos/conexion.php"; 
 
 class AjaxSesiones {
+    public $id_cita_contar;
 
+    public function ajaxContarSesionesDeCita() {
+        $respuesta = SesionesControlador::ctrContarSesionesPorCita($this->id_cita_contar);
+        echo json_encode($respuesta); // Devuelve {"total_sesiones": X}
+    }
     public function ajaxRegistrarSesion() {
         $datos = array(
             "id_cita" => $_POST["id_cita_sesion"],
@@ -79,6 +84,10 @@ if (isset($_POST["accionSesion"])) {
             break;
         case "eliminar":
             $sesionAjax->ajaxEliminarSesion();
+            break;
+        case "contarSesionesDeCita":
+            $sesionAjax->id_cita_contar = $_POST["id_cita_contar"];
+            $sesionAjax->ajaxContarSesionesDeCita();
             break;
     }
 }

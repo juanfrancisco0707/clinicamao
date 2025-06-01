@@ -59,5 +59,13 @@ class SesionesControlador {
             return array("resultado" => "error", "mensaje" => "Error al eliminar la sesión.", "detalle" => $respuesta);
         }
     }
+
+    static public function ctrContarSesionesPorCita($id_cita) {
+        if (empty($id_cita)) {
+            return array("total_sesiones" => 0);
+        }
+        $respuesta = SesionesModelo::mdlContarSesionesPorCita($id_cita);
+        return $respuesta; // Devuelve ['total_sesiones' => X]
+    }
 }
 ?>

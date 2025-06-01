@@ -362,7 +362,7 @@ class PacientesModelo{
         $stmt = Conexion::conectar()->prepare("SELECT 
         p.id, p.nombre, p.sexo, p.fecha_nacimiento, p.edad, p.direccion,
         p.estado_civil, p.escolaridad, p.id_ocupacion, left(o.nombre_ocupacion,20) as nombre_ocupacion,
-        p.id_nacionalidad, n.gentilicio_nac, p.comorbilidad, p.estatus,
+        p.id_nacionalidad, n.gentilicio_nac, p.comorbilidad, p.estatus,p.correo,
         p.fecha_creacion, p.id_empresa, e.nombre as nombre_clinica                                                  
         FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
         inner join tblnacionalidad n on p.id_nacionalidad = n.id

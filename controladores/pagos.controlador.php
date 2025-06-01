@@ -59,6 +59,7 @@ class PagosControlador {
             "id_cita" => $idCita,
             "nombre_paciente" => $paciente ? $paciente->nombre : "Desconocido", // Acceso como objeto
             "id_paciente" => $idPacienteCita,
+            "correo_paciente" => $paciente ? $paciente->correo : null,
             "nombre_fisioterapeuta" => $fisioterapeuta ? ($fisioterapeuta["nombre"] . " " . $fisioterapeuta["apellido"]) : "Desconocido", // $fisioterapeuta es array
             "fecha_cita" => $citaDetalles ? (is_object($citaDetalles) ? $citaDetalles->fecha_hora : $citaDetalles["fecha_hora"]) : "N/A",
             "sesiones_detalle" => $detalleServicios,
@@ -76,10 +77,15 @@ class PagosControlador {
         // Insertar en ModeloPagos::mdlIngresarPago
         $respuestaModelo = ModeloPagos::mdlIngresarPago("tblmao_pagos", $datos);
 
-        if (is_numeric($respuestaModelo) && $respuestaModelo > 0) { // Si la respuesta es un ID numérico > 0
+        // Verificar si la respuesta del modelo es un ID numérico válido y mayor que cero.
+        // lastInsertId() devuelve una cadena que representa el ID, o '0' si no hubo AUTO_INCREMENT,
+        // o false en algunos casos de error (aunque el modelo ya maneja "error_ejecucion").
+        if (is_numeric($respuestaModelo) && intval($respuestaModelo) > 0) {
             return array("resultado" => "ok", "mensaje" => "Pago registrado exitosamente.", "id_pago" => $respuestaModelo);
         } else {
-            return array("resultado" => "error", "mensaje" => "No se pudo registrar el pago.");
+            // Puedes personalizar el mensaje de error basado en $respuestaModelo si es una cadena de error específica
+            $mensajeError = "No se pudo registrar el pago. Modelo devolvió: " . htmlspecialchars($respuestaModelo);
+            return array("resultado" => "error", "mensaje" => $mensajeError);
         }
     }
 }

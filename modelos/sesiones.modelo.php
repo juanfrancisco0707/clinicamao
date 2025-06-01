@@ -74,5 +74,14 @@ class SesionesModelo {
             return array("resultado" => "error", "mensaje" => "Error en la base de datos al eliminar sesión", "detalle" => $stmt->errorInfo());
         }
     }
+
+    // Contar sesiones por ID de Cita
+    static public function mdlContarSesionesPorCita($id_cita) {
+        $stmt = Conexion::conectar()->prepare("SELECT COUNT(*) as total_sesiones FROM tblsesiones WHERE id_cita = :id_cita");
+        $stmt->bindParam(":id_cita", $id_cita, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve un array como ['total_sesiones' => X]
+    }
+
 }
 ?>
