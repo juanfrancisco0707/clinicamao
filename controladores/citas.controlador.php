@@ -102,6 +102,10 @@ class CitasControlador {
                 "extendedProps" => array(
                     "id_paciente" => $fila["id_paciente"], // Asegúrate que esta columna exista en tu consulta de mdlListarCitas
                     "id_fisioterapeuta" => $fila["id_fisioterapeuta"], // Ejemplo, si también lo necesitas
+                     "id_empresa" => $fila["id_empresa"], // Añadir id_empresa de la cita
+                     "nombre_paciente_tooltip" => $fila["nombre_paciente"],      // Para el tooltip
+                    "nombre_fisioterapeuta_tooltip" => $fila["nombre_fisioterapeuta"] // Para el tooltip
+           
                     // "motivo_cita" => $fila["motivo"], // Ya lo tienes fuera, pero podrías moverlo aquí
                     // "estado_cita" => $fila["estado"] // Ya lo tienes fuera, pero podrías moverlo aquí
                 )

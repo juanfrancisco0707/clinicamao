@@ -8,81 +8,96 @@
 
     }
     /* Para los números de los días en la vista de mes */
-#calendar .fc-daygrid-day-number {
-    color: #333333 !important; 
+    #calendar .fc-daygrid-day-number {
+        color: #333333 !important; 
+    }
+
+    /* Para los encabezados de las columnas (ej. Lunes, Martes...) */
+    #calendar .fc-col-header-cell-cushion {
+        color: #333333 !important;
+    }
+
+    /* Para el título de los eventos - Comentado o eliminado para permitir que textColor del evento funcione */
+    #calendar .fc-event-title {
+        /* color: #ffffff !important; */ /* Esta línea puede impedir que textColor funcione correctamente */
+    }
+
+    /* Para el texto de los eventos en la vista de lista */
+    #calendar .fc-list-event-title a { /* FullCalendar a veces envuelve títulos de lista en <a> */
+        color: #333333 !important;
+    }
+    #calendar .fc-list-event-time {
+        color: #555555 !important;
+    }
+
+    /* Para asegurar que los botones de navegación de FullCalendar (prev, next, today) sean legibles */
+    #calendar .fc-button {
+        background-color: #f0f0f0; /* Un fondo claro para los botones */
+        color: #333333;            /* Texto oscuro */
+        border: 1px solid #cccccc;
+    }
+    #calendar .fc-button-primary:hover {
+        background-color: #e0e0e0;
+    }
+    #calendar .fc-toolbar-title {
+        color: #333333; /* Asegurar que el título del mes/semana/día sea legible */
+    }
+
+    /* Estilos para los botones de cambio de vista (Día, Semana, Mes) cuando están activos */
+    .container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary.active,
+    .container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary:focus, /* Bootstrap usa :focus para algunos estados activos */
+    .container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary:active { /* :active es para el estado mientras se presiona */
+        background-color: #0056b3 !important; /* Un azul más oscuro, estándar para .active en Bootstrap primary */
+        border-color: #004085 !important;     /* Borde correspondiente */
+        color: #ffffff !important;            /* Texto blanco para contraste */
+    }
+
+    /* Estilo para el fondo del calendario */
+    #calendar {
+        background-color: ivory;
+    /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
+    }
+    .modal-header.bg-indigo {
+        cursor: move; /* Cambiar cursor para indicar que es arrastrable */
+    /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
+    }
+
+    /* Estilos para el Menú Contextual del Calendario */
+    #modalMenuContextualCalendario .modal-dialog {
+        max-width: 280px; /* Un poco más ancho para mejor espaciado */
+    }
+
+    #modalMenuContextualCalendario .modal-header {
+        background-color: #f8f9fa; /* Un fondo claro para el header */
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem 1rem; /* Ajustar padding */
+    }
+
+    #modalMenuContextualCalendario .modal-title {
+        font-size: 1.1rem; /* Tamaño de fuente del título */
+        color: #495057;
+    }
+
+    #modalMenuContextualCalendario .list-group-item {
+        border-left: none;
+        border-right: none;
+        padding: 0.75rem 1.25rem; /* Ajustar padding de los items */
+    }
+    #custom-calendar-tooltip {
+    position: fixed; /* Se posiciona relativo a la ventana del navegador */
+    display: none;
+    padding: 10px;
+    background-color: #333; /* Fondo oscuro */
+    color: white;           /* Texto blanco */
+    border: 1px solid #555;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 10001;         /* Asegura que esté por encima de otros elementos */
+    max-width: 300px;       /* Evita que sea demasiado ancho */
+    font-size: 0.9em;       /* Tamaño de fuente legible */
+    pointer-events: none;   /* Importante: permite que los eventos del mouse pasen "a través" del tooltip al elemento del calendario debajo */
 }
 
-/* Para los encabezados de las columnas (ej. Lunes, Martes...) */
-#calendar .fc-col-header-cell-cushion {
-    color: #333333 !important;
-}
-
-/* Para el título de los eventos - Comentado o eliminado para permitir que textColor del evento funcione */
-#calendar .fc-event-title {
-    /* color: #ffffff !important; */ /* Esta línea puede impedir que textColor funcione correctamente */
-}
-
-/* Para el texto de los eventos en la vista de lista */
-#calendar .fc-list-event-title a { /* FullCalendar a veces envuelve títulos de lista en <a> */
-    color: #333333 !important;
-}
-#calendar .fc-list-event-time {
-    color: #555555 !important;
-}
-
-/* Para asegurar que los botones de navegación de FullCalendar (prev, next, today) sean legibles */
-#calendar .fc-button {
-    background-color: #f0f0f0; /* Un fondo claro para los botones */
-    color: #333333;            /* Texto oscuro */
-    border: 1px solid #cccccc;
-}
-#calendar .fc-button-primary:hover {
-    background-color: #e0e0e0;
-}
-#calendar .fc-toolbar-title {
-    color: #333333; /* Asegurar que el título del mes/semana/día sea legible */
-}
-
-/* Estilos para los botones de cambio de vista (Día, Semana, Mes) cuando están activos */
-.container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary.active,
-.container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary:focus, /* Bootstrap usa :focus para algunos estados activos */
-.container.mt-3 > .d-flex.justify-content-between.align-items-center.mb-3 > div > .btn.btn-primary:active { /* :active es para el estado mientras se presiona */
-    background-color: #0056b3 !important; /* Un azul más oscuro, estándar para .active en Bootstrap primary */
-    border-color: #004085 !important;     /* Borde correspondiente */
-    color: #ffffff !important;            /* Texto blanco para contraste */
-}
-
-/* Estilo para el fondo del calendario */
-#calendar {
-    background-color: ivory;
-   /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
-}
-.modal-header.bg-indigo {
-    cursor: move; /* Cambiar cursor para indicar que es arrastrable */
-   /* color: #f9f9f9; /* Cambia este valor al color que desees, por ejemplo, un gris claro */
-}
-
-/* Estilos para el Menú Contextual del Calendario */
-#modalMenuContextualCalendario .modal-dialog {
-    max-width: 280px; /* Un poco más ancho para mejor espaciado */
-}
-
-#modalMenuContextualCalendario .modal-header {
-    background-color: #f8f9fa; /* Un fondo claro para el header */
-    border-bottom: 1px solid #dee2e6;
-    padding: 0.75rem 1rem; /* Ajustar padding */
-}
-
-#modalMenuContextualCalendario .modal-title {
-    font-size: 1.1rem; /* Tamaño de fuente del título */
-    color: #495057;
-}
-
-#modalMenuContextualCalendario .list-group-item {
-    border-left: none;
-    border-right: none;
-    padding: 0.75rem 1.25rem; /* Ajustar padding de los items */
-}
 </style>
 
 <div class="container mt-3">
@@ -102,6 +117,77 @@
         </div>
     </div>
 </div>
+<!-- Modal para Editar Paciente desde Calendario -->
+<div class="modal fade" id="modalEditarPacienteCalendario" tabindex="-1" aria-labelledby="modalEditarPacienteCalendarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info py-2" id="modalEditarPacienteCalendarioHeader">
+                <h5 class="modal-title" id="modalEditarPacienteCalendarioLabel">Editar Información del Paciente</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarPacienteCalendario" class="needs-validation" novalidate>
+                    <input type="hidden" id="editCal_id_paciente">
+                    <input type="hidden" id="editCal_id_empresa">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editCal_nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="editCal_nombre" required>
+                            <div class="invalid-feedback">El nombre es obligatorio.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editCal_telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control form-control-sm" id="editCal_telefono">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editCal_correo" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control form-control-sm" id="editCal_correo">
+                            <div class="invalid-feedback">Ingrese un correo válido.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editCal_direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control form-control-sm" id="editCal_direccion">
+                        </div>
+                    </div>
+                    <div class="row">
+                         <div class="col-md-4 mb-3">
+                            <label for="editCal_sexo" class="form-label">Sexo</label>
+                            <select class="form-control form-control-sm" id="editCal_sexo">
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editCal_fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control form-control-sm" id="editCal_fecha_nacimiento">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editCal_estado_civil" class="form-label">Estado Civil</label>
+                            <select class="form-control form-control-sm" id="editCal_estado_civil">
+                                <option>Soltero(a)</option>
+                                <option>Casado(a)</option>
+                                <option>Unión Libre</option>
+                                <option>Divorciado(a)</option>
+                                <option>Viudo(a)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ... resto de los campos del formulario ... -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarCambiosPacienteCalendario">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Modal para Registrar/Editar Sesión -->
 <div class="modal fade" id="modalSesion" tabindex="-1" aria-labelledby="modalSesionLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -414,12 +500,13 @@
     </div>
 </div>
 
+
 <script>
 (function() {
     var calendarEl = document.getElementById('calendar');
     var scheduleEl = document.getElementById('schedule');
     var calendarInstance; // Declarar la instancia aquí para que sea accesible en changeView
-    // Variables para el contexto de la cita/sesión activa para el historial
+    // Variables para el contexto de la cita/sesión activa para el historialf
     let idPacienteCitaActiva = null;
     let idCitaParaRefrescarSesiones = null;
     // Variables para guardar la información del clic en el calendario para el menú contextual
@@ -437,6 +524,10 @@
         console.error("Elemento #calendar no encontrado. El calendario no se puede inicializar.");
         return;
     }
+    // Hacer el modal de Editar Paciente (Calendario) arrastrable
+    $('#modalEditarPacienteCalendario').draggable({
+        handle: "#modalEditarPacienteCalendarioHeader"
+    });
     // Hacer el modal arrastrable
     $('#modalCita').draggable({
         handle: "#modalCitaHeader" // Especifica el encabezado como el área para arrastrar
@@ -588,11 +679,80 @@
                 }
             });*/
         },
-        eventDidMount: function(info) {
-            // Inicializar tooltips para los eventos del calendario si es necesario
-            // $(info.el).tooltip({ title: info.event.extendedProps.tooltipContent || info.event.title });
-        }
-        // Puedes añadir más opciones de FullCalendar aquí
+       eventDidMount: function(info) {
+            let tooltipHtml = `
+                <div>
+                    <strong>Paciente:</strong> ${info.event.extendedProps.nombre_paciente_tooltip || 'N/A'}<br>
+                    <strong>Fisioterapeuta:</strong> ${info.event.extendedProps.nombre_fisioterapeuta_tooltip || 'N/A'}<br>
+                    <strong>Motivo:</strong> ${info.event.motivo || 'Sin motivo especificado'}<br>
+                    <strong>Estado:</strong> ${info.event.estado || 'N/A'}
+                </div>`;
+
+            // Obtener o crear el div del tooltip
+            let tooltipDiv = document.getElementById('custom-calendar-tooltip');
+            if (!tooltipDiv) {
+                tooltipDiv = document.createElement('div');
+                tooltipDiv.id = 'custom-calendar-tooltip';
+                // Los estilos se aplican vía CSS por el ID, pero puedes añadir más aquí si es necesario
+                document.body.appendChild(tooltipDiv);
+            }
+
+            // Evento para mostrar el tooltip
+            info.el.addEventListener('mouseenter', function(e) {
+                tooltipDiv.innerHTML = tooltipHtml; // Cargar el contenido HTML
+
+                // Posicionar el tooltip cerca del cursor
+                const tooltipWidth = tooltipDiv.offsetWidth;
+                const tooltipHeight = tooltipDiv.offsetHeight;
+                let top = e.clientY + 15; // Un poco abajo del cursor
+                let left = e.clientX + 15; // Un poco a la derecha del cursor
+
+                // Ajustar posición si el tooltip se sale de la pantalla
+                if (top + tooltipHeight > window.innerHeight) {
+                    top = e.clientY - tooltipHeight - 15; // Mover arriba del cursor
+                }
+                if (left + tooltipWidth > window.innerWidth) {
+                    left = e.clientX - tooltipWidth - 15; // Mover a la izquierda del cursor
+                }
+
+                // Asegurar que no se salga por arriba o izquierda (menos común con el offset de +15)
+                if (top < 0) top = 5; // Pequeño margen superior
+                if (left < 0) left = 5; // Pequeño margen izquierdo
+
+                tooltipDiv.style.left = left + 'px';
+                tooltipDiv.style.top = top + 'px';
+                tooltipDiv.style.display = 'block'; // Mostrar el tooltip
+            });
+
+            // Evento para mover el tooltip con el cursor
+            info.el.addEventListener('mousemove', function(e) {
+                if (tooltipDiv.style.display === 'block') {
+                    const tooltipWidth = tooltipDiv.offsetWidth;
+                    const tooltipHeight = tooltipDiv.offsetHeight;
+                    let top = e.clientY + 15;
+                    let left = e.clientX + 15;
+
+                    if (top + tooltipHeight > window.innerHeight) {
+                        top = e.clientY - tooltipHeight - 15;
+                    }
+                    if (left + tooltipWidth > window.innerWidth) {
+                        left = e.clientX - tooltipWidth - 15;
+                    }
+                    if (top < 0) top = 5;
+                    if (left < 0) left = 5;
+
+                    tooltipDiv.style.left = left + 'px';
+                    tooltipDiv.style.top = top + 'px';
+                }
+            });
+
+            // Evento para ocultar el tooltip
+            info.el.addEventListener('mouseleave', function() {
+                tooltipDiv.style.display = 'none';
+            });
+        },
+
+         // Puedes añadir más opciones de FullCalendar aquí
     });
 
     calendarInstance.render();
@@ -1414,16 +1574,87 @@ function actualizarOpcionesEstadoCita(estadoActual, numSesiones) {
 
 $('#btnMenuEditarPaciente').on('click', function() {
     $('#modalMenuContextualCalendario').modal('hide');
-    alert(currentEventInfo.event.extendedProps.id_paciente); // Aquí puedes implementar la lógica para editar el paciente
-    if (currentEventInfo && currentEventInfo.event && currentEventInfo.event.extendedProps && currentEventInfo.event.extendedProps.id_paciente) {
+      if (currentEventInfo && currentEventInfo.event && currentEventInfo.event.extendedProps && currentEventInfo.event.extendedProps.id_paciente && typeof currentEventInfo.event.extendedProps.id_empresa !== 'undefined') {
         const idPaciente = currentEventInfo.event.extendedProps.id_paciente;
-        // Opción 1: Redirigir a la vista de pacientes con el ID para mostrar la ficha
-        // window.location.href = 'index.php?pagina=pacientes&id_paciente_ficha=' + idPaciente;
-        
-        // Cargar la vista de pacientes, pasando el id_paciente_ficha como parámetro.
-        // La vista pacientes.php se encargará de mostrar la ficha y/o el modal de edición.
-        CargarContenido('pacientes.php?id_paciente_ficha=' + idPaciente, 'content-wrapper');
-        
+        const idEmpresa = currentEventInfo.event.extendedProps.id_empresa;
+        //CargarContenido('pacientes.php?id_paciente_ficha=' + idPaciente + '&id_empresa_ficha=' + idEmpresa, 'content-wrapper');
+       // Limpiar formulario y mostrar modal
+        $('#formEditarPacienteCalendario')[0].reset();
+        $('#formEditarPacienteCalendario').removeClass('was-validated');
+        $('#editCal_id_paciente').val('');
+        $('#editCal_id_empresa').val('');
+
+        $.ajax({
+            url: '../ajax/pacientes.ajax.php',
+            type: 'POST',
+            data: {
+                accion: '7', // O la acción que uses para obtener datos de un paciente
+                id: idPaciente,
+                id_empresa: idEmpresa
+            },
+            dataType: 'json',
+            success: function(paciente) {
+                if (paciente) {
+                   // alert("¡Paciente encontrado! ID: " + paciente.id + ", Empresa ID: " + paciente.id_empresa); 
+                    $('#editCal_id_paciente').val(paciente.id); // Asumiendo que el ID se llama 'id'
+                    $('#editCal_id_empresa').val(paciente.id_empresa); // Asumiendo que el ID de empresa se llama 'id_empresa'
+                    $('#editCal_nombre').val(paciente.nombre);
+                    $('#editCal_telefono').val(paciente.telefono);
+                    $('#editCal_correo').val(paciente.correo);
+                    $('#editCal_direccion').val(paciente.direccion);
+                    $('#editCal_sexo').val(paciente.sexo);
+                    $('#editCal_fecha_nacimiento').val(paciente.fecha_nacimiento);
+                    $('#editCal_estado_civil').val(paciente.estado_civil);
+                    // Añade más campos si los tienes en el modal y en la respuesta AJAX
+
+                    // Intento más robusto de mostrar el modal
+                    var $modalEditar = $('#modalEditarPacienteCalendario');
+                    if ($modalEditar.length) { // Asegurarse que el elemento existe
+                        console.log("Elemento modal encontrado. Mostrando...");
+                        // $modalEditar.modal({ backdrop: 'static', keyboard: false }); // Opcional: configurar opciones
+                       $modalEditar.off('shown.bs.modal').on('shown.bs.modal', function () {
+                        console.log('Evento shown.bs.modal DISPARADO para #modalEditarPacienteCalendario');
+                        // Forzar estilos aquí DESPUÉS de que Bootstrap haya hecho lo suyo
+                        // $(this).css({ 'display': 'block', 'opacity': 1, 'z-index': 9999 }); // Ya lo tienes, pero asegúrate que sea después del evento
+                        console.log("Estilos del modal después de 'shown':", 
+                            "display:", $(this).css('display'), 
+                            "opacity:", $(this).css('opacity'), 
+                            "z-index:", $(this).css('z-index'),
+                            "position:", $(this).css('position'),
+                            "top:", $(this).css('top'),
+                            "left:", $(this).css('left'),
+                            "width:", $(this).width(), // Ancho del contenido
+                            "height:", $(this).height() // Alto del contenido
+                        );
+                        console.log("Clase 'show' presente:", $(this).hasClass('show'));
+                        console.log("Body tiene clase 'modal-open':", $('body').hasClass('modal-open'));
+                        
+                        var $modalDialog = $(this).find('.modal-dialog');
+                        console.log("Dimensiones de .modal-dialog:", $modalDialog.width(), "x", $modalDialog.height());
+                        
+                        var $modalContent = $(this).find('.modal-content');
+                        console.log("Dimensiones de .modal-content:", $modalContent.width(), "x", $modalContent.height());
+
+                        });
+
+                        $modalEditar.off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                        console.log('Evento hidden.bs.modal DISPARADO para #modalEditarPacienteCalendario');
+                        });
+
+                        $modalEditar.modal('show');
+                        console.log("Modal mostrado correctamente.");
+                    } else {
+                        console.error("El elemento #modalEditarPacienteCalendario no fue encontrado en el DOM.");
+                        Swal.fire('Error de Interfaz', 'No se pudo encontrar el modal para editar el paciente.', 'error');
+                    }
+                } else {
+                    Swal.fire('Error', 'No se pudieron obtener los datos del paciente.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Problema al conectar con el servidor para obtener datos del paciente.', 'error');
+            }
+        }); 
     } else {
         Swal.fire('Error', 'No hay un paciente asociado a esta cita para editar.', 'error');
     }
@@ -1753,6 +1984,65 @@ $(document).on('click', '.btnEnviarCorreoTicketHistorial', function() {
 // --- FIN: Eventos para botones en el Historial de Pagos ---
 
 // --- FIN: Lógica para Pagos ---
+// --- INICIO: Lógica para Guardar Cambios del Paciente desde Modal del Calendario ---
+$('#btnGuardarCambiosPacienteCalendario').on('click', function() {
+    var form = $("#formEditarPacienteCalendario");
+    form.addClass('was-validated');
+
+    if (form[0].checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
+
+    const datosPaciente = {
+        accion: 4, // Acción para actualizar paciente en pacientes.ajax.php
+        id: $('#editCal_id_paciente').val(),
+        id_empresa: $('#editCal_id_empresa').val(), // Importante para la actualización correcta
+        nombre: $('#editCal_nombre').val(),
+        telefono: $('#editCal_telefono').val(),
+        correo: $('#editCal_correo').val(),
+        direccion: $('#editCal_direccion').val(),
+        sexo: $('#editCal_sexo').val(),
+        fecha_nacimiento: $('#editCal_fecha_nacimiento').val(),
+        estado_civil: $('#editCal_estado_civil').val()
+        // Añade aquí el resto de los campos que tienes en el modal y que se envían para actualizar
+        // Asegúrate que los nombres de las propiedades coincidan con los esperados por tu AJAX y controlador de pacientes.
+    };
+
+    $.ajax({
+        url: '../ajax/pacientes.ajax.php',
+        type: 'POST',
+        data: datosPaciente,
+        dataType: 'json',
+        success: function(respuesta) {
+            if (respuesta === "ok" || (respuesta.resultado && respuesta.resultado === "ok")) { // Ajusta según la respuesta de tu AJAX
+                Swal.fire('¡Actualizado!', 'Los datos del paciente han sido actualizados.', 'success');
+                $('#modalEditarPacienteCalendario').modal('hide');
+                // Opcional: Refrescar eventos del calendario si el nombre del paciente cambió y afecta el título del evento
+                if (calendarInstance) {
+                    calendarInstance.refetchEvents();
+                }
+            } else {
+                Swal.fire('Error', respuesta.mensaje || 'No se pudieron guardar los cambios del paciente.', 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'Problema de comunicación al guardar los cambios del paciente.', 'error');
+        }
+    });
+});
+// --- FIN: Lógica para Guardar Cambios del Paciente ---
+$('#modalEditarPacienteCalendario').on('shown.bs.modal', function () {
+  console.log('Evento shown.bs.modal disparado para #modalEditarPacienteCalendario');
+  // Aquí podrías verificar de nuevo los estilos si sigue sin verse
+  // $(this).css({ 'display': 'block', 'opacity': 1, 'z-index': 9999 });
+});
+
+$('#modalEditarPacienteCalendario').on('hidden.bs.modal', function () {
+  console.log('Evento hidden.bs.modal disparado para #modalEditarPacienteCalendario');
+});
+
 })();
 // --- INICIO: Lógica para Pagos ---
 

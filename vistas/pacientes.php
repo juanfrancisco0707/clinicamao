@@ -313,7 +313,6 @@ if(!isset($_SESSION['S_IDUSUARIO'])){
 </div>
 <!-- Fin de Modal -->
 
-
 <!-- /. Fin de Ventana Modal para ingreso de Pacientes -->
                             
 <!-- Ventana Modal para modificar un Paciente -->
@@ -618,24 +617,40 @@ var Toast = Swal.mixin({
 //});
 
 $(document).ready(function() {
+    // Variable para controlar si se debe inicializar DataTables
+    let inicializarDataTable = true;
     // Nueva lógica para manejar el parámetro id_paciente_ficha desde la URL
     const urlParams = new URLSearchParams(window.location.search);
     const idPacienteFichaDesdeUrl = urlParams.get('id_paciente_ficha');
+    const idEmpresaFichaDesdeUrl = urlParams.get('id_empresa_ficha'); // Nuevo
 
-    if (idPacienteFichaDesdeUrl) {
-        // console.log("ID Paciente desde URL para ficha:", idPacienteFichaDesdeUrl);
+    if (idPacienteFichaDesdeUrl && idEmpresaFichaDesdeUrl) {
+         inicializarDataTable = false; // No inicializar DataTables si estamos en modo ficha
+        console.log("Modo ficha detectado. Paciente:", idPacienteFichaDesdeUrl, "Empresa:", idEmpresaFichaDesdeUrl);
+
+
+
+        // Ocultar la tabla de DataTables y el encabezado de la página de pacientes
+        // Ocultar el contenedor de la tabla y el botón de agregar si existe.
+        // Es importante que estos selectores sean precisos para tu HTML.
+        $('.row:has(#tbl_pacientes)').first().hide(); // Oculta el primer .row que contiene la tabla
+  
+        $('.content-header').hide(); // Oculta el título "Pacientes" y breadcrumbs
+        // Si tienes un botón "Agregar Paciente" fuera de la tabla que también quieres ocultar:
+         $('.addNewRecord').hide(); // O el selector específico de tu botón de agregar
 
         // Usamos la función existente para cargar y mostrar el modal de edición.
-        // Esta función ya hace una llamada AJAX para obtener los datos del paciente.
-        cargarYMostrarModalEdicionPaciente(idPacienteFichaDesdeUrl);
+        cargarYMostrarModalEdicionPaciente(idPacienteFichaDesdeUrl, idEmpresaFichaDesdeUrl); // Pasar ambos IDs
 
         // Adicionalmente, si quieres mostrar también la sección de la ficha del paciente
-        // antes o junto con el modal, puedes adaptar la lógica de '.btnVerFichaPaciente'.
-        // Por ejemplo, para mostrar la ficha (esto es opcional si solo quieres el modal):
         $.ajax({
             url: '../ajax/pacientes.ajax.php',
             type: 'POST',
-            data: { accion: 'obtenerPacientePorId', id_paciente: idPacienteFichaDesdeUrl }, // Reutiliza la acción existente
+            data: { 
+                accion: 'obtenerPacientePorId', 
+                id_paciente: idPacienteFichaDesdeUrl,
+                id_empresa: idEmpresaFichaDesdeUrl // Enviar id_empresa
+            },
             dataType: 'json',
             success: function(paciente) {
                 if (paciente && paciente.nombre) {
@@ -644,7 +659,7 @@ $(document).ready(function() {
                     
                     // Simulación de carga de datos generales en la ficha
                     $('#datos-generales .mt-3').html(
-                        '<p>Mostrando datos generales de ' + paciente.nombre + '. Implementa la carga de datos aquí si es necesario.</p>' +
+                         `<h5>Datos de: ${paciente.nombre}</h5><p>Teléfono: ${paciente.telefono || 'N/A'}<br>Correo: ${paciente.correo || 'N/A'}</p>` +
                         '<button class="btn btn-sm btn-info" id="btnEditarPacienteDesdeFicha">Editar Datos del Paciente</button>'
                     );
                     
@@ -659,11 +674,15 @@ $(document).ready(function() {
                 } else {
                     // No mostrar error si el modal de edición ya se está abriendo.
                     // Podrías querer un manejo más sutil aquí.
-                    console.warn("No se pudo obtener el nombre del paciente para el título de la ficha, pero el modal de edición se abrirá.");
-                }
+                    console.warn("No se pudo obtener la información completa del paciente para la ficha, pero el modal de edición se intentará abrir.");
+                    // Aun así, mostrar la sección de la ficha con un mensaje
+                    $('#seccionFichaPaciente').show();
+                     $('#datos-generales .mt-3').html('<p class="text-warning">No se pudo cargar la información completa del paciente.</p>');
+                      }
             },
             error: function() {
-                 console.error("Error al obtener datos del paciente para el título de la ficha.");
+                 $('#seccionFichaPaciente').show();
+                 $('#datos-generales .mt-3').html('<p class="text-danger">Error al cargar la información del paciente.</p>');
             }
         });
     }
@@ -746,21 +765,26 @@ $(document).ready(function() {
         // Esta es más limpia si no quieres depender de la estructura de la tabla.
         cargarYMostrarModalEdicionPaciente(idPaciente);
     });
-
-    function cargarYMostrarModalEdicionPaciente(idPaciente) {
+    // Modificar la función para aceptar idEmpresa
+    function cargarYMostrarModalEdicionPaciente(idPaciente, idEmpresa) {
         // 1. Hacer una llamada AJAX para obtener los datos del paciente por su ID
         // (similar a como lo harías al editar desde la tabla)
         // 2. Poblar los campos del modal #mdlGestionarPacientesm con los datos recibidos
         // 3. Mostrar el modal: $('#mdlGestionarPacientesm').modal('show');
         
-        // Ejemplo simplificado (debes implementar la carga de datos real):
-        console.log("Abrir modal de edición para paciente ID:", idPaciente);
-        // Aquí iría tu lógica para obtener datos del paciente y poblar el modal #mdlGestionarPacientesm
-        // Por ejemplo:
+       // Si idEmpresa no se pasó (ej. al editar desde la tabla), intenta obtenerlo de la sesión o de un campo oculto si es necesario.
+        // Para este flujo específico desde el calendario, idEmpresa ya viene.
+        const idEmpresaFinal = idEmpresa || $('#vclinica').val(); // Fallback a la clínica de la sesión si es necesario
+
+        console.log("Abrir modal de edición para paciente ID:", idPaciente, "Empresa ID:", idEmpresaFinal);
+   
         $.ajax({
             url: '../ajax/pacientes.ajax.php', // Ajusta la URL y la acción
-            type: 'POST',
-            data: { accion: 'obtenerPacientePorId', id_paciente: idPaciente }, // Necesitarás esta acción en tu AJAX
+            data: { 
+                accion: 'obtenerPacientePorId', 
+                id_paciente: idPaciente,
+                id_empresa: idEmpresaFinal 
+            }, 
             dataType: 'json',
             success: function(paciente) {
                 if(paciente){
@@ -1567,11 +1591,21 @@ $(document).ready(function() {
                      "track": true,
                      "fade": 250
     });
+     // Función para inicializar DataTables (se llamará si no vienen parámetros de ficha)
+    function inicializarTablaPacientes() {
+        if ($.fn.DataTable.isDataTable('#tbl_pacientes')) {
+            // Si ya está inicializada, no hacer nada o recargarla si es necesario
+            // table.ajax.reload();
+            return;
+        }
+       } 
     /*===================================================================*/
     // EVENTOS PARA CRITERIOS DE BUSQUEDA (ID, NOMBRE Y DIRECCION)
     /*===================================================================*/
     $("#iptId").keyup(function() {
-        table.column($(this).data('index')).search(this.value).draw();
+         // Solo buscar si la tabla está visible e inicializada
+        if (table && $('#tbl_pacientes_wrapper').is(':visible')) table.column($(this).data('index')).search(this.value).draw();
+ 
     })
 
     $("#iptNombre").keyup(function() {
@@ -1823,8 +1857,11 @@ $(document).ready(function() {
         }
 
     })
-
-});
+// Llamar a la inicialización de la tabla solo si es necesario
+    if (inicializarDataTable) {
+        inicializarTablaPacientes();
+    }
+});// Cierre de $(document).ready
 function obtenerFolio(entidad,id_empresa) {
     $.ajax({
         url: "../ajax/mao.folio.ajax.php",
@@ -1842,6 +1879,7 @@ function obtenerFolio(entidad,id_empresa) {
         }
     });
 }
+
 // CALCULA LA UTILIDAD
 function calcularUtilidad() {
 

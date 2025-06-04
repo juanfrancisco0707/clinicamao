@@ -27,6 +27,7 @@ class ajaxPacientes{
     public $id_nacionalidad;
     public $comorbilidad;
     public $idclinica;
+    // public $id_empresa; // Ya existe abajo, no duplicar
    // public $fecha_creacion; Se graba automaticamente
   
     public $id_empresa;  
@@ -126,7 +127,8 @@ class ajaxPacientes{
     ====================================================================*/
     public function ajaxGetDatosPaciente(){
      
-        $paciente = PacientesControlador::ctrGetDatosPaciente($this->id);
+        // Llamar al controlador con ambos parámetros
+        $paciente = PacientesControlador::ctrGetDatosPaciente($this->id, $this->id_empresa);
 
         echo json_encode($paciente);
     }
@@ -240,9 +242,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 1){ // parametro para listar P
 }else if(isset($_POST["accion"]) && $_POST["accion"] == 7){ // OBTENER DATOS DE UN PACIENTE POR SU ID
 
     $listaPaciente = new AjaxPacientes();
-
     $listaPaciente -> id = $_POST["id"];
-    
+    $listaPaciente -> id_empresa = $_POST["id_empresa"]; // Recibir y asignar id_empresa
     $listaPaciente -> ajaxGetDatosPaciente();
 
 }else if(isset($_POST['accion']) && $_POST['accion'] == 11){ // folio de representantes

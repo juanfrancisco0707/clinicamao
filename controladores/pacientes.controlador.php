@@ -75,8 +75,14 @@ $id_nacionalidad,$comorbilidad, $id_empresa, $estatus){
 }*/
 static public function ctrActualizarPaciente($table, $data, $id, $id_clinica,$nameId){
         
-    $respuesta = PacientesModelo::mdlActualizarInformacion($table, $data, $id, $id_clinica, $nameId);
-    
+    //$respuesta = PacientesModelo::mdlActualizarInformacion($table, $data, $id, $id_clinica, $nameId);
+      $respuesta = PacientesModelo::mdlActualizarInformacion("$table",
+                                                          $data, 
+                                                          $id, // id_paciente
+                                                          $nameId, 
+                                                          "id", 
+                                                          $id_clinica, // id_empresa para el WHERE
+                                                          "id_empresa");
     return $respuesta;
 }
 /*static public function ctrActualizarPaciente($table, $data, $id, $nameId){
@@ -106,9 +112,9 @@ static public function ctrListarNombrePacientes(){
 /*===================================================================
 BUSCAR paciente POR SU id
 ====================================================================*/
-static public function ctrGetDatosPaciente($codigo_paciente){
+static public function ctrGetDatosPaciente($codigo_paciente, $id_empresa_paciente){
         
-    $paciente = PacientesModelo::mdlGetDatosPaciente($codigo_paciente);
+    $paciente = PacientesModelo::mdlGetDatosPaciente($codigo_paciente, $id_empresa_paciente);
 
     return $paciente;
 

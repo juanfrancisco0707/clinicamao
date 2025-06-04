@@ -362,7 +362,7 @@ class PacientesModelo{
         $stmt = Conexion::conectar()->prepare("SELECT 
         p.id, p.nombre, p.sexo, p.fecha_nacimiento, p.edad, p.direccion,
         p.estado_civil, p.escolaridad, p.id_ocupacion, left(o.nombre_ocupacion,20) as nombre_ocupacion,
-        p.id_nacionalidad, n.gentilicio_nac, p.comorbilidad, p.estatus,p.correo,
+        p.id_nacionalidad, n.gentilicio_nac, p.comorbilidad, p.estatus,p.correo,p.telefono,
         p.fecha_creacion, p.id_empresa, e.nombre as nombre_clinica                                                  
         FROM tblpacientes p INNER JOIN tblocupaciones o on p.id_ocupacion = o.id 
         inner join tblnacionalidad n on p.id_nacionalidad = n.id
@@ -376,7 +376,7 @@ class PacientesModelo{
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    static public function mdlActualizarInformacion($table, $data, $id, $id_clinica, $nameId){
+    static public function mdlActualizarInformacion($table, $data, $id, $id_clinica, $nameId, $id_empresa_condicion, $nameIdEmpresa){
 
         $set = "";
 
@@ -388,7 +388,8 @@ class PacientesModelo{
 
         $set = substr($set, 0, -1);
 
-        $stmt = Conexion::conectar()->prepare("UPDATE $table SET $set WHERE $nameId = :$nameId and id_empresa=:id_empresa");
+        //$stmt = Conexion::conectar()->prepare("UPDATE $table SET $set WHERE $nameId = :$nameId and id_empresa=:id_empresa");
+        $stmt = Conexion::conectar()->prepare("UPDATE $table SET $set WHERE $nameId = :$nameId AND $nameIdEmpresa = :$nameIdEmpresa");
 
         foreach ($data as $key => $value) {
             
@@ -397,8 +398,8 @@ class PacientesModelo{
         }		
 
         $stmt->bindParam(":".$nameId, $id, PDO::PARAM_INT);
-        $stmt->bindParam(":id_empresa", $id_clinica, PDO::PARAM_INT);
-
+        //$stmt->bindParam(":id_empresa", $id_clinica, PDO::PARAM_INT);
+         $stmt->bindParam(":".$nameIdEmpresa, $id_empresa_condicion, PDO::PARAM_INT);
         if($stmt->execute()){
 
             return "ok";

@@ -50,6 +50,7 @@ class CitasModelo {
                 c.fecha_hora,
                 c.id_paciente,      -- Añadido id_paciente
                 c.id_fisioterapeuta, -- Añadido id_fisioterapeuta
+                c.id_empresa, -- Añadido id_empresa
                 c.motivo,
                 c.estado,
                 p.NOMBRE AS nombre_paciente,
